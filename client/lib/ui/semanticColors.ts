@@ -7,6 +7,8 @@ export const semanticColors = {
   foreground: colors.foreground.DEFAULT,
   foregroundMuted: colors.foreground.muted,
   background: colors.background.DEFAULT,
+  splashBackground: colors.primary[500],
+  splashForeground: colors.background.DEFAULT,
   placeholder: colors.neutral[400],
   iconOnPrimary: colors.background.DEFAULT,
   iconDismiss: colors.neutral[600],
