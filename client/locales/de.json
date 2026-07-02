@@ -1,0 +1,14 @@
+{
+  "welcome_message": "Willkommen bei SYNA",
+  "sign_in_button": "Anmelden",
+  "login_welcome_back": "Willkommen zurück",
+  "login_email_label": "E-Mail",
+  "login_password_label": "Passwort",
+  "login_forgot_prefix": "Passwort",
+  "login_forgot_link": "vergessen",
+  "login_forgot_suffix": "?",
+  "login_submit_button": "Anmelden",
+  "login_new_to_syna": "Neu bei SYNA?",
+  "login_register_link": "Registrieren",
+  "login_title": "Anmelden"
+}

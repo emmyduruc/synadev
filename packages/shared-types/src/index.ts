@@ -15,6 +15,14 @@ export type {
 } from './schemas/user.schema';
 
 export {
+  UploadImageResponseSchema,
+  ALLOWED_IMAGE_MIME_TYPES,
+  MAX_IMAGE_UPLOAD_BYTES,
+} from './schemas/upload.schema';
+
+export type { UploadImageResponse, AllowedImageMimeType } from './schemas/upload.schema';
+
+export {
   forgotPasswordEmailSchema,
   forgotPasswordFormSchema,
   forgotPasswordResetSchema,

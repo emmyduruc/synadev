@@ -82,7 +82,7 @@ export const clientConfig = (tsconfigRootDir) =>
         },
       },
       {
-        files: ['lib/http/**/*.{ts,tsx}'],
+        files: ['lib/http/**/*.{ts,tsx}', 'lib/i18n/**/*.{ts,tsx}'],
         rules: {
           'import/no-named-as-default-member': 'off',
         },

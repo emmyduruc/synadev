@@ -11,6 +11,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { RootLayoutNav } from '@/components/layout/RootLayoutNav';
 import { SplashScreen as BrandSplash } from '@/components/screens/SplashScreen';
+import '@/lib/i18n';
 
 const SPLASH_DURATION_MS = 1500;
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
