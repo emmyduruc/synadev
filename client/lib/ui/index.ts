@@ -30,6 +30,7 @@ export {
 } from './tokens';
 export {
   BUTTON_VARIANT,
+  COLOR_SCHEME,
   PLATFORM_OS,
   STATUS_BAR_STYLE,
   VALIDATION_CHARS,

@@ -19,6 +19,13 @@ export const semanticColors = {
   themedTextDark: 'rgba(255, 255, 255, 0.8)',
   codeHighlightLight: 'rgba(0, 0, 0, 0.05)',
   codeHighlightDark: 'rgba(255, 255, 255, 0.05)',
+  socialIcon: {
+    apple: colors.foreground.DEFAULT,
+    googleBlue: '#4285f4',
+    googleGreen: '#34a853',
+    googleRed: '#ea4335',
+    googleYellow: '#fbbc05',
+  },
   bannerIcon: {
     info: colors.primary[600],
     success: colors.success[700],
@@ -48,6 +55,11 @@ export const PLATFORM_OS = {
 export const STATUS_BAR_STYLE = {
   light: 'light',
   auto: 'auto',
+} as const;
+
+export const COLOR_SCHEME = {
+  dark: 'dark',
+  light: 'light',
 } as const;
 
 export const isLightButtonVariant = (variant: ButtonVariant): boolean =>

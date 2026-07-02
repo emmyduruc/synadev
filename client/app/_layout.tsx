@@ -1,57 +1,33 @@
 import '../global.css';
 
+import { ClerkProvider } from '@clerk/expo';
+import { tokenCache } from '@clerk/expo/token-cache';
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SlideInUp, SlideOutUp } from 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { RootLayoutNav } from '@/components/layout/RootLayoutNav';
 import { SplashScreen as BrandSplash } from '@/components/screens/SplashScreen';
-import { useColorScheme } from '@/components/useColorScheme';
-import { Toaster } from '@/lib/sonner';
 
 const SPLASH_DURATION_MS = 1500;
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+if (!publishableKey) {
+  throw new Error('Add your Clerk Publishable Key to the .env file');
+}
 
 export {
   ErrorBoundary,
 } from 'expo-router';
 
 export const unstable_settings = {
-  initialRouteName: '(tabs)',
+  initialRouteName: 'index',
 };
 
 void SplashScreen.preventAutoHideAsync();
-
-const RootLayoutNav = () => {
-  const colorScheme = useColorScheme();
-
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-      <Toaster
-        position="top-center"
-        swipeToDismissDirection="up"
-        closeButton
-        richColors
-        animation={{
-          enter: SlideInUp.duration(280),
-          exit: SlideOutUp.duration(220),
-        }}
-        toastOptions={{
-          style: {
-            borderRadius: 12,
-          },
-        }}
-      />
-    </ThemeProvider>
-  );
-};
 
 const RootLayout = () => {
   const [loaded, error] = useFonts({
@@ -78,11 +54,13 @@ const RootLayout = () => {
   }
 
   return (
-    <GestureHandlerRootView style={styles.root}>
-      <SafeAreaProvider>
-        {isSplashVisible ? <BrandSplash /> : <RootLayoutNav />}
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <GestureHandlerRootView style={styles.root}>
+        <SafeAreaProvider>
+          {isSplashVisible ? <BrandSplash /> : <RootLayoutNav />}
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </ClerkProvider>
   );
 };
 

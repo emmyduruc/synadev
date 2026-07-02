@@ -1,16 +1,18 @@
 {
   "expo": {
-    "name": "client",
-    "slug": "client",
+    "name": "SYNA",
+    "slug": "syna",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "client",
+    "scheme": "syna",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.syna.app"
     },
     "android": {
+      "package": "com.syna.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -26,6 +28,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-secure-store", "@clerk/expo",
       [
         "expo-splash-screen",
         {

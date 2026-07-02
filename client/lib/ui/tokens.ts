@@ -189,7 +189,7 @@ export const flexClasses: Record<FlexValue, string> = {
 };
 
 export const buttonVariantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-primary-600 active:bg-primary-700',
+  primary: 'bg-secondary-500 active:bg-secondary-600',
   secondary: 'bg-secondary-600 active:bg-secondary-700',
   outline: 'border border-neutral-300 bg-transparent active:bg-neutral-100',
   ghost: 'bg-transparent active:bg-neutral-100',

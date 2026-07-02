@@ -25,15 +25,12 @@ export const clientConfig = (tsconfigRootDir) =>
           ...reactHooksPlugin.configs.recommended.rules,
           'react/react-in-jsx-scope': 'off',
           'react/prop-types': 'off',
+          'react/no-multi-comp': 'error',
           'react/jsx-no-useless-fragment': 'error',
           'import/no-unresolved': 'off',
           'import/namespace': 'off',
           'import/named': 'off',
           'import/default': 'off',
-          'max-lines-per-function': [
-            'warn',
-            { max: 300, skipBlankLines: true, skipComments: true },
-          ],
         },
       },
       {
@@ -70,10 +67,6 @@ export const clientConfig = (tsconfigRootDir) =>
               ],
             },
           ],
-          'max-lines-per-function': [
-            'error',
-            { max: 300, skipBlankLines: true, skipComments: true },
-          ],
         },
       },
       {
@@ -89,36 +82,9 @@ export const clientConfig = (tsconfigRootDir) =>
         },
       },
       {
-        files: ['components/ui/**/*.{ts,tsx}'],
-        rules: {
-          'max-lines-per-function': [
-            'error',
-            { max: 300, skipBlankLines: true, skipComments: true },
-          ],
-        },
-      },
-      {
-        files: ['components/screens/**/*.{ts,tsx}'],
-        rules: {
-          'max-lines-per-function': [
-            'error',
-            { max: 300, skipBlankLines: true, skipComments: true },
-          ],
-        },
-      },
-      {
         files: ['lib/http/**/*.{ts,tsx}'],
         rules: {
           'import/no-named-as-default-member': 'off',
-        },
-      },
-      {
-        files: ['hooks/**/*.{ts,tsx}', 'lib/**/*.{ts,tsx}'],
-        rules: {
-          'max-lines-per-function': [
-            'warn',
-            { max: 300, skipBlankLines: true, skipComments: true },
-          ],
         },
       },
     ],
