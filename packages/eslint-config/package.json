@@ -1,0 +1,26 @@
+{
+  "name": "@syna/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./base": "./base.mjs",
+    "./client": "./client.mjs",
+    "./backend": "./backend.mjs",
+    "./packages": "./packages.mjs"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.39.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsonc": "^2.21.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^17.0.0",
+    "jsonc-eslint-parser": "^2.4.0",
+    "typescript-eslint": "^8.46.2"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0",
+    "typescript": "^5.0.0"
+  }
+}

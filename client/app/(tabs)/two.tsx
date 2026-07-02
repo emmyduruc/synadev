@@ -1,0 +1,38 @@
+import { StyleSheet } from 'react-native';
+
+import { EditScreenInfo } from '@/components/EditScreenInfo';
+import { Text, View } from '@/components/Themed';
+import { semanticColors } from '@/lib/ui';
+
+const TabTwoScreen = () => {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Tab Two</Text>
+      <View
+        style={styles.separator}
+        lightColor={semanticColors.separatorLight}
+        darkColor={semanticColors.separatorDark}
+      />
+      <EditScreenInfo path="app/(tabs)/two.tsx" />
+    </View>
+  );
+};
+
+export default TabTwoScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    width: '80%',
+  },
+});

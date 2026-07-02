@@ -1,0 +1,4 @@
+{
+  "*.{ts,tsx}": "eslint --max-warnings 0 --fix",
+  "*.json": "eslint --max-warnings 0"
+}
