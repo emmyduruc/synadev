@@ -42,5 +42,20 @@
   "forgot_password_new_password_label": "New password",
   "forgot_password_reset_button": "Reset password",
   "auth_generic_error": "Something went wrong. Please try again.",
-  "auth_reset_success": "Password reset complete. You can now log in."
+  "auth_reset_success": "Password reset complete. You can now log in.",
+  "tab_start_label": "Start",
+  "tab_start_title": "Start",
+  "tab_start_placeholder": "Your daily overview will live here.",
+  "tab_muster_label": "Patterns",
+  "tab_muster_title": "Patterns",
+  "tab_muster_placeholder": "Your symptom patterns will live here.",
+  "tab_syna_label": "SYNA",
+  "tab_syna_title": "SYNA",
+  "tab_syna_placeholder": "Your daily check-in will live here.",
+  "tab_bericht_label": "Report",
+  "tab_bericht_title": "Report",
+  "tab_bericht_placeholder": "Your doctor report will live here.",
+  "tab_ich_label": "Me",
+  "tab_ich_title": "Me",
+  "tab_ich_placeholder": "Your profile and settings will live here."
 }

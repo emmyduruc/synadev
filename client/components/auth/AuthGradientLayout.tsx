@@ -1,12 +1,11 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import type { ReactNode } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import type { AppHeaderProps } from '@/components/ui/AppHeader';
 import { AppHeader } from '@/components/ui/AppHeader';
 import { Box } from '@/components/ui/Box';
-import { semanticColors } from '@/lib/ui';
 
 export type AuthGradientLayoutProps = {
   children: ReactNode;
@@ -26,16 +25,7 @@ export const AuthGradientLayout = ({
   );
 
   return (
-    <LinearGradient
-      colors={[
-        semanticColors.authGradient.lavender,
-        semanticColors.authGradient.dustyRose,
-        semanticColors.authGradient.sageMist,
-      ]}
-      locations={[0, 0.45, 1]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={{ flex: 1 }}>
+    <SynaGradientBackground>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
         {header ? (
           <AppHeader
@@ -61,6 +51,6 @@ export const AuthGradientLayout = ({
           )}
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </LinearGradient>
+    </SynaGradientBackground>
   );
 };

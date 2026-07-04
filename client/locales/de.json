@@ -42,5 +42,20 @@
   "forgot_password_new_password_label": "Neues Passwort",
   "forgot_password_reset_button": "Passwort zurücksetzen",
   "auth_generic_error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
-  "auth_reset_success": "Passwort zurückgesetzt. Sie können sich jetzt anmelden."
+  "auth_reset_success": "Passwort zurückgesetzt. Sie können sich jetzt anmelden.",
+  "tab_start_label": "Start",
+  "tab_start_title": "Start",
+  "tab_start_placeholder": "Ihre tägliche Übersicht erscheint hier.",
+  "tab_muster_label": "Muster",
+  "tab_muster_title": "Muster",
+  "tab_muster_placeholder": "Ihre Symptom-Muster erscheinen hier.",
+  "tab_syna_label": "SYNA",
+  "tab_syna_title": "SYNA",
+  "tab_syna_placeholder": "Ihr täglicher Check-in erscheint hier.",
+  "tab_bericht_label": "Bericht",
+  "tab_bericht_title": "Bericht",
+  "tab_bericht_placeholder": "Ihr Arzt-Bericht erscheint hier.",
+  "tab_ich_label": "Ich",
+  "tab_ich_title": "Ich",
+  "tab_ich_placeholder": "Ihr Profil und Ihre Einstellungen erscheinen hier."
 }

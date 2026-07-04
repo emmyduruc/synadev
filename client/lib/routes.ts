@@ -3,5 +3,12 @@ export const ROUTES = {
   register: '/register',
   login: '/login',
   forgotPassword: '/forgot-password',
-  home: '/home',
+  home: '/(tabs)',
+  tabs: {
+    start: '/(tabs)',
+    muster: '/(tabs)/muster',
+    syna: '/(tabs)/syna',
+    bericht: '/(tabs)/bericht',
+    ich: '/(tabs)/ich',
+  },
 } as const;

@@ -21,7 +21,7 @@ export const RootLayoutNav = () => {
         <Stack.Screen name="register" />
         <Stack.Screen name="login" />
         <Stack.Screen name="forgot-password" />
-        <Stack.Screen name="home" />
+        <Stack.Screen name="(tabs)" />
       </Stack>
       <Toaster
         position="top-center"
