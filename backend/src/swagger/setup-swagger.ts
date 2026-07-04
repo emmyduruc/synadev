@@ -39,6 +39,7 @@ export const setupSwagger = (app: INestApplication): void => {
     .addTag(SWAGGER_TAGS.health, 'Service health and readiness checks')
     .addTag(SWAGGER_TAGS.users, 'User registration and profile management')
     .addTag(SWAGGER_TAGS.uploads, 'Image and file upload endpoints')
+    .addTag(SWAGGER_TAGS.emails, 'Transactional email delivery via Resend')
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {

@@ -1,10 +1,22 @@
 {
   "files": [],
   "references": [
-    { "path": "./client" },
-    { "path": "./backend" },
-    { "path": "./packages/shared-types" },
-    { "path": "./packages/shared-utils" },
-    { "path": "./packages/design-tokens" }
-  ]
+    {
+      "path": "./client"
+    },
+    {
+      "path": "./backend"
+    },
+    {
+      "path": "./packages/shared-types"
+    },
+    {
+      "path": "./packages/shared-utils"
+    },
+    {
+      "path": "./packages/design-tokens"
+    }
+  ],
+  "compilerOptions": {},
+  "extends": "expo/tsconfig.base"
 }

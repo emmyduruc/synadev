@@ -4,12 +4,13 @@ import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { EmailModule } from './email/email.module';
 import { HealthController } from './health/health.controller';
 import { UploadsModule } from './uploads/uploads.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [UsersModule, UploadsModule],
+  imports: [UsersModule, UploadsModule, EmailModule],
   controllers: [AppController, HealthController],
   providers: [
     AppService,

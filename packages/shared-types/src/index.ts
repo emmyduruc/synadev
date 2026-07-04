@@ -23,6 +23,22 @@ export {
 export type { UploadImageResponse, AllowedImageMimeType } from './schemas/upload.schema';
 
 export {
+  EmailAttachmentSchema,
+  SendEmailSchema,
+  SendEmailResponseSchema,
+  MAX_EMAIL_RECIPIENTS,
+  MAX_EMAIL_ATTACHMENTS,
+  MAX_ATTACHMENT_BYTES,
+  MAX_TOTAL_ATTACHMENT_BYTES,
+} from './schemas/email.schema';
+
+export type {
+  EmailAttachment,
+  SendEmail,
+  SendEmailResponse,
+} from './schemas/email.schema';
+
+export {
   forgotPasswordEmailSchema,
   forgotPasswordFormSchema,
   forgotPasswordResetSchema,

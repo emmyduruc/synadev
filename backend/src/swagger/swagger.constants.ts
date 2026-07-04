@@ -3,6 +3,7 @@ export const SWAGGER_TAGS = {
   health: 'Health',
   users: 'Users',
   uploads: 'Uploads',
+  emails: 'Emails',
 } as const;
 
 export const SWAGGER_PATHS = {
@@ -13,7 +14,7 @@ export const SWAGGER_PATHS = {
 export const SWAGGER_API = {
   title: 'SYNA API',
   description:
-    'SYNA Health Platform API — wearable data, health metrics, user management, and file uploads. ' +
+    'SYNA Health Platform API — wearable data, health metrics, user management, file uploads, and email delivery. ' +
     'All request/response schemas are auto-generated from Zod DTOs and stay in sync with controllers.',
   version: '1.0.0',
   contactName: 'SYNA Engineering',
