@@ -57,6 +57,34 @@ export const TextInput = ({
     onBlur?.(event);
   };
 
+  const resolveBorderColorClass = (): string => {
+    if (hasError) {
+      return borderColorClasses.error;
+    }
+
+    if (isFocused) {
+      return borderColorClasses.primary;
+    }
+
+    return borderColorClasses['foreground-muted'];
+  };
+
+  let footer: ReactNode = null;
+
+  if (hasError) {
+    footer = (
+      <Text size="xs" color="error" className="mt-1.5">
+        {errorMessage}
+      </Text>
+    );
+  } else if (helperText) {
+    footer = (
+      <Text size="xs" color="foreground-muted" className="mt-1.5">
+        {helperText}
+      </Text>
+    );
+  }
+
   return (
     <Box className={cn('w-full', containerClassName)}>
       {label ? (
@@ -72,11 +100,7 @@ export const TextInput = ({
           'w-full border bg-white',
           radiusClasses.lg,
           inputSizeClasses[size],
-          hasError
-            ? borderColorClasses.error
-            : isFocused
-              ? borderColorClasses.primary
-              : borderColorClasses['foreground-muted'],
+          resolveBorderColorClass(),
           disabled && 'opacity-50',
         )}>
         {leftIcon ? <Box paddingX="sm">{leftIcon}</Box> : null}
@@ -100,15 +124,7 @@ export const TextInput = ({
         {rightIcon ? <Box paddingX="sm">{rightIcon}</Box> : null}
       </Box>
 
-      {hasError ? (
-        <Text size="xs" color="error" className="mt-1.5">
-          {errorMessage}
-        </Text>
-      ) : helperText ? (
-        <Text size="xs" color="foreground-muted" className="mt-1.5">
-          {helperText}
-        </Text>
-      ) : null}
+      {footer}
     </Box>
   );
 };

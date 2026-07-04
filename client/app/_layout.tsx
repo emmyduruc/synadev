@@ -11,14 +11,10 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { RootLayoutNav } from '@/components/layout/RootLayoutNav';
 import { SplashScreen as BrandSplash } from '@/components/screens/SplashScreen';
+import { getClerkPublishableKey } from '@/lib/clerk/env';
 import '@/lib/i18n';
 
 const SPLASH_DURATION_MS = 1500;
-const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
-
-if (!publishableKey) {
-  throw new Error('Add your Clerk Publishable Key to the .env file');
-}
 
 export {
   ErrorBoundary,
@@ -31,6 +27,7 @@ export const unstable_settings = {
 void SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
+  const publishableKey = getClerkPublishableKey();
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });

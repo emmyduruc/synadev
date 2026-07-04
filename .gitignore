@@ -1,3 +1,8 @@
+# Accidental Expo prebuild at repo root — use client/ios instead
+/ios
+/android
+/app.json
+
 node_modules
 dist
 .turbo

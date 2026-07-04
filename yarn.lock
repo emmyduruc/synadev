@@ -14835,11 +14835,8 @@ __metadata:
   resolution: "syna@workspace:."
   dependencies:
     eslint: "npm:^9.39.4"
-    expo: "npm:~57.0.1"
     husky: "npm:^9.1.7"
     lint-staged: "npm:^15.5.2"
-    react: "npm:19.2.3"
-    react-native: "npm:0.86.0"
     turbo: "npm:^2.5.4"
     typescript: "npm:^5.8.3"
   languageName: unknown

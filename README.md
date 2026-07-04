@@ -31,6 +31,10 @@ yarn dev
 # Or run individually
 yarn workspace @syna/backend dev
 yarn workspace @syna/client dev
+
+# iOS (always from the client workspace — not repo root)
+yarn workspace @syna/client ios
+# or: cd client && npx expo run:ios
 ```
 
 ## Type sync (Zod)

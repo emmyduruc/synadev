@@ -16,7 +16,10 @@
     "lint:fix": "turbo lint -- --fix",
     "typecheck": "turbo typecheck",
     "clean": "turbo clean",
-    "prepare": "husky"
+    "prepare": "husky",
+    "ios": "yarn workspace @syna/client ios",
+    "android": "yarn workspace @syna/client android",
+    "start:client": "yarn workspace @syna/client start"
   },
   "devDependencies": {
     "eslint": "^9.39.4",
@@ -29,10 +32,5 @@
     "node": ">=20.19.0",
     "yarn": ">=4.0.0",
     "npm": "please-use-yarn"
-  },
-  "dependencies": {
-    "expo": "~57.0.1",
-    "react": "19.2.3",
-    "react-native": "0.86.0"
   }
 }

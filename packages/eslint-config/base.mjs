@@ -12,6 +12,7 @@ const sharedRules = {
   'object-shorthand': 'error',
   eqeqeq: ['error', 'always'],
   curly: ['error', 'all'],
+  'no-nested-ternary': 'error',
   'func-style': ['error', 'expression', { allowArrowFunctions: true }],
   camelcase: [
     'error',

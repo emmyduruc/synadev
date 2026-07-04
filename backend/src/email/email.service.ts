@@ -21,6 +21,45 @@ type ResendAttachment = {
   contentType?: string;
 };
 
+const toRecipientList = (value: string | string[]): string[] =>
+  Array.isArray(value) ? value : [value];
+
+const toOptionalRecipientList = (
+  value: string | string[] | undefined,
+): string[] | undefined => {
+  if (!value) {
+    return undefined;
+  }
+
+  return toRecipientList(value);
+};
+
+const buildEmailPayload = (
+  input: SendEmail,
+  baseOptions: {
+    from: string;
+    to: string[];
+    subject: string;
+    cc?: string[];
+    bcc?: string[];
+    replyTo?: string[];
+    attachments?: ResendAttachment[];
+  },
+): CreateEmailOptions => {
+  if (input.html) {
+    return {
+      ...baseOptions,
+      html: input.html,
+      ...(input.text ? { text: input.text } : {}),
+    };
+  }
+
+  return {
+    ...baseOptions,
+    text: input.text as string,
+  };
+};
+
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
@@ -53,12 +92,8 @@ export class EmailService {
       env.RESEND_FROM_NAME,
     );
 
-    const to = Array.isArray(input.to) ? input.to : [input.to];
-    const replyTo = input.replyTo
-      ? Array.isArray(input.replyTo)
-        ? input.replyTo
-        : [input.replyTo]
-      : undefined;
+    const to = toRecipientList(input.to);
+    const replyTo = toOptionalRecipientList(input.replyTo);
 
     const attachments = input.attachments?.map(
       (attachment): ResendAttachment => ({
@@ -78,16 +113,7 @@ export class EmailService {
       attachments,
     };
 
-    const payload: CreateEmailOptions = input.html
-      ? {
-          ...baseOptions,
-          html: input.html,
-          ...(input.text ? { text: input.text } : {}),
-        }
-      : {
-          ...baseOptions,
-          text: input.text as string,
-        };
+    const payload = buildEmailPayload(input, baseOptions);
 
     const { data, error } = await client.emails.send(payload);
 
