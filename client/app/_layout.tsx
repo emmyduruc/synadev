@@ -2,7 +2,6 @@ import '../global.css';
 
 import { ClerkProvider } from '@clerk/expo';
 import { tokenCache } from '@clerk/expo/token-cache';
-import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
@@ -12,6 +11,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootLayoutNav } from '@/components/layout/RootLayoutNav';
 import { SplashScreen as BrandSplash } from '@/components/screens/SplashScreen';
 import { getClerkPublishableKey } from '@/lib/clerk/env';
+import { useAppFonts } from '@/lib/fonts/useAppFonts';
 import '@/lib/i18n';
 
 const SPLASH_DURATION_MS = 1500;
@@ -28,9 +28,7 @@ void SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
   const publishableKey = getClerkPublishableKey();
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const [loaded, error] = useAppFonts();
   const [isSplashVisible, setIsSplashVisible] = useState(true);
 
   useEffect(() => {

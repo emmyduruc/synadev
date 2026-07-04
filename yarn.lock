@@ -1382,6 +1382,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@expo-google-fonts/montserrat@npm:^0.4.2":
+  version: 0.4.2
+  resolution: "@expo-google-fonts/montserrat@npm:0.4.2"
+  checksum: 10c0/6b040a64adef7aa1595d013865c7efa7d9a8c6e20ebeeba338f5024492772b5ea7c1476a9a7911bda55a9c55c7a38112607c6a2b74e5079088fb6ac6baf083f9
+  languageName: node
+  linkType: hard
+
 "@expo/cli@npm:^57.0.3":
   version: 57.0.3
   resolution: "@expo/cli@npm:57.0.3"
@@ -4701,6 +4708,7 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.26.0"
     "@clerk/expo": "npm:^3.6.5"
+    "@expo-google-fonts/montserrat": "npm:^0.4.2"
     "@hookform/resolvers": "npm:^5.4.0"
     "@react-native/metro-config": "npm:^0.86.0"
     "@syna/design-tokens": "workspace:*"

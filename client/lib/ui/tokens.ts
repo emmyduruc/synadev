@@ -16,6 +16,15 @@ import type {
   TextAlign,
 } from './types';
 
+import { FONT_FAMILY } from '@/lib/fonts/constants';
+
+export const fontFamilyByWeight: Record<FontWeight, string> = {
+  normal: FONT_FAMILY.regular,
+  medium: FONT_FAMILY.medium,
+  semibold: FONT_FAMILY.semibold,
+  bold: FONT_FAMILY.bold,
+};
+
 export const spacingClasses: Record<Spacing, string> = {
   none: '',
   xs: 'p-1',
@@ -93,10 +102,10 @@ export const fontSizePx: Record<FontSize, number> = {
 };
 
 export const fontWeightClasses: Record<FontWeight, string> = {
-  normal: 'font-normal',
-  medium: 'font-medium',
-  semibold: 'font-semibold',
-  bold: 'font-bold',
+  normal: 'font-sans',
+  medium: 'font-sans-medium',
+  semibold: 'font-sans-semibold',
+  bold: 'font-sans-bold',
 };
 
 export const textAlignClasses: Record<TextAlign, string> = {

@@ -4,6 +4,7 @@ import { Text as RNText, type TextProps as RNTextProps } from 'react-native';
 import {
   cn,
   colorClasses,
+  fontFamilyByWeight,
   fontSizeClasses,
   fontWeightClasses,
   marginClasses,
@@ -63,7 +64,11 @@ export const Text = ({
         rounded && radiusClasses[rounded],
         className,
       )}
-      style={[scaledFontSize ? { fontSize: scaledFontSize } : undefined, style]}
+      style={[
+        scaledFontSize ? { fontSize: scaledFontSize } : undefined,
+        { fontFamily: fontFamilyByWeight[weight] },
+        style,
+      ]}
       {...props}>
       {children}
     </RNText>

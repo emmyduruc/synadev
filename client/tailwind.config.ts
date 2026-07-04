@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss';
 
+import { FONT_FAMILY } from './lib/fonts/constants';
 import { colors } from './utils/colors';
 
 /**
@@ -57,6 +58,12 @@ const config = {
   theme: {
     extend: {
       colors,
+      fontFamily: {
+        sans: [FONT_FAMILY.regular],
+        'sans-medium': [FONT_FAMILY.medium],
+        'sans-semibold': [FONT_FAMILY.semibold],
+        'sans-bold': [FONT_FAMILY.bold],
+      },
       fontSize,
       spacing,
       borderRadius: {

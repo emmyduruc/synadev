@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@clerk/expo": "^3.6.5",
+    "@expo-google-fonts/montserrat": "^0.4.2",
     "@hookform/resolvers": "^5.4.0",
     "@react-native/metro-config": "^0.86.0",
     "@syna/design-tokens": "workspace:*",

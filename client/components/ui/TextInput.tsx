@@ -7,6 +7,7 @@ import {
 
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
+import { FONT_FAMILY } from '@/lib/fonts/constants';
 import {
   borderColorClasses,
   cn,
@@ -107,13 +108,14 @@ export const TextInput = ({
 
         <RNTextInput
           className={cn(
-            'flex-1 text-foreground',
+            'flex-1 font-sans text-foreground',
             inputPaddingClasses[size],
             leftIcon ? 'pl-0' : undefined,
             rightIcon ? 'pr-0' : undefined,
             inputClassName,
             className,
           )}
+          style={{ fontFamily: FONT_FAMILY.regular }}
           editable={!disabled}
           placeholderTextColor={semanticColors.placeholder}
           onFocus={handleFocus}

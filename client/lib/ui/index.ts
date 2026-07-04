@@ -17,6 +17,7 @@ export {
   flexDirectionClasses,
   fontSizeClasses,
   fontSizePx,
+  fontFamilyByWeight,
   fontWeightClasses,
   inputPaddingClasses,
   inputSizeClasses,
