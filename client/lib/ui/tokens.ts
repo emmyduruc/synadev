@@ -189,10 +189,10 @@ export const flexClasses: Record<FlexValue, string> = {
 };
 
 export const buttonVariantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-secondary-500 active:bg-secondary-600',
+  primary: 'bg-primary-500 active:bg-primary-600',
   secondary: 'bg-secondary-600 active:bg-secondary-700',
-  outline: 'border border-neutral-300 bg-transparent active:bg-neutral-100',
-  ghost: 'bg-transparent active:bg-neutral-100',
+  outline: 'border border-primary-300 bg-white/70 active:bg-white',
+  ghost: 'bg-transparent active:bg-white/50',
   danger: 'bg-error-500 active:bg-error-700',
 };
 
@@ -205,8 +205,8 @@ export const buttonTextClasses: Record<ButtonVariant, string> = {
 };
 
 export const buttonSizeClasses: Record<ButtonSize, string> = {
-  sm: 'h-9 px-3',
-  md: 'h-11 px-4',
+  sm: 'h-9 px-4',
+  md: 'h-12 px-5',
   lg: 'h-14 px-6',
 };
 

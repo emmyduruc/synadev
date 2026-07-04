@@ -14,7 +14,7 @@ const IndexScreen = () => {
     return <Redirect href={ROUTES.home} />;
   }
 
-  return <Redirect href={ROUTES.register} />;
+  return <Redirect href={ROUTES.welcome} />;
 };
 
 export default IndexScreen;

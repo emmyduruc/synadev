@@ -1,9 +1,11 @@
 import { SocialProviderIcon } from '@/components/auth/SocialProviderIcon';
 import { Box, Button } from '@/components/ui';
 import { useSocialAuth } from '@/hooks/useSocialAuth';
+import { useTranslate } from '@/hooks/useTranslate';
 import { AUTH_PROVIDER } from '@/lib/auth/constants';
 
 export const SocialAuthButtons = () => {
+  const { t } = useTranslate();
   const { handleAppleAuth, handleGoogleAuth, isSocialLoading } = useSocialAuth();
 
   return (
@@ -11,19 +13,21 @@ export const SocialAuthButtons = () => {
       <Button
         variant="outline"
         fullWidth
+        size="lg"
         disabled={isSocialLoading}
         leftIcon={<SocialProviderIcon provider={AUTH_PROVIDER.google} />}
         onPress={handleGoogleAuth}>
-        Continue with Google
+        {t('auth_continue_with_google')}
       </Button>
 
       <Button
         variant="outline"
         fullWidth
+        size="lg"
         disabled={isSocialLoading}
         leftIcon={<SocialProviderIcon provider={AUTH_PROVIDER.apple} />}
         onPress={handleAppleAuth}>
-        Continue with Apple
+        {t('auth_continue_with_apple')}
       </Button>
     </Box>
   );

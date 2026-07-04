@@ -5,17 +5,23 @@ import { SlideInUp, SlideOutUp } from 'react-native-reanimated';
 import { Toaster } from '@/lib/sonner';
 import { COLOR_SCHEME } from '@/lib/ui';
 
+const stackScreenOptions = {
+  headerShown: false,
+  contentStyle: { backgroundColor: 'transparent' },
+} as const;
+
 export const RootLayoutNav = () => {
   const colorScheme = useColorScheme();
 
   return (
     <ThemeProvider value={colorScheme === COLOR_SCHEME.dark ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="register" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ headerShown: false }} />
-        <Stack.Screen name="forgot-password" options={{ headerShown: false }} />
-        <Stack.Screen name="home" options={{ headerShown: false }} />
+      <Stack screenOptions={stackScreenOptions}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="welcome" />
+        <Stack.Screen name="register" />
+        <Stack.Screen name="login" />
+        <Stack.Screen name="forgot-password" />
+        <Stack.Screen name="home" />
       </Stack>
       <Toaster
         position="top-center"

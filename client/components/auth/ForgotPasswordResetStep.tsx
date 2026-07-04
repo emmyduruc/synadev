@@ -5,13 +5,14 @@ import { useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
 
 import { Button, FormField } from '@/components/ui';
-import { AUTH_COPY } from '@/lib/auth/constants';
+import { useTranslate } from '@/hooks/useTranslate';
 import { runAuthAction } from '@/lib/auth/runAuthAction';
 import { ROUTES } from '@/lib/routes';
 import { toast } from '@/lib/sonner';
 
 export const ForgotPasswordResetStep = () => {
   const router = useRouter();
+  const { t } = useTranslate();
   const { signIn } = useSignIn();
   const { control, handleSubmit, formState } = useForm<ForgotPasswordResetValues>({
     resolver: zodResolver(forgotPasswordResetSchema),
@@ -32,7 +33,7 @@ export const ForgotPasswordResetStep = () => {
         throw passwordResult.error;
       }
 
-      toast.success(AUTH_COPY.resetSuccess);
+      toast.success(t('auth_reset_success'));
       await signIn.reset();
       router.replace(ROUTES.login);
     });
@@ -40,10 +41,15 @@ export const ForgotPasswordResetStep = () => {
 
   return (
     <>
-      <FormField control={control} name="code" label="Code" />
-      <FormField control={control} name="password" label="New password" secureTextEntry />
-      <Button fullWidth loading={formState.isSubmitting} onPress={onResetPassword}>
-        Reset password
+      <FormField control={control} name="code" label={t('forgot_password_code_label')} />
+      <FormField
+        control={control}
+        name="password"
+        label={t('forgot_password_new_password_label')}
+        secureTextEntry
+      />
+      <Button fullWidth size="lg" loading={formState.isSubmitting} onPress={onResetPassword}>
+        {t('forgot_password_reset_button')}
       </Button>
     </>
   );

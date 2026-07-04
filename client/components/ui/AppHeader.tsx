@@ -19,7 +19,7 @@ export const AppHeader = ({
   title,
   showBack = true,
   right,
-  fallbackHref = ROUTES.register,
+  fallbackHref = ROUTES.welcome,
 }: AppHeaderProps) => {
   const router = useRouter();
 

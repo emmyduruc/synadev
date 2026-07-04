@@ -5,12 +5,13 @@ import { useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
 
 import { Button, FormField, Text } from '@/components/ui';
-import { AUTH_COPY } from '@/lib/auth/constants';
+import { useTranslate } from '@/hooks/useTranslate';
 import { runAuthAction } from '@/lib/auth/runAuthAction';
 import { ROUTES } from '@/lib/routes';
 
 export const RegisterVerificationStep = () => {
   const router = useRouter();
+  const { t } = useTranslate();
   const { signUp } = useSignUp();
   const { control, handleSubmit, formState } = useForm<RegisterVerificationValues>({
     resolver: zodResolver(registerVerificationSchema),
@@ -35,11 +36,11 @@ export const RegisterVerificationStep = () => {
   return (
     <>
       <Text size="sm" color="foreground-muted" align="center">
-        {AUTH_COPY.registrationVerifyPrompt}
+        {t('register_verification_prompt')}
       </Text>
-      <FormField control={control} name="code" label="Verification code" />
-      <Button fullWidth loading={formState.isSubmitting} onPress={onVerify}>
-        Verify email
+      <FormField control={control} name="code" label={t('register_verification_code_label')} />
+      <Button fullWidth size="lg" loading={formState.isSubmitting} onPress={onVerify}>
+        {t('register_verify_button')}
       </Button>
     </>
   );

@@ -4,7 +4,7 @@ import { forgotPasswordEmailSchema, type ForgotPasswordEmailValues } from '@syna
 import { useForm } from 'react-hook-form';
 
 import { Button, FormField } from '@/components/ui';
-import { AUTH_COPY } from '@/lib/auth/constants';
+import { useTranslate } from '@/hooks/useTranslate';
 import { runAuthAction } from '@/lib/auth/runAuthAction';
 import { toast } from '@/lib/sonner';
 
@@ -13,6 +13,7 @@ export type ForgotPasswordEmailStepProps = {
 };
 
 export const ForgotPasswordEmailStep = ({ onCodeSent }: ForgotPasswordEmailStepProps) => {
+  const { t } = useTranslate();
   const { signIn } = useSignIn();
   const { control, handleSubmit, formState } = useForm<ForgotPasswordEmailValues>({
     resolver: zodResolver(forgotPasswordEmailSchema),
@@ -34,7 +35,7 @@ export const ForgotPasswordEmailStep = ({ onCodeSent }: ForgotPasswordEmailStepP
       }
 
       onCodeSent();
-      toast(AUTH_COPY.resetVerifyPrompt);
+      toast(t('forgot_password_verify_prompt'));
     });
   });
 
@@ -43,12 +44,12 @@ export const ForgotPasswordEmailStep = ({ onCodeSent }: ForgotPasswordEmailStepP
       <FormField
         control={control}
         name="email"
-        label="Email"
+        label={t('forgot_password_email_label')}
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      <Button fullWidth loading={formState.isSubmitting} onPress={onSendCode}>
-        Send reset code
+      <Button fullWidth size="lg" loading={formState.isSubmitting} onPress={onSendCode}>
+        {t('forgot_password_send_code_button')}
       </Button>
     </>
   );

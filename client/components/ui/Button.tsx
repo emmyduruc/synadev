@@ -48,7 +48,7 @@ export const Button = ({
       disabled={isDisabled}
       className={cn(
         'flex-row items-center justify-center',
-        radiusClasses.lg,
+        radiusClasses.full,
         buttonVariantClasses[variant],
         buttonSizeClasses[size],
         fullWidth && 'w-full',

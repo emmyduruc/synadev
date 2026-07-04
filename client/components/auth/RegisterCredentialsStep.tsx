@@ -5,9 +5,10 @@ import { useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
 
 import { AuthDivider } from '@/components/auth/AuthDivider';
+import { AuthPrivacyNote } from '@/components/auth/AuthPrivacyNote';
 import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
 import { Button, FormField } from '@/components/ui';
-import { AUTH_COPY } from '@/lib/auth/constants';
+import { useTranslate } from '@/hooks/useTranslate';
 import { runAuthAction } from '@/lib/auth/runAuthAction';
 import { ROUTES } from '@/lib/routes';
 import { toast } from '@/lib/sonner';
@@ -20,6 +21,7 @@ export const RegisterCredentialsStep = ({
   onVerificationRequired,
 }: RegisterCredentialsStepProps) => {
   const router = useRouter();
+  const { t } = useTranslate();
   const { signUp } = useSignUp();
   const { control, handleSubmit, formState } = useForm<RegisterCredentialsValues>({
     resolver: zodResolver(registerCredentialsSchema),
@@ -42,7 +44,7 @@ export const RegisterCredentialsStep = ({
 
       await signUp.verifications.sendEmailCode();
       onVerificationRequired();
-      toast(AUTH_COPY.registrationVerifyPrompt);
+      toast(t('register_verification_prompt'));
     });
   });
 
@@ -51,14 +53,20 @@ export const RegisterCredentialsStep = ({
       <FormField
         control={control}
         name="email"
-        label="Email"
+        label={t('register_email_label')}
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      <FormField control={control} name="password" label="Password" secureTextEntry />
-      <Button fullWidth loading={formState.isSubmitting} onPress={onRegister}>
-        Register
+      <FormField
+        control={control}
+        name="password"
+        label={t('register_password_label')}
+        secureTextEntry
+      />
+      <Button fullWidth size="lg" loading={formState.isSubmitting} onPress={onRegister}>
+        {t('register_submit_button')}
       </Button>
+      <AuthPrivacyNote />
       <AuthDivider />
       <SocialAuthButtons />
     </>

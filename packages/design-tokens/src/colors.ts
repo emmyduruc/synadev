@@ -1,70 +1,125 @@
 /**
  * SYNA design tokens — single source of truth for colors.
  * Imported by tailwind.config.ts in the client app.
+ *
+ * Base + brand values follow the SYNA Mobile-First design sheet.
+ * Ovum palette tokens are category / wash colors for symptoms & UI accents.
  */
 export const colors = {
+  /** Dusty Rose Deep — CTA buttons, pattern accents */
   primary: {
-    50: '#f5f0f2',
-    100: '#e9e0e3',
-    200: '#d3c0c8',
-    300: '#b697a3',
-    400: '#96697a',
-    500: '#6d2e46',
-    600: '#60283e',
-    700: '#532335',
-    800: '#441d2b',
-    900: '#341622',
-    950: '#230f16',
+    50: '#FAF4F6',
+    100: '#F4E8ED',
+    200: '#E8CED8',
+    300: '#D4A8B8',
+    400: '#BC8298',
+    500: '#A55972',
+    600: '#8F4D64',
+    700: '#794054',
+    800: '#633445',
+    900: '#4D2836',
+    950: '#361B26',
   },
+  /** Soft chip / secondary surface */
   secondary: {
-    50: '#f3f5f4',
-    100: '#e7ebe9',
-    200: '#cfd7d2',
-    300: '#afbeb7',
-    400: '#8c9f96',
-    500: '#5e7b6e',
-    600: '#536c61',
-    700: '#475d54',
-    800: '#3a4c44',
-    900: '#2d3b35',
-    950: '#1e2723',
+    DEFAULT: '#F0EDF1',
+    50: '#F0EDF1',
+    100: '#E8E4EA',
+    200: '#D9D3DD',
+    300: '#C4BBCB',
+    400: '#A89DB2',
+    500: '#8C7E98',
+    600: '#756880',
+    700: '#5E5368',
+    800: '#473E50',
+    900: '#302938',
+    950: '#1E1A24',
+  },
+  /** Warm highlight */
+  accent: {
+    DEFAULT: '#E0B784',
+    light: '#F1D5B0',
+  },
+  /** Focus ring */
+  ring: {
+    DEFAULT: '#9F84AD',
+  },
+  destructive: {
+    DEFAULT: '#DC2828',
+    50: '#FEF2F2',
+    500: '#DC2828',
+    700: '#B91C1C',
   },
   neutral: {
-    50: '#fafafa',
-    100: '#f5f5f5',
-    200: '#e5e5e5',
-    300: '#d4d4d4',
-    400: '#a3a3a3',
+    50: '#FAFAFA',
+    100: '#F5F5F5',
+    200: '#E5E5E5',
+    300: '#D4D4D4',
+    400: '#A3A3A3',
     500: '#737373',
     600: '#525252',
     700: '#404040',
     800: '#262626',
     900: '#171717',
-    950: '#0a0a0a',
+    950: '#0A0A0A',
   },
   success: {
-    50: '#f0fdf4',
-    500: '#22c55e',
-    700: '#15803d',
+    50: '#F0FDF4',
+    500: '#22C55E',
+    700: '#15803D',
   },
   warning: {
-    50: '#fffbeb',
-    500: '#f59e0b',
-    700: '#b45309',
+    50: '#FFFBEB',
+    500: '#F59E0B',
+    700: '#B45309',
   },
   error: {
-    50: '#fef2f2',
-    500: '#ef4444',
-    700: '#b91c1c',
+    50: '#FEF2F2',
+    500: '#EF4444',
+    700: '#B91C1C',
+  },
+  card: {
+    DEFAULT: '#FFFFFF',
+  },
+  muted: {
+    DEFAULT: '#EFEDEA',
+    foreground: '#7E7E8A',
+  },
+  border: {
+    DEFAULT: '#EAE8E5',
+  },
+  input: {
+    DEFAULT: '#E6E3DF',
+  },
+  /** SYNA Ovum palette — category washes & auth gradients */
+  lavender: {
+    DEFAULT: '#D1C1E1',
+    light: '#EFEBF3',
+  },
+  'sage-mist': {
+    DEFAULT: '#D5E6E0',
+    light: '#EFF4F3',
+  },
+  'dusty-rose': {
+    DEFAULT: '#DAB3B3',
+    light: '#F4EBEB',
+  },
+  apricot: {
+    DEFAULT: '#F1D5B0',
+    light: '#F7F0E8',
+  },
+  slate: {
+    DEFAULT: '#4C4C56',
+    light: '#868691',
   },
   background: {
-    DEFAULT: '#ffffff',
-    dark: '#0a0a0a',
+    DEFAULT: '#F8F5F1',
+    dark: '#0A0A0A',
   },
   foreground: {
-    DEFAULT: '#171717',
-    muted: '#737373',
-    dark: '#fafafa',
+    DEFAULT: '#3B3B43',
+    muted: '#7E7E8A',
+    dark: '#FAFAFA',
   },
 } as const;
 

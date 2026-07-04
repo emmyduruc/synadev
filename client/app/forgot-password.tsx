@@ -1,32 +1,34 @@
 import { useState } from 'react';
 
+import { AuthGlassCard } from '@/components/auth/AuthGlassCard';
+import { AuthGradientLayout } from '@/components/auth/AuthGradientLayout';
+import { AuthHero } from '@/components/auth/AuthHero';
 import { ForgotPasswordEmailStep } from '@/components/auth/ForgotPasswordEmailStep';
 import { ForgotPasswordResetStep } from '@/components/auth/ForgotPasswordResetStep';
-import { AppHeader, Box, Text } from '@/components/ui';
-import { AUTH_COPY } from '@/lib/auth/constants';
+import { useTranslate } from '@/hooks/useTranslate';
 import { ROUTES } from '@/lib/routes';
 
 const ForgotPasswordScreen = () => {
+  const { t } = useTranslate();
   const [isCodeSent, setIsCodeSent] = useState(false);
 
   return (
-    <Box flex={1} background="background">
-      <AppHeader title="Forgot password" fallbackHref={ROUTES.login} />
-      <Box flex={1} justify="center" padding="lg" gap="md" className="mx-auto w-full max-w-md">
-        <Text size="3xl" weight="bold" align="center">
-          Reset password
-        </Text>
-        <Text size="sm" color="foreground-muted" align="center">
-          {isCodeSent ? AUTH_COPY.resetVerifyPrompt : AUTH_COPY.resetEmailPrompt}
-        </Text>
+    <AuthGradientLayout header={{ title: t('forgot_password_title'), fallbackHref: ROUTES.login }}>
+      <AuthHero
+        headline={t('forgot_password_headline')}
+        subtitle={
+          isCodeSent ? t('forgot_password_verify_prompt') : t('forgot_password_email_prompt')
+        }
+      />
 
+      <AuthGlassCard>
         {isCodeSent ? (
           <ForgotPasswordResetStep />
         ) : (
           <ForgotPasswordEmailStep onCodeSent={() => setIsCodeSent(true)} />
         )}
-      </Box>
-    </Box>
+      </AuthGlassCard>
+    </AuthGradientLayout>
   );
 };
 

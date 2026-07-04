@@ -11,4 +11,12 @@ if (fs.existsSync(rootEnvPath)) {
 }
 
 /** @type {import('expo/config').ExpoConfig} */
-module.exports = require('./app.json').expo;
+const appConfig = require('./app.json').expo;
+
+module.exports = {
+  ...appConfig,
+  extra: {
+    ...appConfig.extra,
+    clerkPublishableKey: process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  },
+};

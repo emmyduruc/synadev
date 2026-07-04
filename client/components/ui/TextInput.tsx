@@ -97,8 +97,8 @@ export const TextInput = ({
         direction="row"
         align="center"
         className={cn(
-          'w-full border bg-white',
-          radiusClasses.lg,
+          'w-full border bg-white/90',
+          radiusClasses.xl,
           inputSizeClasses[size],
           resolveBorderColorClass(),
           disabled && 'opacity-50',

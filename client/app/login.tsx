@@ -6,8 +6,12 @@ import { useForm } from 'react-hook-form';
 import { Pressable } from 'react-native';
 
 import { AuthDivider } from '@/components/auth/AuthDivider';
+import { AuthGlassCard } from '@/components/auth/AuthGlassCard';
+import { AuthGradientLayout } from '@/components/auth/AuthGradientLayout';
+import { AuthHero } from '@/components/auth/AuthHero';
+import { AuthPrivacyNote } from '@/components/auth/AuthPrivacyNote';
 import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
-import { AppHeader, Box, Button, FormField, Text } from '@/components/ui';
+import { Box, Button, FormField, Text } from '@/components/ui';
 import { useTranslate } from '@/hooks/useTranslate';
 import { runAuthAction } from '@/lib/auth/runAuthAction';
 import { ROUTES } from '@/lib/routes';
@@ -37,13 +41,10 @@ const LoginScreen = () => {
   });
 
   return (
-    <Box flex={1} background="background">
-      <AppHeader title={t('login_title')} />
-      <Box flex={1} justify="center" padding="lg" gap="md" className="mx-auto w-full max-w-md">
-        <Text size="3xl" weight="bold" align="center">
-          {t('login_welcome_back')}
-        </Text>
+    <AuthGradientLayout header={{ title: t('login_title'), fallbackHref: ROUTES.welcome }}>
+      <AuthHero headline={t('login_welcome_back')} subtitle={t('login_subtitle')} />
 
+      <AuthGlassCard>
         <FormField
           control={control}
           name="email"
@@ -64,7 +65,7 @@ const LoginScreen = () => {
           </Text>
           <Link href={ROUTES.forgotPassword} asChild>
             <Pressable className="mx-1">
-              <Text size="xs" weight="semibold" color="secondary" className="underline">
+              <Text size="xs" weight="semibold" color="primary" className="underline">
                 {t('login_forgot_link')}
               </Text>
             </Pressable>
@@ -74,26 +75,31 @@ const LoginScreen = () => {
           </Text>
         </Box>
 
-        <Button fullWidth loading={formState.isSubmitting} onPress={onLogin}>
+        <Button fullWidth size="lg" loading={formState.isSubmitting} onPress={onLogin}>
           {t('login_submit_button')}
         </Button>
+
+        <AuthPrivacyNote />
+      </AuthGlassCard>
+
+      <Box gap="md" className="mt-6">
         <AuthDivider />
         <SocialAuthButtons />
 
-        <Box direction="row" justify="center" align="center">
-          <Text size="xs" color="foreground-muted">
-            {t('login_new_to_syna')}
+        <Box direction="row" justify="center" align="center" className="mt-2">
+          <Text size="sm" color="foreground-muted">
+            {t('login_new_to_syna')}{' '}
           </Text>
           <Link href={ROUTES.register} asChild>
-            <Pressable className="ml-1">
-              <Text size="xs" weight="semibold" color="secondary" className="underline">
+            <Pressable>
+              <Text size="sm" weight="semibold" color="primary" className="underline">
                 {t('login_register_link')}
               </Text>
             </Pressable>
           </Link>
         </Box>
       </Box>
-    </Box>
+    </AuthGradientLayout>
   );
 };
 

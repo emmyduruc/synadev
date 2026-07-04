@@ -2,45 +2,44 @@ import { Link } from 'expo-router';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 
+import { AuthGlassCard } from '@/components/auth/AuthGlassCard';
+import { AuthGradientLayout } from '@/components/auth/AuthGradientLayout';
+import { AuthHero } from '@/components/auth/AuthHero';
 import { RegisterCredentialsStep } from '@/components/auth/RegisterCredentialsStep';
 import { RegisterVerificationStep } from '@/components/auth/RegisterVerificationStep';
-import { AppHeader, Box, Text } from '@/components/ui';
+import { Box, Text } from '@/components/ui';
+import { useTranslate } from '@/hooks/useTranslate';
 import { ROUTES } from '@/lib/routes';
 
 const RegisterScreen = () => {
+  const { t } = useTranslate();
   const [isVerifying, setIsVerifying] = useState(false);
 
   return (
-    <Box flex={1} background="background">
-      <AppHeader title="Create account" showBack={false} />
-      <Box flex={1} justify="center" padding="lg" gap="md" className="mx-auto w-full max-w-md">
-        <Text size="3xl" weight="bold" align="center">
-          Join SYNA
-        </Text>
-        <Text size="sm" color="foreground-muted" align="center">
-          Create your account to continue.
-        </Text>
+    <AuthGradientLayout header={{ title: t('register_title'), fallbackHref: ROUTES.welcome }}>
+      <AuthHero headline={t('register_headline')} subtitle={t('register_subtitle')} />
 
+      <AuthGlassCard>
         {isVerifying ? (
           <RegisterVerificationStep />
         ) : (
           <RegisterCredentialsStep onVerificationRequired={() => setIsVerifying(true)} />
         )}
+      </AuthGlassCard>
 
-        <Box direction="row" justify="center" align="center">
-          <Text size="xs" color="foreground-muted">
-            Already have an account?
-          </Text>
-          <Link href={ROUTES.login} asChild>
-            <Pressable className="ml-1">
-              <Text size="xs" weight="semibold" color="secondary" className="underline">
-                Login
-              </Text>
-            </Pressable>
-          </Link>
-        </Box>
+      <Box direction="row" justify="center" align="center" className="mt-6">
+        <Text size="sm" color="foreground-muted">
+          {t('register_has_account')}{' '}
+        </Text>
+        <Link href={ROUTES.login} asChild>
+          <Pressable>
+            <Text size="sm" weight="semibold" color="primary" className="underline">
+              {t('register_login_link')}
+            </Text>
+          </Pressable>
+        </Link>
       </Box>
-    </Box>
+    </AuthGradientLayout>
   );
 };
 
