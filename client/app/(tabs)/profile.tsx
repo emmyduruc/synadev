@@ -1,18 +1,21 @@
 import { useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
+import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
 import { ProfileMyProfileContent } from '@/components/profile/ProfileMyProfileContent';
 import { ProfileTabBar, type ProfileTabOption } from '@/components/profile/ProfileTabBar';
 import { ProfileTabPlaceholder } from '@/components/profile/ProfileTabPlaceholder';
 import { AppHeader, Box } from '@/components/ui';
+import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
 import { useTranslate } from '@/hooks/useTranslate';
 import { PROFILE_TAB, type ProfileTabId } from '@/lib/profile/constants';
 
 const ProfileTabScreen = () => {
   const { t } = useTranslate();
   const [activeTabId, setActiveTabId] = useState<ProfileTabId>(PROFILE_TAB.myProfile);
+  const { percent, isVisible, isLoading, dismiss } = useProfileCompletionBanner();
 
   const tabs: readonly ProfileTabOption[] = [
     { id: PROFILE_TAB.myProfile, label: t('profile_tab_my_profile') },
@@ -29,6 +32,7 @@ const ProfileTabScreen = () => {
       <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: 'transparent' }}>
         <Box flex={1}>
           <AppHeader title={t('profile_page_title')} showBack={false} />
+
           <Box paddingX="md" paddingY="sm">
             <ProfileTabBar
               tabs={tabs}
@@ -36,6 +40,7 @@ const ProfileTabScreen = () => {
               onTabChange={setActiveTabId}
             />
           </Box>
+
           <ScrollView
             contentContainerStyle={{ paddingBottom: 24 }}
             showsVerticalScrollIndicator={false}>
@@ -53,6 +58,17 @@ const ProfileTabScreen = () => {
               ) : null}
             </Box>
           </ScrollView>
+
+          {!isLoading && isVisible ? (
+            <Box style={styles.bannerOverlay} pointerEvents="box-none">
+              <ProfileCompletionBanner
+                percent={percent}
+                onDismiss={() => {
+                  void dismiss();
+                }}
+              />
+            </Box>
+          ) : null}
         </Box>
       </SafeAreaView>
     </SynaGradientBackground>
@@ -60,3 +76,14 @@ const ProfileTabScreen = () => {
 };
 
 export default ProfileTabScreen;
+
+const styles = StyleSheet.create({
+  bannerOverlay: {
+    position: 'absolute',
+    top: 8,
+    left: 16,
+    right: 16,
+    zIndex: 10,
+    elevation: 10,
+  },
+});

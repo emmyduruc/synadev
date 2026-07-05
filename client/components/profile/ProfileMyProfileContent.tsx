@@ -1,4 +1,3 @@
-import { ProfileCompletionCard } from '@/components/profile/ProfileCompletionCard';
 import { ProfileHealthSourcesCard } from '@/components/profile/ProfileHealthSourcesCard';
 import { ProfileMissingPatternsCard } from '@/components/profile/ProfileMissingPatternsCard';
 import { ProfilePersonalSectionCard } from '@/components/profile/ProfilePersonalSectionCard';
@@ -12,7 +11,6 @@ export const ProfileMyProfileContent = () => {
     errorMessage,
     isConnected,
     connectHealth,
-    modifyPermissions,
   } = useProfileHealthConnection();
 
   return (
@@ -24,9 +22,7 @@ export const ProfileMyProfileContent = () => {
         isConnecting={isConnecting}
         errorMessage={errorMessage}
         onConnect={connectHealth}
-        onModifyPermissions={modifyPermissions}
       />
-      <ProfileCompletionCard />
       <ProfilePersonalSectionCard />
     </Box>
   );

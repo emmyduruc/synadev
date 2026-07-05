@@ -1,9 +1,8 @@
 import { SymbolView } from 'expo-symbols';
-import { Platform } from 'react-native';
-
+import { ActivityIndicator, Platform, StyleSheet } from 'react-native';
 
 import { ProfilePlatformHealthIcon } from '@/components/profile/ProfilePlatformHealthIcon';
-import { Box, Button, Tag, Text } from '@/components/ui';
+import { Box, Button, Tag, Text, TouchableOpacity } from '@/components/ui';
 import { useTranslate } from '@/hooks/useTranslate';
 import { HEALTH_METRIC_LABEL_KEY, isHealthMetricKey } from '@/lib/health/metricCatalog';
 import { PLATFORM_OS, semanticColors } from '@/lib/ui';
@@ -31,13 +30,24 @@ const getPlatformHealthCopy = (
   };
 };
 
+const getPermissionsHintKey = (): string => {
+  if (Platform.OS === PLATFORM_OS.android) {
+    return 'profile_health_sources_hint_android';
+  }
+
+  if (Platform.OS === PLATFORM_OS.ios) {
+    return 'profile_health_sources_hint_ios';
+  }
+
+  return 'profile_health_sources_hint_unsupported';
+};
+
 export type ProfileHealthSourcesCardProps = {
   isConnected: boolean;
   connectedMetricKeys: readonly string[];
   isConnecting: boolean;
   errorMessage: string | null;
   onConnect: () => void;
-  onModifyPermissions: () => void;
 };
 
 export const ProfileHealthSourcesCard = ({
@@ -46,12 +56,13 @@ export const ProfileHealthSourcesCard = ({
   isConnecting,
   errorMessage,
   onConnect,
-  onModifyPermissions,
 }: ProfileHealthSourcesCardProps) => {
   const { t } = useTranslate();
   const platformCopy = getPlatformHealthCopy(t);
   const isSupportedPlatform =
     Platform.OS === PLATFORM_OS.ios || Platform.OS === PLATFORM_OS.android;
+
+  const permissionsHintKey = getPermissionsHintKey();
 
   return (
     <Box gap="md" className="rounded-2xl border border-white/60 bg-white/90 p-5">
@@ -66,6 +77,29 @@ export const ProfileHealthSourcesCard = ({
             {t('profile_health_sources_title')}
           </Text>
         </Box>
+
+        {isSupportedPlatform && isConnected ? (
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={t('profile_health_sync_button')}
+            disabled={isConnecting}
+            onPress={onConnect}
+            style={styles.syncButton}>
+            {isConnecting ? (
+              <ActivityIndicator color={semanticColors.splashBackground} size="small" />
+            ) : (
+              <SymbolView
+                name={{
+                  ios: 'arrow.triangle.2.circlepath',
+                  android: 'sync',
+                  web: 'sync',
+                }}
+                size={20}
+                tintColor={semanticColors.splashBackground}
+              />
+            )}
+          </TouchableOpacity>
+        ) : null}
       </Box>
 
       <Box
@@ -109,42 +143,25 @@ export const ProfileHealthSourcesCard = ({
         </Text>
       ) : null}
 
-      <Box gap="sm">
-        {isSupportedPlatform && !isConnected ? (
-          <Button
-            fullWidth
-            size="md"
-            loading={isConnecting}
-            onPress={onConnect}>
-            {t('profile_health_connect_button')}
-          </Button>
-        ) : null}
-
-        {isSupportedPlatform && isConnected ? (
-          <Button
-            fullWidth
-            size="md"
-            variant="outline"
-            onPress={onModifyPermissions}>
-            {t('profile_health_modify_permissions_button')}
-          </Button>
-        ) : null}
-
-        {isSupportedPlatform && isConnected ? (
-          <Button
-            fullWidth
-            size="md"
-            variant="ghost"
-            loading={isConnecting}
-            onPress={onConnect}>
-            {t('profile_health_sync_button')}
-          </Button>
-        ) : null}
-      </Box>
+      {isSupportedPlatform && !isConnected ? (
+        <Button fullWidth size="md" loading={isConnecting} onPress={onConnect}>
+          {t('profile_health_connect_button')}
+        </Button>
+      ) : null}
 
       <Text size="2xs" color="foreground-muted" className="leading-relaxed">
-        {t('profile_health_sources_hint')}
+        {t(permissionsHintKey)}
       </Text>
     </Box>
   );
 };
+
+const styles = StyleSheet.create({
+  syncButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
+});

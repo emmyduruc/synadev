@@ -95,3 +95,5 @@ export const COLOR_SCHEME = {
 
 export const isLightButtonVariant = (variant: ButtonVariant): boolean =>
   variant === BUTTON_VARIANT.outline || variant === BUTTON_VARIANT.ghost;
+
+export const TOUCHABLE_ACTIVE_OPACITY = 0.7;

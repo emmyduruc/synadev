@@ -37,5 +37,6 @@ export {
   VALIDATION_CHARS,
   isLightButtonVariant,
   semanticColors,
+  TOUCHABLE_ACTIVE_OPACITY,
 } from './semanticColors';
 export { useResponsiveFontSize, useResponsiveScale } from './useResponsiveScale';

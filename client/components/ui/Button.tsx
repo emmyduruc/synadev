@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
-import { ActivityIndicator, Pressable, type PressableProps } from 'react-native';
+import { ActivityIndicator, type TouchableOpacityProps } from 'react-native';
 
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
+import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import {
   buttonSizeClasses,
   buttonTextClasses,
@@ -15,7 +16,7 @@ import {
 } from '@/lib/ui';
 import type { ButtonSize, ButtonVariant } from '@/lib/ui';
 
-export type ButtonProps = Omit<PressableProps, 'children'> & {
+export type ButtonProps = Omit<TouchableOpacityProps, 'children'> & {
   children: ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
@@ -43,7 +44,7 @@ export const Button = ({
   const isDisabled = disabled || loading;
 
   return (
-    <Pressable
+    <TouchableOpacity
       accessibilityRole="button"
       disabled={isDisabled}
       className={cn(
@@ -79,6 +80,6 @@ export const Button = ({
           {rightIcon ? <Box className="ml-2">{rightIcon}</Box> : null}
         </>
       )}
-    </Pressable>
+    </TouchableOpacity>
   );
 };

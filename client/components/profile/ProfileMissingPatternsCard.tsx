@@ -38,6 +38,7 @@ export const ProfileMissingPatternsCard = () => {
             key={fieldId}
             label={t(missingFieldLabelKey[fieldId])}
             iconPosition={TAG_ICON_POSITION.left}
+            onPress={() => {}}
             icon={
               <SymbolView
                 name={{ ios: 'plus', android: 'add', web: 'add' }}

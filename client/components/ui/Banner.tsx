@@ -1,10 +1,10 @@
 import { SymbolView } from 'expo-symbols';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { Pressable } from 'react-native';
 
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
+import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import {
   bannerSizeClasses,
   bannerTextClasses,
@@ -17,7 +17,7 @@ import {
 import type { BannerSize, BannerVariant } from '@/lib/ui';
 
 export type BannerProps = {
-  title: string;
+  title?: string;
   description?: string;
   variant?: BannerVariant;
   size?: BannerSize;
@@ -25,6 +25,7 @@ export type BannerProps = {
   dismissable?: boolean;
   onDismiss?: () => void;
   className?: string;
+  children?: ReactNode;
 };
 
 const defaultIcons: Record<BannerVariant, ReactNode> = {
@@ -67,8 +68,10 @@ export const Banner = ({
   dismissable = true,
   onDismiss,
   className,
+  children,
 }: BannerProps) => {
   const [isVisible, setIsVisible] = useState(true);
+  const hasCustomContent = Boolean(children);
 
   if (!isVisible) {
     return null;
@@ -78,6 +81,27 @@ export const Banner = ({
     setIsVisible(false);
     onDismiss?.();
   };
+
+  if (hasCustomContent) {
+    return (
+      <Box className={cn('relative w-full', className)}>
+        {children}
+        {dismissable ? (
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Dismiss banner"
+            onPress={handleDismiss}
+            className="absolute right-3 top-3 z-10 p-1">
+            <SymbolView
+              name={{ ios: 'xmark', android: 'close', web: 'close' }}
+              size={14}
+              tintColor={semanticColors.iconDismiss}
+            />
+          </TouchableOpacity>
+        ) : null}
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -108,7 +132,7 @@ export const Banner = ({
       </Box>
 
       {dismissable ? (
-        <Pressable
+        <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel="Dismiss banner"
           onPress={handleDismiss}
@@ -118,7 +142,7 @@ export const Banner = ({
             size={14}
             tintColor={semanticColors.iconDismiss}
           />
-        </Pressable>
+        </TouchableOpacity>
       ) : null}
     </Box>
   );

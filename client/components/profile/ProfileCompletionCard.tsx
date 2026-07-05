@@ -1,9 +1,9 @@
 import { SymbolView } from 'expo-symbols';
-import { Pressable } from 'react-native';
 
 import { Box } from '@/components/ui/Box';
 import { CircularProgress } from '@/components/ui/CircularProgress';
 import { Text } from '@/components/ui/Text';
+import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import { useTranslate } from '@/hooks/useTranslate';
 import { PROFILE_COMPLETION_PERCENT } from '@/lib/profile/constants';
 import { semanticColors } from '@/lib/ui';
@@ -20,13 +20,13 @@ export const ProfileCompletionCard = ({
   const { t } = useTranslate();
 
   return (
-    <Pressable accessibilityRole="button" onPress={onPress}>
+    <TouchableOpacity accessibilityRole="button" onPress={onPress}>
       <Box
         direction="row"
         align="center"
         gap="md"
-        className="rounded-2xl border border-white/60 bg-white/90 p-5">
-        <CircularProgress percent={percent} />
+        className="rounded-2xl h-20 border border-white/60 bg-white/90 p-5">
+        <CircularProgress percent={percent} size={50} />
         <Box flex={1} gap="xs">
           <Text size="sm" weight="semibold" className="leading-snug">
             {t('profile_completion_title', { percent })}
@@ -43,6 +43,6 @@ export const ProfileCompletionCard = ({
           </Box>
         </Box>
       </Box>
-    </Pressable>
+    </TouchableOpacity>
   );
 };

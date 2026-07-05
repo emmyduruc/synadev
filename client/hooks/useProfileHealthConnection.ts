@@ -9,7 +9,6 @@ import {
   type HealthConnectionSummary,
 } from '@/lib/health/healthConnectionSummary';
 import { readHealthSnapshot } from '@/lib/health/healthData';
-import { openHealthSettings } from '@/lib/health/openHealthSettings';
 
 export const useProfileHealthConnection = () => {
   const [summary, setSummary] = useState<HealthConnectionSummary | null>(null);
@@ -25,7 +24,7 @@ export const useProfileHealthConnection = () => {
     void refreshSummary();
   }, [refreshSummary]);
 
-  const connectHealth = useCallback(async () => {
+  const syncHealthConnection = useCallback(async () => {
     setIsConnecting(true);
     setErrorMessage(null);
 
@@ -47,10 +46,6 @@ export const useProfileHealthConnection = () => {
     }
   }, []);
 
-  const modifyPermissions = useCallback(async () => {
-    await openHealthSettings();
-  }, []);
-
   const isConnected = isHealthConnected(summary);
 
   return {
@@ -58,8 +53,7 @@ export const useProfileHealthConnection = () => {
     isConnecting,
     errorMessage,
     isConnected,
-    connectHealth,
-    modifyPermissions,
+    connectHealth: syncHealthConnection,
     refreshSummary,
   };
 };

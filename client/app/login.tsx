@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginFormSchema, type LoginFormValues } from '@syna/shared-types';
 import { Link, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
-import { Pressable } from 'react-native';
 
 import { AuthDivider } from '@/components/auth/AuthDivider';
 import { AuthGlassCard } from '@/components/auth/AuthGlassCard';
@@ -11,7 +10,7 @@ import { AuthGradientLayout } from '@/components/auth/AuthGradientLayout';
 import { AuthHero } from '@/components/auth/AuthHero';
 import { AuthPrivacyNote } from '@/components/auth/AuthPrivacyNote';
 import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
-import { Box, Button, FormField, Text } from '@/components/ui';
+import { Box, Button, FormField, Text, TouchableOpacity } from '@/components/ui';
 import { useTranslate } from '@/hooks/useTranslate';
 import { runAuthAction } from '@/lib/auth/runAuthAction';
 import { ROUTES } from '@/lib/routes';
@@ -64,11 +63,11 @@ const LoginScreen = () => {
             {t('login_forgot_prefix')}
           </Text>
           <Link href={ROUTES.forgotPassword} asChild>
-            <Pressable className="mx-1">
+            <TouchableOpacity className="mx-1">
               <Text size="xs" weight="semibold" color="primary" className="underline">
                 {t('login_forgot_link')}
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </Link>
           <Text size="xs" color="foreground-muted">
             {t('login_forgot_suffix')}
@@ -91,11 +90,11 @@ const LoginScreen = () => {
             {t('login_new_to_syna')}{' '}
           </Text>
           <Link href={ROUTES.register} asChild>
-            <Pressable>
+            <TouchableOpacity>
               <Text size="sm" weight="semibold" color="primary" className="underline">
                 {t('login_register_link')}
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </Link>
         </Box>
       </Box>

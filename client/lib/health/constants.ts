@@ -15,6 +15,9 @@ export const HEALTH_PLATFORM = {
 
 export const HEALTH_SETTINGS_URL = {
   appleHealth: 'x-apple-health://',
+  appleHealthSources: 'x-apple-health://Sources/',
+  appleHealthSharing: 'x-apple-health://sharing',
+  androidPackageName: 'com.syna.app',
 } as const;
 
 export const HEALTH_SNAPSHOT_STORAGE_KEY = 'syna_health_snapshot_summary';

@@ -1,7 +1,8 @@
-import { Pressable, ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
+import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import type { ProfileTabId } from '@/lib/profile/constants';
 import { semanticColors } from '@/lib/ui';
 
@@ -24,7 +25,7 @@ export const ProfileTabBar = ({ tabs, activeTabId, onTabChange }: ProfileTabBarP
         const isActive = tab.id === activeTabId;
 
         return (
-          <Pressable
+          <TouchableOpacity
             key={tab.id}
             accessibilityRole="button"
             accessibilityState={{ selected: isActive }}
@@ -37,7 +38,7 @@ export const ProfileTabBar = ({ tabs, activeTabId, onTabChange }: ProfileTabBarP
               responsive={false}>
               {tab.label}
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         );
       })}
     </Box>

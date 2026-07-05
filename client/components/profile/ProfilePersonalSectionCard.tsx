@@ -1,8 +1,8 @@
 import { SymbolView } from 'expo-symbols';
-import { Pressable } from 'react-native';
 
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
+import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import { useTranslate } from '@/hooks/useTranslate';
 import { STATIC_PROFILE } from '@/lib/profile/constants';
 import { semanticColors } from '@/lib/ui';
@@ -29,7 +29,7 @@ export const ProfilePersonalSectionCard = ({ onEditPress }: ProfilePersonalSecti
           </Text>
         </Box>
 
-        <Pressable accessibilityRole="button" onPress={onEditPress}>
+        <TouchableOpacity accessibilityRole="button" onPress={onEditPress}>
           <Box direction="row" align="center" gap="xs">
             <SymbolView
               name={{ ios: 'pencil', android: 'edit', web: 'edit' }}
@@ -40,7 +40,7 @@ export const ProfilePersonalSectionCard = ({ onEditPress }: ProfilePersonalSecti
               {t('profile_personal_edit_button')}
             </Text>
           </Box>
-        </Pressable>
+        </TouchableOpacity>
       </Box>
 
       <Box gap="sm">

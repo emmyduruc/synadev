@@ -1,13 +1,12 @@
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { Pressable } from 'react-native';
 
 import { AuthGlassCard } from '@/components/auth/AuthGlassCard';
 import { AuthGradientLayout } from '@/components/auth/AuthGradientLayout';
 import { AuthHero } from '@/components/auth/AuthHero';
 import { RegisterCredentialsStep } from '@/components/auth/RegisterCredentialsStep';
 import { RegisterVerificationStep } from '@/components/auth/RegisterVerificationStep';
-import { Box, Text } from '@/components/ui';
+import { Box, Text, TouchableOpacity } from '@/components/ui';
 import { useTranslate } from '@/hooks/useTranslate';
 import { ROUTES } from '@/lib/routes';
 
@@ -32,11 +31,11 @@ const RegisterScreen = () => {
           {t('register_has_account')}{' '}
         </Text>
         <Link href={ROUTES.login} asChild>
-          <Pressable>
+          <TouchableOpacity>
             <Text size="sm" weight="semibold" color="primary" className="underline">
               {t('register_login_link')}
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </Link>
       </Box>
     </AuthGradientLayout>

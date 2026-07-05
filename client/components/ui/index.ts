@@ -18,6 +18,9 @@ export type { BannerProps } from './Banner';
 export { AppHeader } from './AppHeader';
 export type { AppHeaderProps } from './AppHeader';
 
+export { TouchableOpacity } from './TouchableOpacity';
+export type { TouchableOpacityProps } from './TouchableOpacity';
+
 export { Tag, TAG_ICON_POSITION } from './Tag';
 export type { TagIconPosition, TagProps } from './Tag';
 

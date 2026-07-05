@@ -1,8 +1,9 @@
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Text } from '@/components/ui/Text';
+import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import { useTranslate } from '@/hooks/useTranslate';
 import { TAB_BAR, TAB_ROUTE, type TabRouteName } from '@/lib/navigation/constants';
 import type { SynaTabBarProps } from '@/lib/navigation/types';
@@ -102,7 +103,7 @@ export const SynaTabBar = ({ state, navigation }: SynaTabBarProps) => {
 
         if (isCenter) {
           return (
-            <Pressable
+            <TouchableOpacity
               key={route.key}
               accessibilityRole="button"
               accessibilityState={{ selected: isFocused }}
@@ -119,12 +120,12 @@ export const SynaTabBar = ({ state, navigation }: SynaTabBarProps) => {
               <Text size="2xs" weight="semibold" style={{ color: labelColor }}>
                 {label}
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           );
         }
 
         return (
-          <Pressable
+          <TouchableOpacity
             key={route.key}
             accessibilityRole="button"
             accessibilityState={{ selected: isFocused }}
@@ -142,7 +143,7 @@ export const SynaTabBar = ({ state, navigation }: SynaTabBarProps) => {
             <Text size="2xs" weight="medium" style={{ color: labelColor }}>
               {label}
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         );
       })}
     </View>
