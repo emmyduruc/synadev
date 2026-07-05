@@ -57,5 +57,12 @@
   "tab_bericht_placeholder": "Your doctor report will live here.",
   "tab_ich_label": "Me",
   "tab_ich_title": "Me",
-  "tab_ich_placeholder": "Your profile and settings will live here."
+  "tab_ich_placeholder": "Your profile and settings will live here.",
+  "health_connect_title": "Connect your health data",
+  "health_connect_subtitle": "Allow SYNA to read recent wearable data from Apple Health or Health Connect. For now, we will show the raw JSON so we can inspect the device data structure.",
+  "health_connect_button": "Connect health data",
+  "health_connect_error_title": "Could not read health data",
+  "health_connect_raw_payload_title": "Raw health payload",
+  "health_connect_raw_payload_hint": "Prototype view: this is the exact payload returned by the native health APIs.",
+  "health_connect_rebuild_hint": "If the app closes immediately, rebuild the dev client from client/: npx expo run:ios"
 }

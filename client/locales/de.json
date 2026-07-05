@@ -57,5 +57,12 @@
   "tab_bericht_placeholder": "Ihr Arzt-Bericht erscheint hier.",
   "tab_ich_label": "Ich",
   "tab_ich_title": "Ich",
-  "tab_ich_placeholder": "Ihr Profil und Ihre Einstellungen erscheinen hier."
+  "tab_ich_placeholder": "Ihr Profil und Ihre Einstellungen erscheinen hier.",
+  "health_connect_title": "Gesundheitsdaten verbinden",
+  "health_connect_subtitle": "Erlauben Sie SYNA, aktuelle Wearable-Daten aus Apple Health oder Health Connect zu lesen. Vorerst zeigen wir die Rohdaten als JSON, damit wir die Datenstruktur prüfen können.",
+  "health_connect_button": "Gesundheitsdaten verbinden",
+  "health_connect_error_title": "Gesundheitsdaten konnten nicht gelesen werden",
+  "health_connect_raw_payload_title": "Rohdaten aus der Health-API",
+  "health_connect_raw_payload_hint": "Prototyp-Ansicht: Das ist die exakte Antwort der nativen Health-APIs.",
+  "health_connect_rebuild_hint": "Wenn die App sofort schließt, Dev Client neu bauen: npx expo run:ios im client-Ordner"
 }

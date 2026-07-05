@@ -28,7 +28,17 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store", "@clerk/expo",
+      "expo-secure-store",
+      "@clerk/expo",
+      [
+        "@kingstinct/react-native-healthkit",
+        {
+          "NSHealthShareUsageDescription": "SYNA reads your health data to show patterns from your own wearable history.",
+          "NSHealthUpdateUsageDescription": "SYNA does not write health data.",
+          "background": true
+        }
+      ],
+      "react-native-health-connect",
       [
         "expo-splash-screen",
         {

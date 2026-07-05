@@ -5,7 +5,9 @@
   "dependencies": {
     "@clerk/expo": "^3.6.5",
     "@expo-google-fonts/montserrat": "^0.4.2",
+    "@expo/config-plugins": "^57.0.2",
     "@hookform/resolvers": "^5.4.0",
+    "@kingstinct/react-native-healthkit": "^14.0.2",
     "@react-native/metro-config": "^0.86.0",
     "@syna/design-tokens": "workspace:*",
     "@syna/shared-types": "workspace:*",
@@ -34,6 +36,8 @@
     "react-i18next": "^17.0.8",
     "react-native": "0.86.0",
     "react-native-gesture-handler": "~2.32.0",
+    "react-native-health-connect": "^3.5.3",
+    "react-native-nitro-modules": "^0.36.1",
     "react-native-reanimated": "4.5.0",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "4.25.2",
