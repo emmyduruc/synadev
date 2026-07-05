@@ -30,20 +30,20 @@ const TabsLayout = () => {
         options={{ title: t('tab_start_label') }}
       />
       <Tabs.Screen
-        name={TAB_ROUTE.muster}
-        options={{ title: t('tab_muster_label') }}
+        name={TAB_ROUTE.patterns}
+        options={{ title: t('tab_patterns_label') }}
       />
       <Tabs.Screen
         name={TAB_ROUTE.syna}
         options={{ title: t('tab_syna_label') }}
       />
       <Tabs.Screen
-        name={TAB_ROUTE.bericht}
-        options={{ title: t('tab_bericht_label') }}
+        name={TAB_ROUTE.report}
+        options={{ title: t('tab_report_label') }}
       />
       <Tabs.Screen
-        name={TAB_ROUTE.ich}
-        options={{ title: t('tab_ich_label') }}
+        name={TAB_ROUTE.profile}
+        options={{ title: t('tab_profile_label') }}
       />
     </Tabs>
   );

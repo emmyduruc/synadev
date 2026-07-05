@@ -1,15 +1,15 @@
 import { TabScreenLayout } from '@/components/layout/TabScreenLayout';
 import { useTranslate } from '@/hooks/useTranslate';
 
-const MusterTabScreen = () => {
+const ReportTabScreen = () => {
   const { t } = useTranslate();
 
   return (
     <TabScreenLayout
-      title={t('tab_muster_title')}
-      body={t('tab_muster_placeholder')}
+      title={t('tab_report_title')}
+      body={t('tab_report_placeholder')}
     />
   );
 };
 
-export default MusterTabScreen;
+export default ReportTabScreen;

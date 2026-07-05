@@ -1,16 +1,16 @@
 export const TAB_ROUTE = {
   start: 'index',
-  muster: 'muster',
+  patterns: 'patterns',
   syna: 'syna',
-  bericht: 'bericht',
-  ich: 'ich',
+  report: 'report',
+  profile: 'profile',
 } as const;
 
 export type TabRouteName = (typeof TAB_ROUTE)[keyof typeof TAB_ROUTE];
 
 export const TAB_BAR = {
   centerRoute: TAB_ROUTE.syna,
-  badgeRoute: TAB_ROUTE.muster,
+  badgeRoute: TAB_ROUTE.patterns,
   centerButtonSize: 56,
   centerButtonLift: 18,
 } as const;

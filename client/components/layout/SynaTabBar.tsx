@@ -16,7 +16,7 @@ const TAB_ICON: Record<TabRouteName, TabIconName> = {
     android: 'home',
     web: 'home',
   },
-  [TAB_ROUTE.muster]: {
+  [TAB_ROUTE.patterns]: {
     ios: 'square.stack.3d.up.fill',
     android: 'layers',
     web: 'layers',
@@ -26,12 +26,12 @@ const TAB_ICON: Record<TabRouteName, TabIconName> = {
     android: 'auto_awesome',
     web: 'auto_awesome',
   },
-  [TAB_ROUTE.bericht]: {
+  [TAB_ROUTE.report]: {
     ios: 'doc.text.fill',
     android: 'description',
     web: 'description',
   },
-  [TAB_ROUTE.ich]: {
+  [TAB_ROUTE.profile]: {
     ios: 'person.fill',
     android: 'person',
     web: 'person',
@@ -40,10 +40,10 @@ const TAB_ICON: Record<TabRouteName, TabIconName> = {
 
 const TAB_LABEL_KEY: Record<TabRouteName, string> = {
   [TAB_ROUTE.start]: 'tab_start_label',
-  [TAB_ROUTE.muster]: 'tab_muster_label',
+  [TAB_ROUTE.patterns]: 'tab_patterns_label',
   [TAB_ROUTE.syna]: 'tab_syna_label',
-  [TAB_ROUTE.bericht]: 'tab_bericht_label',
-  [TAB_ROUTE.ich]: 'tab_ich_label',
+  [TAB_ROUTE.report]: 'tab_report_label',
+  [TAB_ROUTE.profile]: 'tab_profile_label',
 };
 
 const isTabRouteName = (routeName: string): routeName is TabRouteName =>

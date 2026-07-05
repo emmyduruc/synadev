@@ -6,9 +6,9 @@ export const ROUTES = {
   home: '/(tabs)',
   tabs: {
     start: '/(tabs)',
-    muster: '/(tabs)/muster',
+    patterns: '/(tabs)/patterns',
     syna: '/(tabs)/syna',
-    bericht: '/(tabs)/bericht',
-    ich: '/(tabs)/ich',
+    report: '/(tabs)/report',
+    profile: '/(tabs)/profile',
   },
 } as const;

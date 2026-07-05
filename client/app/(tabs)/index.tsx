@@ -5,6 +5,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import { AppHeader, Box, Button, Text } from '@/components/ui';
 import { useTranslate } from '@/hooks/useTranslate';
+import { HEALTH_READ_STATUS } from '@/lib/health/constants';
+import {
+  saveHealthConnectionSummary,
+  toHealthConnectionSummary,
+} from '@/lib/health/healthConnectionSummary';
 import { readHealthSnapshot } from '@/lib/health/healthData';
 import type { HealthRawSnapshot } from '@/lib/health/types';
 
@@ -21,8 +26,9 @@ const StartTabScreen = () => {
     try {
       const snapshot = await readHealthSnapshot();
       setHealthSnapshot(snapshot);
+      await saveHealthConnectionSummary(toHealthConnectionSummary(snapshot));
 
-      if (snapshot.status === 'error') {
+      if (snapshot.status === HEALTH_READ_STATUS.error) {
         const firstError = snapshot.metrics.find((metric) => metric.error)?.error;
         setErrorMessage(firstError ?? t('health_connect_error_title'));
       }

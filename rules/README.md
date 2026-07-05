@@ -14,9 +14,13 @@ yarn check
 |--------|------------|---------|
 | Variables | camelCase | `userName`, `isLoading` |
 | Functions | camelCase arrow functions | `const fetchUser = async () => {}` |
-| Translation keys | snake_case | `welcome_message`, `sign_in_button` |
-| Files (components) | PascalCase | `UserCard.tsx` |
+| Translation keys | snake_case **English** | `welcome_message`, `tab_profile_label` |
+| Route segments / files | English kebab or camel | `profile.tsx`, `patterns.tsx` |
+| Constants / enum keys | English camelCase | `TAB_ROUTE.profile`, `PROFILE_TAB.healthRecord` |
+| Files (components) | PascalCase English | `ProfileTabScreen.tsx` |
 | Files (utils/hooks) | camelCase | `useAuth.ts`, `formatDate.ts` |
+
+**German and other non-English text belongs only in locale JSON values** (`de.json`), never in code identifiers, route names, or translation keys.
 
 ## Functions
 
