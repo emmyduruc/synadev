@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useState } from 'react';
 
+import { useTranslate } from '@/hooks/useTranslate';
 import { AUTH_STRATEGY } from '@/lib/auth/constants';
 import { getAuthErrorMessage } from '@/lib/auth/errors';
 import { ROUTES } from '@/lib/routes';
@@ -12,6 +13,7 @@ void WebBrowser.maybeCompleteAuthSession();
 
 export const useSocialAuth = () => {
   const router = useRouter();
+  const { t } = useTranslate();
   const googleOAuth = useOAuth({ strategy: AUTH_STRATEGY.google });
   const appleOAuth = useOAuth({ strategy: AUTH_STRATEGY.apple });
   const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +28,9 @@ export const useSocialAuth = () => {
 
       if (createdSessionId) {
         await setActive?.({ session: createdSessionId });
+        toast.success(t('login_success_title'), {
+          description: t('login_success_description'),
+        });
         router.replace(ROUTES.home);
       }
     } catch (caught) {

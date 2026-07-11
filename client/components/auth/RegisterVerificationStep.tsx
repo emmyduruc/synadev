@@ -6,8 +6,8 @@ import { useForm } from 'react-hook-form';
 
 import { Button, FormField, Text } from '@/components/ui';
 import { useTranslate } from '@/hooks/useTranslate';
+import { completeAuthSession } from '@/lib/auth/completeAuthSession';
 import { runAuthAction } from '@/lib/auth/runAuthAction';
-import { ROUTES } from '@/lib/routes';
 
 export const RegisterVerificationStep = () => {
   const router = useRouter();
@@ -26,9 +26,12 @@ export const RegisterVerificationStep = () => {
         throw error;
       }
 
-      if (signUp.createdSessionId) {
-        await signUp.finalize();
-        router.replace(ROUTES.home);
+      if (signUp.status === 'complete') {
+        await completeAuthSession(signUp, {
+          router,
+          successTitle: t('register_success_title'),
+          successDescription: t('register_success_description'),
+        });
       }
     });
   });

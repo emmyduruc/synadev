@@ -9,8 +9,8 @@ import { AuthPrivacyNote } from '@/components/auth/AuthPrivacyNote';
 import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
 import { Button, FormField } from '@/components/ui';
 import { useTranslate } from '@/hooks/useTranslate';
+import { completeAuthSession } from '@/lib/auth/completeAuthSession';
 import { runAuthAction } from '@/lib/auth/runAuthAction';
-import { ROUTES } from '@/lib/routes';
 import { toast } from '@/lib/sonner';
 
 export type RegisterCredentialsStepProps = {
@@ -36,9 +36,12 @@ export const RegisterCredentialsStep = ({
         throw error;
       }
 
-      if (signUp.createdSessionId) {
-        await signUp.finalize();
-        router.replace(ROUTES.home);
+      if (signUp.status === 'complete') {
+        await completeAuthSession(signUp, {
+          router,
+          successTitle: t('register_success_title'),
+          successDescription: t('register_success_description'),
+        });
         return;
       }
 
