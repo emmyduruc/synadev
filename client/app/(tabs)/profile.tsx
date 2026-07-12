@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
@@ -62,7 +62,7 @@ const ProfileTabScreen = () => {
           </ScrollView>
 
           {!isLoading && isVisible ? (
-            <Box style={styles.bannerOverlay} pointerEvents="box-none">
+            <Box className="absolute left-4 right-4 top-2 z-10" pointerEvents="box-none">
               <ProfileCompletionBanner
                 percent={percent}
                 onPress={openBioDataWizard}
@@ -79,14 +79,3 @@ const ProfileTabScreen = () => {
 };
 
 export default ProfileTabScreen;
-
-const styles = StyleSheet.create({
-  bannerOverlay: {
-    position: 'absolute',
-    top: 8,
-    left: 16,
-    right: 16,
-    zIndex: 10,
-    elevation: 10,
-  },
-});

@@ -1,13 +1,11 @@
 import type { Href } from 'expo-router';
 import type { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { KeyboardStickyFooter } from '@/components/layout/KeyboardStickyFooter';
 import { AppHeader } from '@/components/ui/AppHeader';
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
-import { semanticColors } from '@/lib/ui';
 
 export type AuthVerificationLayoutProps = {
   title: string;
@@ -24,8 +22,8 @@ export const AuthVerificationLayout = ({
   footer,
   children,
 }: AuthVerificationLayoutProps) => (
-  <View style={styles.root}>
-    <SafeAreaView style={styles.safeArea}>
+  <Box flex={1} fullWidth background="background">
+    <SafeAreaView className="flex-1">
       <AppHeader
         title=""
         showBack
@@ -58,15 +56,5 @@ export const AuthVerificationLayout = ({
         </KeyboardStickyFooter>
       ) : null}
     </SafeAreaView>
-  </View>
+  </Box>
 );
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: semanticColors.background,
-  },
-  safeArea: {
-    flex: 1,
-  },
-});

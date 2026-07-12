@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Box } from '@/components/ui/Box';
 import { useKeyboardInset } from '@/hooks/useKeyboardInset';
 
 export type KeyboardStickyFooterProps = {
@@ -20,14 +20,8 @@ export const KeyboardStickyFooter = ({ children, gap = 12 }: KeyboardStickyFoote
   const bottomSpacing = keyboardInset > 0 ? keyboardInset + gap : Math.max(safeAreaBottom, gap);
 
   return (
-    <View style={[styles.footer, { paddingBottom: bottomSpacing }]}>
+    <Box className="pt-2" style={{ paddingBottom: bottomSpacing }}>
       {children}
-    </View>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  footer: {
-    paddingTop: 8,
-  },
-});

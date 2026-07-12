@@ -1,8 +1,8 @@
-import { Pressable, StyleSheet, View } from 'react-native';
-
+import { Box } from '@/components/ui/Box';
 import { BackspaceIcon } from '@/components/ui/icons/BackspaceIcon';
 import { Text } from '@/components/ui/Text';
-import { semanticColors } from '@/lib/ui';
+import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
+import { cn, semanticColors } from '@/lib/ui';
 
 const KEYPAD_ROWS = [
   [
@@ -22,6 +22,9 @@ const KEYPAD_ROWS = [
   ],
 ] as const;
 
+const keypadKeyClassName =
+  'min-h-[52px] flex-1 items-center justify-center rounded-xl bg-card py-2';
+
 export type OtpNumericKeypadProps = {
   onDigitPress: (digit: string) => void;
   onBackspacePress: () => void;
@@ -33,20 +36,16 @@ export const OtpNumericKeypad = ({
   onBackspacePress,
   disabled = false,
 }: OtpNumericKeypadProps) => (
-  <View style={styles.container}>
+  <Box className="gap-2 rounded-3xl bg-muted p-3">
     {KEYPAD_ROWS.map((row) => (
-      <View key={row.map((key) => key.digit).join('-')} style={styles.row}>
+      <Box key={row.map((key) => key.digit).join('-')} direction="row" gap="sm">
         {row.map((key) => (
-          <Pressable
+          <TouchableOpacity
             key={key.digit}
             accessibilityRole="button"
             disabled={disabled}
             onPress={() => onDigitPress(key.digit)}
-            style={({ pressed }) => [
-              styles.key,
-              pressed && !disabled ? styles.keyPressed : undefined,
-              disabled ? styles.keyDisabled : undefined,
-            ]}>
+            className={cn(keypadKeyClassName, disabled && 'opacity-45')}>
             <Text size="2xl" weight="semibold" align="center" responsive={false}>
               {key.digit}
             </Text>
@@ -55,72 +54,29 @@ export const OtpNumericKeypad = ({
                 {key.letters}
               </Text>
             ) : null}
-          </Pressable>
+          </TouchableOpacity>
         ))}
-      </View>
+      </Box>
     ))}
 
-    <View style={styles.row}>
-      <View style={styles.keySpacer} />
-      <Pressable
+    <Box direction="row" gap="sm">
+      <Box flex={1} />
+      <TouchableOpacity
         accessibilityRole="button"
         disabled={disabled}
         onPress={() => onDigitPress('0')}
-        style={({ pressed }) => [
-          styles.key,
-          pressed && !disabled ? styles.keyPressed : undefined,
-          disabled ? styles.keyDisabled : undefined,
-        ]}>
+        className={cn(keypadKeyClassName, disabled && 'opacity-45')}>
         <Text size="2xl" weight="semibold" align="center" responsive={false}>
           0
         </Text>
-      </Pressable>
-      <Pressable
+      </TouchableOpacity>
+      <TouchableOpacity
         accessibilityRole="button"
         disabled={disabled}
         onPress={onBackspacePress}
-        style={({ pressed }) => [
-          styles.key,
-          styles.backspaceKey,
-          pressed && !disabled ? styles.keyPressed : undefined,
-          disabled ? styles.keyDisabled : undefined,
-        ]}>
+        className={cn(keypadKeyClassName, disabled && 'opacity-45')}>
         <BackspaceIcon size={22} color={semanticColors.foreground} />
-      </Pressable>
-    </View>
-  </View>
+      </TouchableOpacity>
+    </Box>
+  </Box>
 );
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: semanticColors.muted,
-    borderRadius: 24,
-    padding: 12,
-    gap: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  key: {
-    flex: 1,
-    minHeight: 52,
-    borderRadius: 12,
-    backgroundColor: semanticColors.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-  },
-  keyPressed: {
-    opacity: 0.75,
-  },
-  keyDisabled: {
-    opacity: 0.45,
-  },
-  keySpacer: {
-    flex: 1,
-  },
-  backspaceKey: {
-    justifyContent: 'center',
-  },
-});

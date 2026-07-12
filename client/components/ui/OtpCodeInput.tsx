@@ -1,9 +1,10 @@
 import { useRef } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { TextInput } from 'react-native';
 
+import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
-import { FONT_FAMILY } from '@/lib/fonts/constants';
-import { semanticColors } from '@/lib/ui';
+import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
+import { cn, hiddenOtpInputStyle } from '@/lib/ui';
 
 export const OTP_CODE_LENGTH = 6;
 
@@ -35,17 +36,17 @@ export const OtpCodeInput = ({
   };
 
   return (
-    <View>
-      <Pressable
+    <Box>
+      <TouchableOpacity
         accessibilityRole="button"
         onPress={() => inputRef.current?.focus()}
-        style={styles.slotsRow}>
+        className="flex-row justify-between gap-2">
         {digits.map((digit, index) => {
           const isActive = index === value.length;
           const slotKey = `otp-slot-${index}`;
 
           return (
-            <View key={slotKey} style={styles.slot}>
+            <Box key={slotKey} flex={1} align="center">
               <Text
                 size="3xl"
                 weight="semibold"
@@ -54,16 +55,16 @@ export const OtpCodeInput = ({
                 className="min-h-10">
                 {digit.trim()}
               </Text>
-              <View
-                style={[
-                  styles.underline,
-                  isActive ? styles.underlineActive : undefined,
-                ]}
+              <Box
+                className={cn(
+                  'mt-2 h-0.5 w-full rounded-full',
+                  isActive ? 'bg-foreground' : 'bg-muted-foreground',
+                )}
               />
-            </View>
+            </Box>
           );
         })}
-      </Pressable>
+      </TouchableOpacity>
 
       <TextInput
         ref={inputRef}
@@ -76,37 +77,8 @@ export const OtpCodeInput = ({
         autoFocus={autoFocus}
         caretHidden
         showSoftInputOnFocus={false}
-        style={styles.hiddenInput}
+        style={hiddenOtpInputStyle}
       />
-    </View>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  slotsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
-  slot: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  underline: {
-    marginTop: 8,
-    height: 2,
-    width: '100%',
-    backgroundColor: semanticColors.foregroundMuted,
-    borderRadius: 999,
-  },
-  underlineActive: {
-    backgroundColor: semanticColors.foreground,
-  },
-  hiddenInput: {
-    position: 'absolute',
-    opacity: 0,
-    width: 1,
-    height: 1,
-    fontFamily: FONT_FAMILY.regular,
-  },
-});

@@ -1,10 +1,9 @@
 import { DatePicker } from '@quidone/react-native-wheel-picker';
 import { useCallback, useEffect, useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
 
+import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
 import { useTranslate } from '@/hooks/useTranslate';
-import { FONT_FAMILY } from '@/lib/fonts/constants';
 import {
   clampIsoDate,
   getDatePickerLocale,
@@ -13,11 +12,13 @@ import {
   isAtLeastMinAge,
   parseIsoDate,
 } from '@/lib/profile/bioDataValidation';
-import { semanticColors } from '@/lib/ui';
-
-const PICKER_ITEM_HEIGHT = 48;
-const PICKER_VISIBLE_ITEM_COUNT = 5;
-const PICKER_HEIGHT = PICKER_ITEM_HEIGHT * PICKER_VISIBLE_ITEM_COUNT;
+import {
+  WHEEL_PICKER_HEIGHT,
+  WHEEL_PICKER_ITEM_HEIGHT,
+  WHEEL_PICKER_VISIBLE_ITEM_COUNT,
+  wheelPickerItemTextStyle,
+  wheelPickerSelectionOverlayStyle,
+} from '@/lib/wizard/wheelPickerNativeStyles';
 
 const DATE_COLUMN_WIDTH = '26%' as `${number}%`;
 const MONTH_COLUMN_WIDTH = '48%' as `${number}%`;
@@ -70,53 +71,33 @@ export const WizardDateWheel = ({
   }, [notifyValidity, onChange, pickerDate, value]);
 
   return (
-    <View style={styles.root}>
+    <Box fullWidth gap="md">
       <Text size="sm" color="foreground-muted" align="center">
         {t('wizard_date_of_birth_age_hint')}
       </Text>
 
-      <View style={styles.pickerFrame}>
+      <Box
+        fullWidth
+        align="center"
+        justify="center"
+        className="overflow-hidden rounded-2xl"
+        style={{ height: WHEEL_PICKER_HEIGHT }}>
         <DatePicker
           date={pickerDate}
           minDate={minDate}
           maxDate={maxDate}
           locale={locale}
           onDateChanged={handleDateChanged}
-          itemHeight={PICKER_ITEM_HEIGHT}
-          visibleItemCount={PICKER_VISIBLE_ITEM_COUNT}
+          itemHeight={WHEEL_PICKER_ITEM_HEIGHT}
+          visibleItemCount={WHEEL_PICKER_VISIBLE_ITEM_COUNT}
           enableScrollByTapOnItem
-          overlayItemStyle={styles.selectionOverlay}
-          itemTextStyle={styles.itemText}
+          overlayItemStyle={wheelPickerSelectionOverlayStyle}
+          itemTextStyle={wheelPickerItemTextStyle}
           renderDate={() => <DatePicker.Date width={DATE_COLUMN_WIDTH} />}
           renderMonth={() => <DatePicker.Month width={MONTH_COLUMN_WIDTH} />}
           renderYear={() => <DatePicker.Year width={YEAR_COLUMN_WIDTH} />}
         />
-      </View>
-    </View>
+      </Box>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  root: {
-    width: '100%',
-    gap: 16,
-  },
-  pickerFrame: {
-    width: '100%',
-    height: PICKER_HEIGHT,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  selectionOverlay: {
-    backgroundColor: semanticColors.codeHighlightLight,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: semanticColors.border,
-    borderRadius: 12,
-  },
-  itemText: {
-    color: semanticColors.foreground,
-    fontFamily: FONT_FAMILY.semibold,
-    fontSize: 20,
-  },
-});

@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
 import { TextInput } from '@/components/ui/TextInput';
 import { WizardDateWheel } from '@/components/wizard/WizardDateWheel';
@@ -15,7 +16,6 @@ import {
   isAtLeastMinAge,
   parseIsoDate,
 } from '@/lib/profile/bioDataValidation';
-import { semanticColors } from '@/lib/ui';
 
 const BIO_WIZARD_STEP = {
   firstName: 'first_name',
@@ -105,6 +105,8 @@ export const BioDataWizard = ({
           eyebrow={t('wizard_bio_eyebrow')}
           title={t('wizard_bio_first_name_title')}>
           <TextInput
+            key={currentStepId}
+            focusKey={currentStepId}
             value={bioData.firstName}
             onChangeText={(firstName) => setBioData((previous) => ({ ...previous, firstName }))}
             autoCapitalize="words"
@@ -128,6 +130,8 @@ export const BioDataWizard = ({
           eyebrow={t('wizard_bio_eyebrow')}
           title={t('wizard_bio_last_name_title')}>
           <TextInput
+            key={currentStepId}
+            focusKey={currentStepId}
             value={bioData.lastName}
             onChangeText={(lastName) => setBioData((previous) => ({ ...previous, lastName }))}
             autoCapitalize="words"
@@ -148,27 +152,26 @@ export const BioDataWizard = ({
     return (
       <WizardQuestionLayout
         eyebrow={t('wizard_bio_eyebrow')}
-        title={t('wizard_bio_date_of_birth_title')}
-        contentAlign="start">
+        title={t('wizard_bio_date_of_birth_title')}>
         <WizardDateWheel
           value={ensureDateOfBirth}
           onChange={(dateOfBirth) => setBioData((previous) => ({ ...previous, dateOfBirth }))}
           onValidityChange={setIsDateValid}
         />
         {!isDateValid ? (
-          <View style={styles.ageWarning}>
+          <Box className="mt-2">
             <Text size="sm" color="error" align="center">
               {t('wizard_bio_age_requirement_error')}
             </Text>
-          </View>
+          </Box>
         ) : null}
       </WizardQuestionLayout>
     );
   })();
 
   return (
-    <View style={styles.root}>
-      <SafeAreaView style={styles.safeArea}>
+    <Box flex={1} fullWidth background="background">
+      <SafeAreaView className="flex-1">
         <WizardShell
           skippable={skippable}
           onSkip={onSkip}
@@ -192,19 +195,6 @@ export const BioDataWizard = ({
           {stepContent}
         </WizardShell>
       </SafeAreaView>
-    </View>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: semanticColors.background,
-  },
-  safeArea: {
-    flex: 1,
-  },
-  ageWarning: {
-    marginTop: 8,
-  },
-});

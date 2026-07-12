@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Box } from '@/components/ui/Box';
 import { WizardFooterActions } from '@/components/wizard/WizardFooterActions';
 import { WizardShell } from '@/components/wizard/WizardShell';
 import { useTranslate } from '@/hooks/useTranslate';
-import { semanticColors } from '@/lib/ui';
 import type { WizardConfig, WizardStepRenderProps } from '@/lib/wizard/types';
 
 export type WizardProps<TContext> = WizardConfig<TContext> & {
@@ -100,8 +100,8 @@ export const Wizard = <TContext,>({
   }
 
   return (
-    <View style={styles.root}>
-      <SafeAreaView style={styles.safeArea}>
+    <Box flex={1} fullWidth background="background">
+      <SafeAreaView className="flex-1">
         <WizardShell
           skippable={skippable}
           onSkip={onSkip}
@@ -126,16 +126,6 @@ export const Wizard = <TContext,>({
           {currentStep.render(stepRenderProps)}
         </WizardShell>
       </SafeAreaView>
-    </View>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: semanticColors.background,
-  },
-  safeArea: {
-    flex: 1,
-  },
-});

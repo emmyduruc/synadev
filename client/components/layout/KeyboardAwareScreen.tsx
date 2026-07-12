@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
-import { Keyboard, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { Keyboard, Platform, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Box } from '@/components/ui/Box';
 import { useKeyboardInset } from '@/hooks/useKeyboardInset';
 
 export type KeyboardAwareScreenProps = {
@@ -27,15 +28,15 @@ export const KeyboardAwareScreen = ({
     keyboardInset > 0 ? keyboardInset + 12 : Math.max(safeAreaBottom, 12);
 
   return (
-    <View style={styles.root}>
+    <Box flex={1} fullWidth>
       {header}
 
       <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: footer ? footerClearance + footerBottomSpacing : 24 },
-        ]}
+        className="flex-1"
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: footer ? footerClearance + footerBottomSpacing : 24,
+        }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         onScrollBeginDrag={Platform.OS === 'ios' ? Keyboard.dismiss : undefined}>
@@ -43,25 +44,10 @@ export const KeyboardAwareScreen = ({
       </ScrollView>
 
       {footer ? (
-        <View style={[styles.footer, { paddingBottom: footerBottomSpacing }]}>
+        <Box className="pt-2" style={{ paddingBottom: footerBottomSpacing }}>
           {footer}
-        </View>
+        </Box>
       ) : null}
-    </View>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  footer: {
-    paddingTop: 8,
-  },
-});

@@ -1,6 +1,5 @@
 import type { Href } from 'expo-router';
 import { useRouter } from 'expo-router';
-import { StyleSheet } from 'react-native';
 
 import { ChevronLeftIcon } from '@/components/ui/icons/ChevronLeftIcon';
 import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
@@ -42,18 +41,8 @@ export const BackButton = ({
       accessibilityLabel={t('header_back_accessibility_label')}
       hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
       onPress={handlePress}
-      style={styles.button}>
+      className="h-11 w-11 items-center justify-center bg-transparent">
       <ChevronLeftIcon color={iconColor} />
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-});

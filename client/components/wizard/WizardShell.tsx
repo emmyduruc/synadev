@@ -1,12 +1,10 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
 
 import { KeyboardStickyFooter } from '@/components/layout/KeyboardStickyFooter';
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
 import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import { useTranslate } from '@/hooks/useTranslate';
-import { semanticColors } from '@/lib/ui';
 
 export type WizardShellProps = {
   children: ReactNode;
@@ -26,7 +24,7 @@ export const WizardShell = ({
   const { t } = useTranslate();
 
   return (
-    <View style={styles.root}>
+    <Box flex={1} fullWidth background="background">
       <Box direction="row" justify="between" align="center" paddingX="lg" paddingY="sm">
         <Box className="min-h-8 min-w-16 justify-center">
           {stepLabel ? (
@@ -49,13 +47,6 @@ export const WizardShell = ({
       <Box flex={1}>{children}</Box>
 
       <KeyboardStickyFooter>{footer}</KeyboardStickyFooter>
-    </View>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: semanticColors.background,
-  },
-});

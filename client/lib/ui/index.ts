@@ -40,3 +40,4 @@ export {
   TOUCHABLE_ACTIVE_OPACITY,
 } from './semanticColors';
 export { useResponsiveFontSize, useResponsiveScale } from './useResponsiveScale';
+export { hiddenOtpInputStyle } from './nativeOnlyStyles';

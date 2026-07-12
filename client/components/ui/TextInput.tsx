@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
+  InteractionManager,
   TextInput as RNTextInput,
   type TextInputProps as RNTextInputProps,
 } from 'react-native';
@@ -28,6 +29,8 @@ export type TextInputProps = Omit<RNTextInputProps, 'editable'> & {
   disabled?: boolean;
   containerClassName?: string;
   inputClassName?: string;
+  /** Re-triggers focus when this value changes (e.g. wizard step id). Requires `autoFocus`. */
+  focusKey?: string | number;
 };
 
 export const TextInput = ({
@@ -41,12 +44,29 @@ export const TextInput = ({
   containerClassName,
   inputClassName,
   className,
+  autoFocus = false,
+  focusKey,
   onFocus,
   onBlur,
   ...props
 }: TextInputProps) => {
+  const inputRef = useRef<RNTextInput>(null);
   const [isFocused, setIsFocused] = useState(false);
   const hasError = Boolean(errorMessage);
+
+  useEffect(() => {
+    if (!autoFocus || disabled) {
+      return undefined;
+    }
+
+    const task = InteractionManager.runAfterInteractions(() => {
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
+    });
+
+    return () => task.cancel();
+  }, [autoFocus, disabled, focusKey]);
 
   const handleFocus: RNTextInputProps['onFocus'] = (event) => {
     setIsFocused(true);
@@ -107,6 +127,7 @@ export const TextInput = ({
         {leftIcon ? <Box paddingX="sm">{leftIcon}</Box> : null}
 
         <RNTextInput
+          ref={inputRef}
           className={cn(
             'flex-1 font-sans text-foreground',
             inputPaddingClasses[size],
@@ -118,6 +139,7 @@ export const TextInput = ({
           style={{ fontFamily: FONT_FAMILY.regular }}
           editable={!disabled}
           placeholderTextColor={semanticColors.placeholder}
+          autoFocus={autoFocus}
           onFocus={handleFocus}
           onBlur={handleBlur}
           {...props}

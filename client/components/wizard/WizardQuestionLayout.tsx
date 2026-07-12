@@ -1,14 +1,15 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
 
+import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
 import { useKeyboardInset } from '@/hooks/useKeyboardInset';
+import { cn } from '@/lib/ui';
 
 export type WizardQuestionLayoutProps = {
   eyebrow?: string;
   title: string;
   children: ReactNode;
-  /** Use `start` for tall controls like date wheels so they are not vertically centered away. */
+  /** Use `start` so content sits below the title (better with keyboard and tall controls). */
   contentAlign?: 'center' | 'start';
 };
 
@@ -16,21 +17,24 @@ export const WizardQuestionLayout = ({
   eyebrow,
   title,
   children,
-  contentAlign = 'center',
+  contentAlign = 'start',
 }: WizardQuestionLayoutProps) => {
   const keyboardInset = useKeyboardInset();
   const isKeyboardVisible = keyboardInset > 0;
   const shouldAlignStart = contentAlign === 'start' || isKeyboardVisible;
 
   return (
-    <View style={styles.container}>
-      <View
-        style={[
-          styles.inner,
-          shouldAlignStart ? styles.innerStart : styles.innerCentered,
-          isKeyboardVisible ? styles.innerCompact : undefined,
-        ]}>
-        <View style={styles.copyBlock}>
+    <Box flex={1} fullWidth>
+      <Box
+        flex={1}
+        fullWidth
+        paddingX="lg"
+        gap="lg"
+        className={cn(
+          shouldAlignStart ? 'justify-start pt-2' : 'justify-center',
+          isKeyboardVisible && 'gap-5 pt-4',
+        )}>
+        <Box gap="sm">
           {eyebrow ? (
             <Text size="sm" color="foreground-muted">
               {eyebrow}
@@ -39,39 +43,10 @@ export const WizardQuestionLayout = ({
           <Text size="3xl" weight="bold" className="leading-tight">
             {title}
           </Text>
-        </View>
+        </Box>
 
-        <View style={styles.inputBlock}>{children}</View>
-      </View>
-    </View>
+        <Box gap="sm">{children}</Box>
+      </Box>
+    </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  inner: {
-    flex: 1,
-    width: '100%',
-    paddingHorizontal: 24,
-    gap: 24,
-  },
-  innerCentered: {
-    justifyContent: 'center',
-  },
-  innerStart: {
-    justifyContent: 'flex-start',
-    paddingTop: 8,
-  },
-  innerCompact: {
-    paddingTop: 16,
-    gap: 20,
-  },
-  copyBlock: {
-    gap: 8,
-  },
-  inputBlock: {
-    gap: 12,
-  },
-});
