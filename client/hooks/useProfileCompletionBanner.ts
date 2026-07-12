@@ -1,15 +1,15 @@
+import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { PROFILE_COMPLETION_PERCENT } from '@/lib/profile/constants';
+import { useBioData } from '@/hooks/useBioData';
 import {
   getProfileCompletionBannerDismissed,
   setProfileCompletionBannerDismissed,
 } from '@/lib/profile/profileCompletionBannerStorage';
 
 export const useProfileCompletionBanner = () => {
+  const { percent, isComplete, isLoading: isBioLoading, refresh } = useBioData();
   const [isDismissed, setIsDismissed] = useState<boolean | null>(null);
-  const percent = PROFILE_COMPLETION_PERCENT;
-  const isComplete = percent >= 100;
 
   useEffect(() => {
     let isMounted = true;
@@ -28,13 +28,19 @@ export const useProfileCompletionBanner = () => {
     };
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      void refresh();
+    }, [refresh]),
+  );
+
   const dismiss = useCallback(async () => {
     await setProfileCompletionBannerDismissed();
     setIsDismissed(true);
   }, []);
 
   const isVisible = !isComplete && isDismissed === false;
-  const isLoading = isDismissed === null;
+  const isLoading = isBioLoading || isDismissed === null;
 
   return {
     percent,

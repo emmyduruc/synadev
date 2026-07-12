@@ -15,38 +15,50 @@ import { ROUTES } from '@/lib/routes';
 const LoginScreen = () => {
   const { t } = useTranslate();
   const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
+
+  if (isVerifying) {
+    return (
+      <LoginVerificationStep
+        identifier={verificationEmail}
+        onStartOver={() => {
+          setIsVerifying(false);
+          setVerificationEmail('');
+        }}
+      />
+    );
+  }
 
   return (
     <AuthGradientLayout header={{ title: t('login_title'), fallbackHref: ROUTES.welcome }}>
       <AuthHero headline={t('login_welcome_back')} subtitle={t('login_subtitle')} />
 
       <AuthGlassCard>
-        {isVerifying ? (
-          <LoginVerificationStep onStartOver={() => setIsVerifying(false)} />
-        ) : (
-          <LoginCredentialsStep onVerificationRequired={() => setIsVerifying(true)} />
-        )}
+        <LoginCredentialsStep
+          onVerificationRequired={(email) => {
+            setVerificationEmail(email);
+            setIsVerifying(true);
+          }}
+        />
       </AuthGlassCard>
 
-      {!isVerifying ? (
-        <Box gap="md" className="mt-6">
-          <AuthDivider />
-          <SocialAuthButtons />
+      <Box gap="md" className="mt-6">
+        <AuthDivider />
+        <SocialAuthButtons />
 
-          <Box direction="row" justify="center" align="center" className="mt-2">
-            <Text size="sm" color="foreground-muted">
-              {t('login_new_to_syna')}{' '}
-            </Text>
-            <Link href={ROUTES.register} asChild>
-              <TouchableOpacity>
-                <Text size="sm" weight="semibold" color="primary" className="underline">
-                  {t('login_register_link')}
-                </Text>
-              </TouchableOpacity>
-            </Link>
-          </Box>
+        <Box direction="row" justify="center" align="center" className="mt-2">
+          <Text size="sm" color="foreground-muted">
+            {t('login_new_to_syna')}{' '}
+          </Text>
+          <Link href={ROUTES.register} asChild>
+            <TouchableOpacity>
+              <Text size="sm" weight="semibold" color="primary" className="underline">
+                {t('login_register_link')}
+              </Text>
+            </TouchableOpacity>
+          </Link>
         </Box>
-      ) : null}
+      </Box>
     </AuthGradientLayout>
   );
 };

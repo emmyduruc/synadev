@@ -14,7 +14,7 @@ import { runAuthAction } from '@/lib/auth/runAuthAction';
 import { toast } from '@/lib/sonner';
 
 export type RegisterCredentialsStepProps = {
-  onVerificationRequired: () => void;
+  onVerificationRequired: (email: string) => void;
 };
 
 export const RegisterCredentialsStep = ({
@@ -46,7 +46,7 @@ export const RegisterCredentialsStep = ({
       }
 
       await signUp.verifications.sendEmailCode();
-      onVerificationRequired();
+      onVerificationRequired(email);
       toast(t('register_verification_prompt'));
     });
   });

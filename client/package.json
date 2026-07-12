@@ -8,6 +8,7 @@
     "@expo/config-plugins": "^57.0.2",
     "@hookform/resolvers": "^5.4.0",
     "@kingstinct/react-native-healthkit": "^14.0.2",
+    "@quidone/react-native-wheel-picker": "^1.7.1",
     "@react-native/metro-config": "^0.86.0",
     "@syna/design-tokens": "workspace:*",
     "@syna/shared-types": "workspace:*",

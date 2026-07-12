@@ -13,7 +13,7 @@ import { sendLoginVerificationCode } from '@/lib/auth/sendLoginVerificationCode'
 import { ROUTES } from '@/lib/routes';
 
 export type LoginCredentialsStepProps = {
-  onVerificationRequired: () => void;
+  onVerificationRequired: (email: string) => void;
 };
 
 export const LoginCredentialsStep = ({ onVerificationRequired }: LoginCredentialsStepProps) => {
@@ -50,7 +50,7 @@ export const LoginCredentialsStep = ({ onVerificationRequired }: LoginCredential
         || signIn.status === 'needs_client_trust'
       ) {
         await sendLoginVerificationCode(signIn);
-        onVerificationRequired();
+        onVerificationRequired(email);
         return;
       }
 

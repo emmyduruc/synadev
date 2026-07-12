@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
+import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
 import { AppHeader, Box, Button, Text } from '@/components/ui';
+import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
+import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
 import { useTranslate } from '@/hooks/useTranslate';
 import { HEALTH_READ_STATUS } from '@/lib/health/constants';
 import {
@@ -15,6 +18,8 @@ import type { HealthRawSnapshot } from '@/lib/health/types';
 
 const StartTabScreen = () => {
   const { t } = useTranslate();
+  const openBioDataWizard = useOpenBioDataWizard();
+  const { percent, isVisible, isLoading, dismiss } = useProfileCompletionBanner();
   const [healthSnapshot, setHealthSnapshot] = useState<HealthRawSnapshot | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -98,6 +103,18 @@ const StartTabScreen = () => {
               ) : null}
             </Box>
           </ScrollView>
+
+          {!isLoading && isVisible ? (
+            <Box style={styles.bannerOverlay} pointerEvents="box-none">
+              <ProfileCompletionBanner
+                percent={percent}
+                onPress={openBioDataWizard}
+                onDismiss={() => {
+                  void dismiss();
+                }}
+              />
+            </Box>
+          ) : null}
         </Box>
       </SafeAreaView>
     </SynaGradientBackground>
@@ -105,3 +122,14 @@ const StartTabScreen = () => {
 };
 
 export default StartTabScreen;
+
+const styles = StyleSheet.create({
+  bannerOverlay: {
+    position: 'absolute',
+    top: 8,
+    left: 16,
+    right: 16,
+    zIndex: 10,
+    elevation: 10,
+  },
+});

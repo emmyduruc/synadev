@@ -18,6 +18,9 @@ export type { BannerProps } from './Banner';
 export { AppHeader } from './AppHeader';
 export type { AppHeaderProps } from './AppHeader';
 
+export { BackButton } from './BackButton';
+export type { BackButtonProps } from './BackButton';
+
 export { TouchableOpacity } from './TouchableOpacity';
 export type { TouchableOpacityProps } from './TouchableOpacity';
 
@@ -26,3 +29,9 @@ export type { TagIconPosition, TagProps } from './Tag';
 
 export { CircularProgress } from './CircularProgress';
 export type { CircularProgressProps } from './CircularProgress';
+
+export { OtpCodeInput, OTP_CODE_LENGTH } from './OtpCodeInput';
+export type { OtpCodeInputProps } from './OtpCodeInput';
+
+export { OtpNumericKeypad } from './OtpNumericKeypad';
+export type { OtpNumericKeypadProps } from './OtpNumericKeypad';

@@ -13,17 +13,23 @@ import { ROUTES } from '@/lib/routes';
 const RegisterScreen = () => {
   const { t } = useTranslate();
   const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
+
+  if (isVerifying) {
+    return <RegisterVerificationStep identifier={verificationEmail} />;
+  }
 
   return (
     <AuthGradientLayout header={{ title: t('register_title'), fallbackHref: ROUTES.welcome }}>
       <AuthHero headline={t('register_headline')} subtitle={t('register_subtitle')} />
 
       <AuthGlassCard>
-        {isVerifying ? (
-          <RegisterVerificationStep />
-        ) : (
-          <RegisterCredentialsStep onVerificationRequired={() => setIsVerifying(true)} />
-        )}
+        <RegisterCredentialsStep
+          onVerificationRequired={(email) => {
+            setVerificationEmail(email);
+            setIsVerifying(true);
+          }}
+        />
       </AuthGlassCard>
 
       <Box direction="row" justify="center" align="center" className="mt-6">

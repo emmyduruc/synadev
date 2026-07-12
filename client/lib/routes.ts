@@ -4,6 +4,9 @@ export const ROUTES = {
   login: '/login',
   forgotPassword: '/forgot-password',
   home: '/(tabs)',
+  onboarding: {
+    bioData: '/onboarding/bio-data',
+  },
   tabs: {
     start: '/(tabs)',
     patterns: '/(tabs)/patterns',

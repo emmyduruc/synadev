@@ -1,50 +1,60 @@
 import { useSignUp } from '@clerk/expo';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { registerVerificationSchema, type RegisterVerificationValues } from '@syna/shared-types';
 import { useRouter } from 'expo-router';
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 
-import { Button, FormField, Text } from '@/components/ui';
+import { VerificationCodeStep } from '@/components/auth/VerificationCodeStep';
 import { useTranslate } from '@/hooks/useTranslate';
 import { completeAuthSession } from '@/lib/auth/completeAuthSession';
 import { runAuthAction } from '@/lib/auth/runAuthAction';
+import { ROUTES } from '@/lib/routes';
 
-export const RegisterVerificationStep = () => {
+export type RegisterVerificationStepProps = {
+  identifier: string;
+};
+
+export const RegisterVerificationStep = ({ identifier }: RegisterVerificationStepProps) => {
   const router = useRouter();
   const { t } = useTranslate();
   const { signUp } = useSignUp();
-  const { control, handleSubmit, formState } = useForm<RegisterVerificationValues>({
-    resolver: zodResolver(registerVerificationSchema),
-    defaultValues: { code: '' },
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onVerify = handleSubmit(async ({ code }) => {
+  const onVerify = async (code: string) => {
     await runAuthAction(async () => {
-      const { error } = await signUp.verifications.verifyEmailCode({ code });
+      setIsSubmitting(true);
 
-      if (error) {
-        throw error;
-      }
+      try {
+        const { error } = await signUp.verifications.verifyEmailCode({ code });
 
-      if (signUp.status === 'complete') {
-        await completeAuthSession(signUp, {
-          router,
-          successTitle: t('register_success_title'),
-          successDescription: t('register_success_description'),
-        });
+        if (error) {
+          throw error;
+        }
+
+        if (signUp.status === 'complete') {
+          await completeAuthSession(signUp, {
+            router,
+            successTitle: t('register_success_title'),
+            successDescription: t('register_success_description'),
+          });
+        }
+      } finally {
+        setIsSubmitting(false);
       }
     });
-  });
+  };
+
+  const onResendCode = async () => {
+    await runAuthAction(async () => {
+      await signUp.verifications.sendEmailCode();
+    });
+  };
 
   return (
-    <>
-      <Text size="sm" color="foreground-muted" align="center">
-        {t('register_verification_prompt')}
-      </Text>
-      <FormField control={control} name="code" label={t('register_verification_code_label')} />
-      <Button fullWidth size="lg" loading={formState.isSubmitting} onPress={onVerify}>
-        {t('register_verify_button')}
-      </Button>
-    </>
+    <VerificationCodeStep
+      identifier={identifier}
+      fallbackHref={ROUTES.register}
+      onVerify={onVerify}
+      onResend={onResendCode}
+      isSubmitting={isSubmitting}
+    />
   );
 };

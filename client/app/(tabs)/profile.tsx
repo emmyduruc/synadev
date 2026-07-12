@@ -8,6 +8,7 @@ import { ProfileMyProfileContent } from '@/components/profile/ProfileMyProfileCo
 import { ProfileTabBar, type ProfileTabOption } from '@/components/profile/ProfileTabBar';
 import { ProfileTabPlaceholder } from '@/components/profile/ProfileTabPlaceholder';
 import { AppHeader, Box } from '@/components/ui';
+import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
 import { useTranslate } from '@/hooks/useTranslate';
 import { PROFILE_TAB, type ProfileTabId } from '@/lib/profile/constants';
@@ -16,6 +17,7 @@ const ProfileTabScreen = () => {
   const { t } = useTranslate();
   const [activeTabId, setActiveTabId] = useState<ProfileTabId>(PROFILE_TAB.myProfile);
   const { percent, isVisible, isLoading, dismiss } = useProfileCompletionBanner();
+  const openBioDataWizard = useOpenBioDataWizard();
 
   const tabs: readonly ProfileTabOption[] = [
     { id: PROFILE_TAB.myProfile, label: t('profile_tab_my_profile') },
@@ -63,6 +65,7 @@ const ProfileTabScreen = () => {
             <Box style={styles.bannerOverlay} pointerEvents="box-none">
               <ProfileCompletionBanner
                 percent={percent}
+                onPress={openBioDataWizard}
                 onDismiss={() => {
                   void dismiss();
                 }}

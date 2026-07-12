@@ -120,5 +120,20 @@
   "health_metric_active_energy": "Aktive Energie",
   "health_metric_active_calories": "Aktive Kalorien",
   "health_metric_exercise_minutes": "Trainingsminuten",
-  "health_metric_sleep": "Schlaf"
+  "health_metric_sleep": "Schlaf",
+  "verification_code_title": "Code eingeben",
+  "verification_code_resend_prompt": "Nichts erhalten? Kein Problem, versuch es noch einmal.",
+  "header_back_accessibility_label": "Zurück",
+  "wizard_previous_button": "Zurück",
+  "wizard_next_button": "Weiter",
+  "wizard_finish_button": "Fertig",
+  "wizard_skip_button": "Überspringen",
+  "wizard_step_progress": "Schritt {{current}} von {{total}}",
+  "wizard_bio_eyebrow": "Lernen wir uns kennen",
+  "wizard_bio_first_name_title": "Wie sollen wir dich nennen?",
+  "wizard_bio_last_name_title": "Und dein Nachname?",
+  "wizard_bio_date_of_birth_title": "Wann bist du geboren?",
+  "wizard_bio_age_requirement_error": "Du musst mindestens 18 Jahre alt sein, um SYNA zu nutzen.",
+  "wizard_date_of_birth_age_hint": "Wir nutzen dein Geburtsdatum für personalisierte Einblicke. Du musst mindestens 18 sein.",
+  "wizard_date_of_birth_select_label": "Auswählen"
 }

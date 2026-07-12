@@ -1,7 +1,7 @@
 import type { SignInFutureResource, SignUpFutureResource } from '@clerk/shared/types';
 import type { Href } from 'expo-router';
 
-import { ROUTES } from '@/lib/routes';
+import { resolvePostAuthDestination } from '@/lib/auth/postAuthDestination';
 import { toast } from '@/lib/sonner';
 
 type AuthRouter = {
@@ -25,7 +25,7 @@ export const completeAuthSession = async (
   }
 
   const { error } = await auth.finalize({
-    navigate: ({ session, decorateUrl }) => {
+    navigate: async ({ session, decorateUrl }) => {
       if (session?.currentTask) {
         return;
       }
@@ -34,7 +34,8 @@ export const completeAuthSession = async (
         description: successDescription,
       });
 
-      router.replace(decorateUrl(ROUTES.home) as Href);
+      const destination = await resolvePostAuthDestination();
+      router.replace(decorateUrl(destination as string) as Href);
     },
   });
 

@@ -22,6 +22,13 @@ export const RootLayoutNav = () => {
         <Stack.Screen name="login" />
         <Stack.Screen name="forgot-password" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="onboarding/bio-data"
+          options={{
+            presentation: 'fullScreenModal',
+            gestureEnabled: false,
+          }}
+        />
       </Stack>
       <Toaster
         position="top-center"

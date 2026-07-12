@@ -3043,6 +3043,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@quidone/react-native-wheel-picker@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "@quidone/react-native-wheel-picker@npm:1.7.1"
+  dependencies:
+    "@rozhkov/react-useful-hooks": "npm:^1.0.10"
+    date-fns: "npm:^4.1.0"
+  peerDependencies:
+    react: ">=16.8"
+    react-native: ">=0.71.6"
+  checksum: 10c0/2190ca0229c2bcfcd79bb952c2f6ce0f238e11f278d82d48f396ec977052d9a7ae5c4fe710b927ef38cfa3ede04b1684079a8f3b051057cf40b54e48b46893cb
+  languageName: node
+  linkType: hard
+
 "@radix-ui/primitive@npm:1.1.4":
   version: 1.1.4
   resolution: "@radix-ui/primitive@npm:1.1.4"
@@ -3625,6 +3638,17 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/df5006e01e2f527f4fd46b93db17f3dbf8fd18c832e4ad9b1b43c544a83b4b2fca34ba72114ad9679968043e7fa6f9fe352bcee250799b9b973d0998b446ca50
+  languageName: node
+  linkType: hard
+
+"@rozhkov/react-useful-hooks@npm:^1.0.10":
+  version: 1.0.10
+  resolution: "@rozhkov/react-useful-hooks@npm:1.0.10"
+  dependencies:
+    default-values: "npm:^1.0.2"
+  peerDependencies:
+    react: ^16.8 || ^17 || ^18 || ^19
+  checksum: 10c0/943022d5b900cd400ca42a0ff7a828b1ef91ca76d86bcd5c078ea4b0e43cd7b827706b2caa5513d4656598144a50479db0c88d332c01cb39a67208f6686c45c5
   languageName: node
   linkType: hard
 
@@ -4800,6 +4824,7 @@ __metadata:
     "@expo/config-plugins": "npm:^57.0.2"
     "@hookform/resolvers": "npm:^5.4.0"
     "@kingstinct/react-native-healthkit": "npm:^14.0.2"
+    "@quidone/react-native-wheel-picker": "npm:^1.7.1"
     "@react-native/metro-config": "npm:^0.86.0"
     "@syna/design-tokens": "workspace:*"
     "@syna/eslint-config": "workspace:*"
@@ -7658,6 +7683,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-fns@npm:^4.1.0":
+  version: 4.4.0
+  resolution: "date-fns@npm:4.4.0"
+  checksum: 10c0/988f0a13db183f5dfc85c36bbb6847a9c135a9225888bbea4005876ec15539a8613c21a07370a4e7ea543918d5a1cafb423c528b42cdbbde5fdfddb178126b21
+  languageName: node
+  linkType: hard
+
 "dayjs@npm:^1.11.20":
   version: 1.11.21
   resolution: "dayjs@npm:1.11.21"
@@ -7732,6 +7764,13 @@ __metadata:
   version: 4.3.1
   resolution: "deepmerge@npm:4.3.1"
   checksum: 10c0/e53481aaf1aa2c4082b5342be6b6d8ad9dfe387bc92ce197a66dea08bd4265904a087e75e464f14d1347cf2ac8afe1e4c16b266e0561cc5df29382d3c5f80044
+  languageName: node
+  linkType: hard
+
+"default-values@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "default-values@npm:1.0.2"
+  checksum: 10c0/f785452cdbb9ef81fd8660e0001f0bd22a6692a63b8b8fb515d5757fe59bfe9af26910c3239d7693d5bc992afcb2431f55da5cc4c8b78651ed179d81125edc08
   languageName: node
   linkType: hard
 

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useTranslate } from '@/hooks/useTranslate';
 import { AUTH_STRATEGY } from '@/lib/auth/constants';
 import { getAuthErrorMessage } from '@/lib/auth/errors';
-import { ROUTES } from '@/lib/routes';
+import { resolvePostAuthDestination } from '@/lib/auth/postAuthDestination';
 import { toast } from '@/lib/sonner';
 
 void WebBrowser.maybeCompleteAuthSession();
@@ -31,7 +31,8 @@ export const useSocialAuth = () => {
         toast.success(t('login_success_title'), {
           description: t('login_success_description'),
         });
-        router.replace(ROUTES.home);
+        const destination = await resolvePostAuthDestination();
+        router.replace(destination);
       }
     } catch (caught) {
       toast.error(getAuthErrorMessage(caught));
