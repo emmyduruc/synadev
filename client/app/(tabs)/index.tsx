@@ -73,6 +73,8 @@ const StartTabScreen = () => {
                       params: { mode: CALENDAR_MODE.editPeriod },
                     })
                   }
+                  onOpenSymptoms={() => router.push(ROUTES.symptoms)}
+                  onOpenMood={() => router.push(ROUTES.mood)}
                 />
               </Box>
               <DashboardInsightsSection />

@@ -1,18 +1,9 @@
 import * as SecureStore from 'expo-secure-store';
 
+import { isDateKey } from '@/lib/date/dateKeys';
 import { PERIOD_DATES_STORAGE_KEY } from '@/lib/period/constants';
 
-const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-
-export const toDateKey = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
-};
-
-const isDateKey = (value: string): boolean => DATE_KEY_PATTERN.test(value);
+export { toDateKey } from '@/lib/date/dateKeys';
 
 export const loadPeriodDateKeys = async (): Promise<string[]> => {
   const raw = await SecureStore.getItemAsync(PERIOD_DATES_STORAGE_KEY);

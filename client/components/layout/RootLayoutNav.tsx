@@ -35,6 +35,18 @@ export const RootLayoutNav = () => {
             presentation: 'fullScreenModal',
           }}
         />
+        <Stack.Screen
+          name="symptoms/index"
+          options={{
+            presentation: 'fullScreenModal',
+          }}
+        />
+        <Stack.Screen
+          name="mood/index"
+          options={{
+            presentation: 'fullScreenModal',
+          }}
+        />
       </Stack>
       <Toaster
         position="top-center"

@@ -19,12 +19,16 @@ import { cn, semanticColors } from '@/lib/ui';
 export type DashboardCheckInCardProps = {
   onCelebrate: (action: (typeof CONFETTI_ACTION)[keyof typeof CONFETTI_ACTION]) => void;
   onEditPeriod: () => void;
+  onOpenSymptoms: () => void;
+  onOpenMood: () => void;
   embedded?: boolean;
 };
 
 export const DashboardCheckInCard = ({
   onCelebrate,
   onEditPeriod,
+  onOpenSymptoms,
+  onOpenMood,
   embedded = false,
 }: DashboardCheckInCardProps) => {
   const { t } = useTranslate();
@@ -69,14 +73,14 @@ export const DashboardCheckInCard = ({
             icon={<SymptomsIcon size={22} color={semanticColors.dashboardIcon.onLavender} />}
             iconWellClassName={DASHBOARD_ICON_WELL.symptoms}
             surfaceClassName={DASHBOARD_QUICK_ACTION_SURFACE.symptoms}
-            onPress={() => onCelebrate(CONFETTI_ACTION.symptomsLogged)}
+            onPress={onOpenSymptoms}
           />
           <DashboardQuickActionButton
             label={t('dashboard_quick_action_mood')}
             icon={<MoodIcon size={22} color={semanticColors.dashboardIcon.onApricot} />}
             iconWellClassName={DASHBOARD_ICON_WELL.mood}
             surfaceClassName={DASHBOARD_QUICK_ACTION_SURFACE.mood}
-            onPress={() => onCelebrate(CONFETTI_ACTION.moodLogged)}
+            onPress={onOpenMood}
           />
         </Box>
       </Box>

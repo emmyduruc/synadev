@@ -9,7 +9,7 @@ export type ChevronLeftIconProps = {
 
 export const ChevronLeftIcon = ({
   size = 22,
-  color = semanticColors.foreground,
+  color = semanticColors.foregroundMuted,
 }: ChevronLeftIconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path
