@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useProfileHealthConnection } from '@/hooks/useProfileHealthConnection';
 import { readHealthSnapshot } from '@/lib/health/healthData';
+import { logHealthSnapshotDebug } from '@/lib/health/healthDebug';
 import {
   EMPTY_DASHBOARD_HEALTH_METRICS,
   parseDashboardHealthMetrics,
@@ -24,6 +25,14 @@ export const useDashboardHealth = () => {
   );
   const [isLoadingMetrics, setIsLoadingMetrics] = useState(false);
 
+  const applyHealthSnapshot = useCallback((snapshot: HealthRawSnapshot) => {
+    const parsedMetrics = parseDashboardHealthMetrics(snapshot);
+    logHealthSnapshotDebug(snapshot, parsedMetrics);
+    setHealthSnapshot(snapshot);
+    setMetrics(parsedMetrics);
+    return parsedMetrics;
+  }, []);
+
   const loadMetrics = useCallback(async () => {
     if (!isConnected) {
       setHealthSnapshot(null);
@@ -35,12 +44,11 @@ export const useDashboardHealth = () => {
 
     try {
       const snapshot = await readHealthSnapshot();
-      setHealthSnapshot(snapshot);
-      setMetrics(parseDashboardHealthMetrics(snapshot));
+      applyHealthSnapshot(snapshot);
     } finally {
       setIsLoadingMetrics(false);
     }
-  }, [isConnected]);
+  }, [applyHealthSnapshot, isConnected]);
 
   useEffect(() => {
     void loadMetrics();
@@ -54,14 +62,13 @@ export const useDashboardHealth = () => {
 
     try {
       const snapshot = await readHealthSnapshot();
-      setHealthSnapshot(snapshot);
-      setMetrics(parseDashboardHealthMetrics(snapshot));
+      applyHealthSnapshot(snapshot);
 
       return snapshot.metrics.some((metric) => !metric.error);
     } finally {
       setIsLoadingMetrics(false);
     }
-  }, [connectHealth, refreshSummary]);
+  }, [applyHealthSnapshot, connectHealth, refreshSummary]);
 
   return {
     summary,

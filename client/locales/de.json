@@ -141,6 +141,7 @@
   "dashboard_greeting_tagline": "Du kennst deinen Körper. SYNA liefert den Überblick.",
   "dashboard_greeting_description": "Halte fest, was dir auffällt. SYNA führt Symptome, Zyklusdaten und Alltagsinformationen in einer persönlichen Übersicht zusammen — damit du Veränderungen besser verstehst und gezielter mit deiner Ärztin oder deinem Arzt sprechen kannst.",
   "dashboard_health_connect_hint": "Verbinde unten deine Gesundheitsdaten, um Schritte, Aktivität, HRV und Schlaf hier zu sehen.",
+  "dashboard_health_today_label": "Heute",
   "dashboard_health_trend_label": "vs. Vorwoche",
   "dashboard_week_calendar_title": "Diese Woche",
   "dashboard_open_calendar_accessibility_label": "Kalender öffnen",

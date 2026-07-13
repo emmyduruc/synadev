@@ -17,7 +17,7 @@ export const DashboardInsightsSection = () => {
   return (
     <Box gap="sm">
       <Box gap="xs">
-        <Text size="2xl" weight="bold">
+        <Text size="lg" weight="bold">
           {t('dashboard_insights_title')}
         </Text>
         <Text size="sm" color="foreground-muted" className="leading-relaxed">

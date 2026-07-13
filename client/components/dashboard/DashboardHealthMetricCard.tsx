@@ -41,11 +41,11 @@ export const DashboardHealthMetricCard = ({
   const { t } = useTranslate();
 
   return (
-    <Box flex={1} className={cn(surfaceClassName, 'min-w-[74px] px-3 py-3')}>
+    <Box className={cn(surfaceClassName, 'w-[108px] shrink-0 px-3.5 py-3.5')}>
       <Box
         align="center"
         justify="center"
-        className={cn('mb-2 h-9 w-9 rounded-full', iconBackgroundClassName)}>
+        className={cn('mb-2.5 h-11 w-11 rounded-full', iconBackgroundClassName)}>
         {icon}
       </Box>
       <Text size="lg" weight="bold" align="center" responsive={false} className="leading-tight">

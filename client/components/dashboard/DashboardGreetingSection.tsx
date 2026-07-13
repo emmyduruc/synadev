@@ -12,14 +12,14 @@ export const DashboardGreetingSection = ({ firstName }: DashboardGreetingSection
   const greetingName = trimmedName.length > 0 ? trimmedName : t('dashboard_greeting_fallback_name');
 
   return (
-    <Box gap="md">
-      <Text size="4xl" weight="bold" className="leading-tight">
+    <Box gap="sm">
+      <Text size="2xl" weight="bold" className="leading-tight">
         {t('dashboard_greeting_title', { firstName: greetingName })}
       </Text>
-      <Text size="lg" weight="semibold" className="leading-snug">
+      <Text size="sm" weight="semibold" className="leading-snug">
         {t('dashboard_greeting_tagline')}
       </Text>
-      <Text size="sm" className="leading-relaxed text-black">
+      <Text size="xs" className="leading-relaxed text-black">
         {t('dashboard_greeting_description')}
       </Text>
     </Box>
