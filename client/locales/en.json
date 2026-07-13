@@ -276,5 +276,13 @@
   "mood_angry": "Angry",
   "mood_tearful": "Tearful",
   "mood_unmotivated": "Unmotivated",
-  "mood_lonely": "Lonely"
+  "mood_lonely": "Lonely",
+  "loading_mascot_cycle_title": "Hang on!",
+  "loading_mascot_cycle_message": "We're lining up your cycle months — almost there!",
+  "loading_mascot_symptoms_title": "One moment!",
+  "loading_mascot_symptoms_message": "We're getting your symptom log ready for you.",
+  "loading_mascot_mood_title": "Hang tight!",
+  "loading_mascot_mood_message": "We're preparing your mood check-in — hooray!",
+  "loading_mascot_generic_title": "Just a sec!",
+  "loading_mascot_generic_message": "Something lovely is on its way."
 }

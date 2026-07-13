@@ -10,6 +10,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ConfettiProvider } from '@/components/gamification/ConfettiProvider';
 import { RootLayoutNav } from '@/components/layout/RootLayoutNav';
+import { MascotLoadingProvider } from '@/components/loading/MascotLoadingProvider';
 import { SplashScreen as BrandSplash } from '@/components/screens/SplashScreen';
 import { getClerkPublishableKey } from '@/lib/clerk/env';
 import { useAppFonts } from '@/lib/fonts/useAppFonts';
@@ -58,7 +59,9 @@ const RootLayout = () => {
             <BrandSplash />
           ) : (
             <ConfettiProvider>
-              <RootLayoutNav />
+              <MascotLoadingProvider>
+                <RootLayoutNav />
+              </MascotLoadingProvider>
             </ConfettiProvider>
           )}
         </SafeAreaProvider>

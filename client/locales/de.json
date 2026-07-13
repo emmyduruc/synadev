@@ -276,5 +276,13 @@
   "mood_angry": "Wütend",
   "mood_tearful": "Den Tränen nahe",
   "mood_unmotivated": "Antriebslos",
-  "mood_lonely": "Einsam"
+  "mood_lonely": "Einsam",
+  "loading_mascot_cycle_title": "Einen Moment!",
+  "loading_mascot_cycle_message": "Wir richten deine Zyklusmonate ein — gleich geschafft!",
+  "loading_mascot_symptoms_title": "Kurz warten!",
+  "loading_mascot_symptoms_message": "Wir bereiten dein Symptom-Tagebuch vor.",
+  "loading_mascot_mood_title": "Gleich geht's los!",
+  "loading_mascot_mood_message": "Wir bereiten deinen Stimmungs-Check-in vor — hooray!",
+  "loading_mascot_generic_title": "Nur eine Sekunde!",
+  "loading_mascot_generic_message": "Etwas Schönes ist unterwegs."
 }
