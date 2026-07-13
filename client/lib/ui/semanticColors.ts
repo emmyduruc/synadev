@@ -50,6 +50,23 @@ export const semanticColors = {
   authGlass: 'rgba(255, 255, 255, 0.88)',
   authGlassBorder: 'rgba(255, 255, 255, 0.6)',
   authDivider: colors.lavender.DEFAULT,
+  /** Dashboard icons — Ovum + primary pairings */
+  dashboardIcon: {
+    onPrimary: colors.card.DEFAULT,
+    steps: colors.primary[600],
+    activity: colors.primary[700],
+    hrv: colors.primary[600],
+    sleep: colors.primary[700],
+    period: colors.card.DEFAULT,
+    symptoms: colors.primary[700],
+    mood: colors.primary[700],
+    sparkle: colors.card.DEFAULT,
+    calendar: colors.primary[600],
+    insight: colors.primary[600],
+    cycle: colors.primary[600],
+    onLavender: colors.primary[700],
+    onApricot: colors.primary[700],
+  },
   socialIcon: {
     apple: colors.foreground.DEFAULT,
     googleBlue: '#4285F4',

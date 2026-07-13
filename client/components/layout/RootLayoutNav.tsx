@@ -29,6 +29,12 @@ export const RootLayoutNav = () => {
             gestureEnabled: false,
           }}
         />
+        <Stack.Screen
+          name="calendar/index"
+          options={{
+            presentation: 'fullScreenModal',
+          }}
+        />
       </Stack>
       <Toaster
         position="top-center"

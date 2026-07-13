@@ -8,6 +8,7 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { ConfettiProvider } from '@/components/gamification/ConfettiProvider';
 import { RootLayoutNav } from '@/components/layout/RootLayoutNav';
 import { SplashScreen as BrandSplash } from '@/components/screens/SplashScreen';
 import { getClerkPublishableKey } from '@/lib/clerk/env';
@@ -53,7 +54,13 @@ const RootLayout = () => {
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <GestureHandlerRootView style={styles.root}>
         <SafeAreaProvider>
-          {isSplashVisible ? <BrandSplash /> : <RootLayoutNav />}
+          {isSplashVisible ? (
+            <BrandSplash />
+          ) : (
+            <ConfettiProvider>
+              <RootLayoutNav />
+            </ConfettiProvider>
+          )}
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </ClerkProvider>

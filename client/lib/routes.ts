@@ -7,6 +7,7 @@ export const ROUTES = {
   onboarding: {
     bioData: '/onboarding/bio-data',
   },
+  calendar: '/calendar',
   tabs: {
     start: '/(tabs)',
     patterns: '/(tabs)/patterns',
