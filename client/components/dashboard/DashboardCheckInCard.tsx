@@ -18,11 +18,13 @@ import { cn, semanticColors } from '@/lib/ui';
 
 export type DashboardCheckInCardProps = {
   onCelebrate: (action: (typeof CONFETTI_ACTION)[keyof typeof CONFETTI_ACTION]) => void;
+  onEditPeriod: () => void;
   embedded?: boolean;
 };
 
 export const DashboardCheckInCard = ({
   onCelebrate,
+  onEditPeriod,
   embedded = false,
 }: DashboardCheckInCardProps) => {
   const { t } = useTranslate();
@@ -60,7 +62,7 @@ export const DashboardCheckInCard = ({
             icon={<PeriodIcon size={22} color={semanticColors.dashboardIcon.period} />}
             iconWellClassName={DASHBOARD_ICON_WELL.period}
             surfaceClassName={DASHBOARD_QUICK_ACTION_SURFACE.period}
-            onPress={() => onCelebrate(CONFETTI_ACTION.periodLogged)}
+            onPress={onEditPeriod}
           />
           <DashboardQuickActionButton
             label={t('dashboard_quick_action_symptoms')}

@@ -8,6 +8,7 @@ export const ROUTES = {
     bioData: '/onboarding/bio-data',
   },
   calendar: '/calendar',
+  calendarEditPeriod: '/calendar?mode=edit_period',
   tabs: {
     start: '/(tabs)',
     patterns: '/(tabs)/patterns',

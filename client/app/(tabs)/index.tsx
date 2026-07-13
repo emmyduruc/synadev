@@ -20,6 +20,7 @@ import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
 import { useTranslate } from '@/hooks/useTranslate';
 import { DASHBOARD_SURFACE } from '@/lib/dashboard/surfaces';
 import { CONFETTI_ACTION } from '@/lib/gamification/confettiActions';
+import { CALENDAR_MODE } from '@/lib/period/constants';
 import { ROUTES } from '@/lib/routes';
 import { cn } from '@/lib/ui';
 
@@ -63,7 +64,16 @@ const StartTabScreen = () => {
                   embedded
                   onOpenCalendar={() => router.push(ROUTES.calendar)}
                 />
-                <DashboardCheckInCard embedded onCelebrate={celebrate} />
+                <DashboardCheckInCard
+                  embedded
+                  onCelebrate={celebrate}
+                  onEditPeriod={() =>
+                    router.push({
+                      pathname: ROUTES.calendar,
+                      params: { mode: CALENDAR_MODE.editPeriod },
+                    })
+                  }
+                />
               </Box>
               <DashboardInsightsSection />
               <DashboardCyclePhaseCard />
