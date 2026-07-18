@@ -19,7 +19,7 @@ import {
 } from '@/lib/health/healthMetricDisplay';
 import { semanticColors } from '@/lib/ui';
 
-const METRIC_ICON_SIZE = 22;
+const METRIC_ICON_SIZE = 18;
 
 export type DashboardHealthMetricsRowProps = {
   metrics: readonly DashboardHealthMetricDisplay[];

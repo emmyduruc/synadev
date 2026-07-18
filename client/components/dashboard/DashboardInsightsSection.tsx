@@ -18,10 +18,10 @@ import { semanticColors } from '@/lib/ui';
 
 const CARD_ICONS = {
   [INSIGHT_ICON_KEY.pattern]: (
-    <InsightPatternIcon size={28} color={semanticColors.dashboardIcon.insight} />
+    <InsightPatternIcon size={20} color={semanticColors.dashboardIcon.insight} />
   ),
-  [INSIGHT_ICON_KEY.sleep]: <SleepIcon size={28} color={semanticColors.dashboardIcon.sleep} />,
-  [INSIGHT_ICON_KEY.flame]: <FlameIcon size={28} color={semanticColors.dashboardIcon.insight} />,
+  [INSIGHT_ICON_KEY.sleep]: <SleepIcon size={20} color={semanticColors.dashboardIcon.sleep} />,
+  [INSIGHT_ICON_KEY.flame]: <FlameIcon size={20} color={semanticColors.dashboardIcon.insight} />,
 } as const;
 
 const CARD_SURFACES = {

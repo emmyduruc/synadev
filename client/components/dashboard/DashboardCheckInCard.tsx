@@ -1,6 +1,9 @@
+import { ScrollView } from 'react-native';
+
 import { DashboardQuickActionButton } from './DashboardQuickActionButton';
 
 import { Box } from '@/components/ui/Box';
+import { BloodDropIcon } from '@/components/ui/icons/BloodDropIcon';
 import { MoodIcon } from '@/components/ui/icons/MoodIcon';
 import { PeriodIcon } from '@/components/ui/icons/PeriodIcon';
 import { SparkleIcon } from '@/components/ui/icons/SparkleIcon';
@@ -18,6 +21,7 @@ import { cn, semanticColors } from '@/lib/ui';
 
 export type DashboardCheckInCardProps = {
   onCelebrate: (action: (typeof CONFETTI_ACTION)[keyof typeof CONFETTI_ACTION]) => void;
+  onRecordPeriod: () => void;
   onEditPeriod: () => void;
   onOpenSymptoms: () => void;
   onOpenMood: () => void;
@@ -26,6 +30,7 @@ export type DashboardCheckInCardProps = {
 
 export const DashboardCheckInCard = ({
   onCelebrate,
+  onRecordPeriod,
   onEditPeriod,
   onOpenSymptoms,
   onOpenMood,
@@ -60,7 +65,20 @@ export const DashboardCheckInCard = ({
           </Box>
         </TouchableOpacity>
 
-        <Box direction="row" gap="sm" className="mt-4">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          className="mt-4"
+          contentContainerStyle={{ gap: 8, paddingRight: 4 }}>
+          <DashboardQuickActionButton
+            label={t('dashboard_quick_action_record_period')}
+            icon={
+              <BloodDropIcon size={22} color={semanticColors.dashboardIcon.recordPeriod} />
+            }
+            iconWellClassName={DASHBOARD_ICON_WELL.recordPeriod}
+            surfaceClassName={DASHBOARD_QUICK_ACTION_SURFACE.recordPeriod}
+            onPress={onRecordPeriod}
+          />
           <DashboardQuickActionButton
             label={t('dashboard_quick_action_period')}
             icon={<PeriodIcon size={22} color={semanticColors.dashboardIcon.period} />}
@@ -82,7 +100,7 @@ export const DashboardCheckInCard = ({
             surfaceClassName={DASHBOARD_QUICK_ACTION_SURFACE.mood}
             onPress={onOpenMood}
           />
-        </Box>
+        </ScrollView>
       </Box>
     </Box>
   );

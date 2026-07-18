@@ -41,24 +41,35 @@ export const DashboardHealthMetricCard = ({
   const { t } = useTranslate();
 
   return (
-    <Box className={cn(surfaceClassName, 'w-[108px] shrink-0 px-3.5 py-3.5')}>
+    <Box
+      direction="row"
+      align="center"
+      gap="sm"
+      className={cn(surfaceClassName, 'w-[148px] shrink-0 px-3 py-2.5')}>
       <Box
         align="center"
         justify="center"
-        className={cn('mb-2.5 h-11 w-11 rounded-full', iconBackgroundClassName)}>
+        className={cn('h-9 w-9 shrink-0 rounded-full', iconBackgroundClassName)}>
         {icon}
       </Box>
-      <Text size="lg" weight="bold" align="center" responsive={false} className="leading-tight">
-        {metric.value}
-      </Text>
-      <Text size="2xs" color="foreground-muted" align="center" responsive={false} className="mt-1">
-        {t(labelKey)}
-      </Text>
-      {metric.trendDirection ? (
-        <Text size="2xs" color="foreground-muted" align="center" responsive={false} className="mt-1">
-          {getTrendSymbol(metric.trendDirection)} {t('dashboard_health_trend_label')}
+      <Box flex={1} className="min-w-0">
+        <Text size="base" weight="bold" responsive={false} className="leading-tight" numberOfLines={1}>
+          {metric.value}
         </Text>
-      ) : null}
+        <Text
+          size="2xs"
+          color="foreground-muted"
+          responsive={false}
+          className="mt-0.5 leading-tight"
+          numberOfLines={1}>
+          {t(labelKey)}
+        </Text>
+        {metric.trendDirection ? (
+          <Text size="2xs" color="foreground-muted" responsive={false} className="mt-0.5">
+            {getTrendSymbol(metric.trendDirection)} {t('dashboard_health_trend_label')}
+          </Text>
+        ) : null}
+      </Box>
     </Box>
   );
 };

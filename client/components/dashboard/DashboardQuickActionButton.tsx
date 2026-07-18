@@ -23,7 +23,7 @@ export const DashboardQuickActionButton = ({
   <TouchableOpacity
     accessibilityRole="button"
     onPress={onPress}
-    className={cn(surfaceClassName, 'min-w-[92px] flex-1 items-center px-2 py-3')}>
+    className={cn(surfaceClassName, 'w-[100px] shrink-0 items-center px-2 py-3')}>
     <Box
       align="center"
       justify="center"

@@ -67,6 +67,12 @@ const StartTabScreen = () => {
                 <DashboardCheckInCard
                   embedded
                   onCelebrate={celebrate}
+                  onRecordPeriod={() =>
+                    router.push({
+                      pathname: ROUTES.calendar,
+                      params: { mode: CALENDAR_MODE.editPeriod },
+                    })
+                  }
                   onEditPeriod={() =>
                     router.push({
                       pathname: ROUTES.calendar,
@@ -77,8 +83,8 @@ const StartTabScreen = () => {
                   onOpenMood={() => router.push(ROUTES.mood)}
                 />
               </Box>
-              <DashboardInsightsSection />
               <DashboardCyclePhaseCard />
+              <DashboardInsightsSection />
               <DashboardConnectHealthSection
                 healthSnapshot={healthSnapshot}
                 errorMessage={errorMessage}

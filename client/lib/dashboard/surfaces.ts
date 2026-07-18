@@ -47,6 +47,7 @@ export const DASHBOARD_ICON_WELL = {
   hrv: `${iconWellBase} bg-card border-lavender`,
   sleep: `${iconWellBase} bg-card border-apricot`,
   period: `${iconWellBase} bg-primary-500 border-primary-400`,
+  recordPeriod: `${iconWellBase} bg-dusty-rose border-dusty-rose-light`,
   symptoms: `${iconWellBase} bg-lavender border-lavender-light`,
   mood: `${iconWellBase} bg-apricot border-apricot-light`,
   sparkle: `${iconWellBase} bg-primary-500 border-primary-400`,
@@ -55,6 +56,7 @@ export const DASHBOARD_ICON_WELL = {
 } as const;
 
 export const DASHBOARD_QUICK_ACTION_SURFACE = {
+  recordPeriod: `${tintedTile} border-dusty-rose bg-dusty-rose-light`,
   period: `${tintedTile} border-primary-200 bg-primary-50`,
   symptoms: `${tintedTile} border-lavender bg-lavender-light`,
   mood: `${tintedTile} border-apricot bg-apricot-light`,

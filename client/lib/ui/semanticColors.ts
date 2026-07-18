@@ -58,6 +58,7 @@ export const semanticColors = {
     hrv: colors.primary[600],
     sleep: colors.primary[700],
     period: colors.card.DEFAULT,
+    recordPeriod: colors.primary[700],
     symptoms: colors.primary[700],
     mood: colors.primary[700],
     sparkle: colors.card.DEFAULT,
