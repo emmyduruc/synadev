@@ -90,6 +90,19 @@ export const buildYearMonths = (year: number, today = new Date()): CalendarMonth
     weeks: buildMonthGrid(year, monthIndex, today),
   }));
 
+/** Single calendar month for the current reference date (Record Period UI). */
+export const buildCurrentMonth = (referenceDate = new Date()): CalendarMonth => {
+  const year = referenceDate.getFullYear();
+  const monthIndex = referenceDate.getMonth();
+
+  return {
+    monthIndex,
+    year,
+    labelKey: `calendar_month_${monthIndex + 1}`,
+    weeks: buildMonthGrid(year, monthIndex, referenceDate),
+  };
+};
+
 export const WEEKDAY_LABEL_KEYS = [
   'calendar_weekday_mon',
   'calendar_weekday_tue',

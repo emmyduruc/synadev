@@ -67,12 +67,7 @@ const StartTabScreen = () => {
                 <DashboardCheckInCard
                   embedded
                   onCelebrate={celebrate}
-                  onRecordPeriod={() =>
-                    router.push({
-                      pathname: ROUTES.calendar,
-                      params: { mode: CALENDAR_MODE.editPeriod },
-                    })
-                  }
+                  onRecordPeriod={() => router.push(ROUTES.recordPeriod)}
                   onEditPeriod={() =>
                     router.push({
                       pathname: ROUTES.calendar,

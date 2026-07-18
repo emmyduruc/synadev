@@ -9,6 +9,7 @@ export const ROUTES = {
   },
   calendar: '/calendar',
   calendarEditPeriod: '/calendar?mode=edit_period',
+  recordPeriod: '/record-period',
   symptoms: '/symptoms',
   mood: '/mood',
   tabs: {
