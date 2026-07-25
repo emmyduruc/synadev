@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-syntax -- TypeORM entities must be classes */
+import type { UserHealthMetrics } from '@syna/shared-types';
 import {
   Column,
   CreateDateColumn,
@@ -11,6 +12,7 @@ import {
 /**
  * 1NF identity + bio profile table.
  * Auth credentials stay in Clerk — we only store clerk_id + profile attributes.
+ * Health metrics are a typed JSONB snapshot (not raw sample history).
  */
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -36,6 +38,9 @@ export class UserEntity {
 
   @Column({ type: 'text', nullable: true })
   address!: string | null;
+
+  @Column({ name: 'health_metrics', type: 'jsonb', nullable: true })
+  healthMetrics!: UserHealthMetrics | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;

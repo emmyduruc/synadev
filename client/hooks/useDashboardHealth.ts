@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useProfileHealthConnection } from '@/hooks/useProfileHealthConnection';
+import { updateCurrentUserHealthMetrics } from '@/lib/api';
 import { readHealthSnapshot } from '@/lib/health/healthData';
 import { logHealthSnapshotDebug } from '@/lib/health/healthDebug';
 import {
@@ -8,7 +9,16 @@ import {
   parseDashboardHealthMetrics,
   type DashboardHealthMetricDisplay,
 } from '@/lib/health/healthMetricDisplay';
+import { toUserHealthMetrics } from '@/lib/health/toUserHealthMetrics';
 import type { HealthRawSnapshot } from '@/lib/health/types';
+
+const persistHealthMetricsSnapshot = async (snapshot: HealthRawSnapshot): Promise<void> => {
+  try {
+    await updateCurrentUserHealthMetrics(toUserHealthMetrics(snapshot));
+  } catch {
+    // Device read still succeeds; DB sync is best-effort until offline queue exists.
+  }
+};
 
 export const useDashboardHealth = () => {
   const {
@@ -30,6 +40,7 @@ export const useDashboardHealth = () => {
     logHealthSnapshotDebug(snapshot, parsedMetrics);
     setHealthSnapshot(snapshot);
     setMetrics(parsedMetrics);
+    void persistHealthMetricsSnapshot(snapshot);
     return parsedMetrics;
   }, []);
 

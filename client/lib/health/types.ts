@@ -1,4 +1,6 @@
-export type HealthPlatform = 'ios-healthkit' | 'android-health-connect' | 'unsupported';
+import type { HealthPlatform } from '@syna/shared-types';
+
+export type { HealthPlatform };
 
 export type HealthReadStatus = 'idle' | 'connected' | 'unavailable' | 'error';
 

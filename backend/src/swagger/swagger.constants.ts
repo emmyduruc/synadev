@@ -2,6 +2,9 @@ export const SWAGGER_TAGS = {
   app: 'App',
   health: 'Health',
   users: 'Users',
+  period: 'Period',
+  mood: 'Mood',
+  symptoms: 'Symptoms',
   uploads: 'Uploads',
   emails: 'Emails',
 } as const;

@@ -1,3 +1,5 @@
+import type { SymptomCategoryId, SymptomId } from '@syna/shared-types';
+
 export const SYMPTOM_CATEGORY = {
   vasomotor: 'vasomotor',
   mood: 'mood',
@@ -7,12 +9,12 @@ export const SYMPTOM_CATEGORY = {
   urogenital: 'urogenital',
   digestion: 'digestion',
   skin: 'skin',
-} as const;
+} as const satisfies Record<string, SymptomCategoryId>;
 
-export type SymptomCategoryId = (typeof SYMPTOM_CATEGORY)[keyof typeof SYMPTOM_CATEGORY];
+export type { SymptomCategoryId };
 
 export type SymptomOption = {
-  id: string;
+  id: SymptomId;
   emoji: string;
   labelKey: string;
 };
@@ -27,10 +29,6 @@ export type SymptomCategory = {
   options: SymptomOption[];
 };
 
-/**
- * SYNA symptom taxonomy — tuned for peri/menopause (MRS-II aligned) rather than
- * the fertility-first Flo set. Grouped so logged data can feed the MRS subscales.
- */
 export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
   {
     id: SYMPTOM_CATEGORY.vasomotor,

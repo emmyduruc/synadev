@@ -1,3 +1,5 @@
+import type { SymptomId } from '@syna/shared-types';
+
 import { DailyLogChip } from '@/components/dailyLog/DailyLogChip';
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
@@ -7,8 +9,8 @@ import { cn } from '@/lib/ui';
 
 export type SymptomCategoryCardProps = {
   category: SymptomCategory;
-  selectedIds: ReadonlySet<string>;
-  onToggle: (symptomId: string) => void;
+  selectedIds: ReadonlySet<SymptomId>;
+  onToggle: (symptomId: SymptomId) => void;
   /** When false, only chips are rendered (title handled by accordion header). */
   showTitle?: boolean;
   className?: string;

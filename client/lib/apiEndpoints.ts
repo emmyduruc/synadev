@@ -26,27 +26,29 @@ export const USERS_ME_ABSOLUTE = absolute(USERS_ME);
 /** PATCH — update bio profile (firstName, lastName, dateOfBirth, address?) */
 export const USERS_ME_UPDATE = USERS_ME;
 
-// =============================================================================
-// MENSTRUAL CYCLE  (placeholder — wire when cycle API ships)
-// =============================================================================
-
-// export const CYCLE_LOGS = '/cycle/logs';
-// export const CYCLE_LOGS_ABSOLUTE = absolute(CYCLE_LOGS);
+/** PATCH — replace summarized health metrics JSONB snapshot */
+export const USERS_ME_HEALTH_METRICS = '/users/me/health-metrics';
+export const USERS_ME_HEALTH_METRICS_ABSOLUTE = absolute(USERS_ME_HEALTH_METRICS);
 
 // =============================================================================
-// SYMPTOMS  (placeholder)
+// MENSTRUAL CYCLE / PERIOD
 // =============================================================================
 
-// export const SYMPTOM_LOGS = '/symptoms/logs';
+export const PERIOD_DAYS = '/period/days';
+export const PERIOD_DAYS_ABSOLUTE = absolute(PERIOD_DAYS);
 
 // =============================================================================
-// MOOD  (placeholder)
+// SYMPTOMS
 // =============================================================================
 
-// export const MOOD_LOGS = '/mood/logs';
+export const SYMPTOM_CATALOG = '/symptoms/catalog';
+export const SYMPTOM_CATALOG_ABSOLUTE = absolute(SYMPTOM_CATALOG);
+export const SYMPTOM_LOGS = '/symptoms/logs';
+export const SYMPTOM_LOGS_ABSOLUTE = absolute(SYMPTOM_LOGS);
 
 // =============================================================================
-// HEALTH METRICS / WEARABLES  (placeholder)
+// MOOD
 // =============================================================================
 
-// export const HEALTH_METRICS = '/health/metrics';
+export const MOOD_LOGS = '/mood/logs';
+export const MOOD_LOGS_ABSOLUTE = absolute(MOOD_LOGS);

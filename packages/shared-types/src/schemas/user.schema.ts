@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+import { UserHealthMetricsSchema } from './health-metrics.schema';
+import { IsoDateSchema } from './iso-date.schema';
+
+export { IsoDateSchema } from './iso-date.schema';
+
 export const HealthResponseSchema = z.object({
   status: z.literal('ok').describe('Health check status indicator'),
   timestamp: z.string().datetime().describe('ISO 8601 timestamp of the health check'),
@@ -7,12 +12,6 @@ export const HealthResponseSchema = z.object({
 });
 
 export type HealthResponse = z.infer<typeof HealthResponseSchema>;
-
-/** ISO calendar date (YYYY-MM-DD) used for date of birth. */
-export const IsoDateSchema = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD')
-  .describe('ISO calendar date in YYYY-MM-DD format');
 
 export const UserSchema = z.object({
   id: z.string().uuid().describe('Unique Syna user identifier'),
@@ -31,13 +30,15 @@ export const UserSchema = z.object({
     .string()
     .nullable()
     .describe('Optional free-text address; reserved for future profile deepening'),
+  healthMetrics: UserHealthMetricsSchema.nullable().describe(
+    'Latest summarized health metrics snapshot (JSONB); null until first sync',
+  ),
   isBioComplete: z
     .boolean()
     .describe('True when firstName, lastName, and dateOfBirth are all set'),
   createdAt: z.string().datetime().describe('ISO 8601 timestamp when the user was created'),
   updatedAt: z.string().datetime().describe('ISO 8601 timestamp when the user was last updated'),
 });
-
 export type User = z.infer<typeof UserSchema>;
 
 export const UpdateUserProfileSchema = z.object({

@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import {
-  loadSymptomLogs,
-  saveSymptomLogs,
-  type SymptomLogMap,
-} from '@/lib/symptoms/symptomLogStorage';
+import { getSymptomLogs, replaceSymptomLogs } from '@/lib/api';
+import type { SymptomLogMap } from '@/lib/symptoms/symptomLogStorage';
 
 export const useSymptomLog = () => {
   const [logs, setLogs] = useState<SymptomLogMap>({});
@@ -14,11 +11,20 @@ export const useSymptomLog = () => {
     let isMounted = true;
 
     const load = async () => {
-      const stored = await loadSymptomLogs();
+      try {
+        const { logs: stored } = await getSymptomLogs();
 
-      if (isMounted) {
-        setLogs(stored);
-        setIsLoading(false);
+        if (isMounted) {
+          setLogs(stored);
+        }
+      } catch {
+        if (isMounted) {
+          setLogs({});
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -30,8 +36,8 @@ export const useSymptomLog = () => {
   }, []);
 
   const persist = useCallback(async (nextLogs: SymptomLogMap) => {
-    await saveSymptomLogs(nextLogs);
-    setLogs(nextLogs);
+    const { logs: saved } = await replaceSymptomLogs({ logs: nextLogs });
+    setLogs(saved);
   }, []);
 
   return { logs, isLoading, persist };

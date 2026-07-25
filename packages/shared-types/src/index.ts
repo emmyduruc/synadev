@@ -16,6 +16,81 @@ export type {
 } from './schemas/user.schema';
 
 export {
+  HEALTH_METRIC_KEY,
+  HEALTH_METRIC_KEYS,
+  HealthMetricKeySchema,
+  isHealthMetricKey,
+  HEALTH_PLATFORM,
+  HealthPlatformSchema,
+  UserHealthMetricValueSchema,
+  UserHealthMetricsMapSchema,
+  UserHealthMetricsSchema,
+  UpdateUserHealthMetricsSchema,
+} from './schemas/health-metrics.schema';
+
+export type {
+  HealthMetricKey,
+  HealthPlatform,
+  UserHealthMetricValue,
+  UserHealthMetricsMap,
+  UserHealthMetrics,
+  UpdateUserHealthMetrics,
+} from './schemas/health-metrics.schema';
+
+export {
+  PeriodDaysSchema,
+  ReplacePeriodDaysSchema,
+} from './schemas/period.schema';
+
+export type { PeriodDays, ReplacePeriodDays } from './schemas/period.schema';
+
+export {
+  MOOD_IDS,
+  MoodIdSchema,
+  isMoodId,
+  MOOD_SCALE_MAX,
+  MoodScaleSchema,
+  MoodEntrySchema,
+  MoodLogMapSchema,
+  MoodLogsSchema,
+  ReplaceMoodLogsSchema,
+} from './schemas/mood.schema';
+
+export type {
+  MoodId,
+  MoodEntry,
+  MoodLogMap,
+  MoodLogs,
+  ReplaceMoodLogs,
+} from './schemas/mood.schema';
+
+export {
+  SYMPTOM_CATEGORY_IDS,
+  SymptomCategoryIdSchema,
+  SYMPTOM_IDS,
+  SymptomIdSchema,
+  isSymptomId,
+  isSymptomCategoryId,
+  SymptomCatalogOptionSchema,
+  SymptomCatalogCategorySchema,
+  SymptomCatalogSchema,
+  SymptomLogMapSchema,
+  SymptomLogsSchema,
+  ReplaceSymptomLogsSchema,
+} from './schemas/symptoms.schema';
+
+export type {
+  SymptomCategoryId,
+  SymptomId,
+  SymptomCatalogOption,
+  SymptomCatalogCategory,
+  SymptomCatalog,
+  SymptomLogMap,
+  SymptomLogs,
+  ReplaceSymptomLogs,
+} from './schemas/symptoms.schema';
+
+export {
   UploadImageResponseSchema,
   ALLOWED_IMAGE_MIME_TYPES,
   MAX_IMAGE_UPLOAD_BYTES,

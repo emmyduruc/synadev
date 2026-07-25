@@ -1,5 +1,10 @@
+import type { MoodId } from '@syna/shared-types';
+import { MOOD_SCALE_MAX } from '@syna/shared-types';
+
+export { MOOD_SCALE_MAX };
+
 export type MoodOption = {
-  id: string;
+  id: MoodId;
   emoji: string;
   labelKey: string;
   /** Emoji well tint grouped by emotional tone */
@@ -13,6 +18,7 @@ const CHALLENGING_WELL = 'bg-lavender';
 /**
  * SYNA mood taxonomy — one primary mood + optional secondary feelings.
  * Ordered positive → neutral → challenging so the primary picker reads warmly.
+ * IDs come from `@syna/shared-types` (`MOOD_IDS`).
  */
 export const MOOD_OPTIONS: readonly MoodOption[] = [
   { id: 'happy', emoji: '😄', labelKey: 'mood_happy', wellClassName: POSITIVE_WELL },
@@ -40,5 +46,3 @@ export const MOOD_SECTION_SURFACE = {
   stress: 'border-apricot bg-apricot-light',
   note: 'border-secondary-200 bg-secondary-50',
 } as const;
-
-export const MOOD_SCALE_MAX = 5;

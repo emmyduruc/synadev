@@ -1,3 +1,4 @@
+import type { SymptomId } from '@syna/shared-types';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -17,13 +18,7 @@ import { CONFETTI_ACTION } from '@/lib/gamification/confettiActions';
 import { LOADING_VARIANT } from '@/lib/loading/loadingVariants';
 import type { SymptomLogMap } from '@/lib/symptoms/symptomLogStorage';
 
-/**
- * Record Period modal — single-select date wheel + cycle-critical symptom accordions.
- *
- * Persistence today: SecureStore via usePeriodDates + useSymptomLog.
- * TODO(api): Replace local persists with a single backend mutation that saves
- * cycle dates and symptoms together once the period/symptoms API is ready.
- */
+/** Record Period modal — date wheel + cycle-critical symptoms; persists via API. */
 const RecordPeriodScreen = () => {
   const router = useRouter();
   const { t } = useTranslate();
@@ -54,7 +49,7 @@ const RecordPeriodScreen = () => {
   );
 
   const handleToggleSymptom = useCallback(
-    (symptomId: string) => {
+    (symptomId: SymptomId) => {
       setDraftSymptoms((previous) => {
         const current = new Set(previous[selectedDateKey] ?? []);
 
@@ -78,7 +73,6 @@ const RecordPeriodScreen = () => {
     setIsSaving(true);
 
     try {
-      // Local-only for now — see file-level TODO(api) for backend persistence.
       const nextPeriodDates = new Set(dateKeys);
       nextPeriodDates.add(selectedDateKey);
       await persistPeriodDates(nextPeriodDates);

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { loadPeriodDateKeys, savePeriodDateKeys } from '@/lib/period/periodStorage';
+import { getPeriodDays, replacePeriodDays } from '@/lib/api';
 
 export const usePeriodDates = () => {
   const [dateKeys, setDateKeys] = useState<Set<string>>(new Set());
@@ -8,9 +8,15 @@ export const usePeriodDates = () => {
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
-    const stored = await loadPeriodDateKeys();
-    setDateKeys(new Set(stored));
-    setIsLoading(false);
+
+    try {
+      const { dateKeys: next } = await getPeriodDays();
+      setDateKeys(new Set(next));
+    } catch {
+      setDateKeys(new Set());
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -18,9 +24,9 @@ export const usePeriodDates = () => {
   }, [refresh]);
 
   const persist = useCallback(async (nextDateKeys: ReadonlySet<string>) => {
-    const sorted = [...nextDateKeys];
-    await savePeriodDateKeys(sorted);
-    setDateKeys(new Set(sorted));
+    const sorted = [...new Set(nextDateKeys)].sort();
+    const { dateKeys: saved } = await replacePeriodDays({ dateKeys: sorted });
+    setDateKeys(new Set(saved));
   }, []);
 
   return {

@@ -1,3 +1,5 @@
+import type { MoodId } from '@syna/shared-types';
+
 import { DailyLogChip } from '@/components/dailyLog/DailyLogChip';
 import { DailyLogNoteField } from '@/components/dailyLog/DailyLogNoteField';
 import { DailyLogScale } from '@/components/dailyLog/DailyLogScale';
@@ -10,8 +12,8 @@ import { cn } from '@/lib/ui';
 
 export type MoodLogSectionsProps = {
   entry: MoodEntry;
-  onSelectPrimary: (moodId: string) => void;
-  onToggleFeeling: (moodId: string) => void;
+  onSelectPrimary: (moodId: MoodId) => void;
+  onToggleFeeling: (moodId: MoodId) => void;
   onEnergyChange: (value: number) => void;
   onStressChange: (value: number) => void;
   onNoteChange: (value: string) => void;

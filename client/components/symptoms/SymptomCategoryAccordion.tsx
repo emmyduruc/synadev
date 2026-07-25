@@ -1,3 +1,4 @@
+import type { SymptomId } from '@syna/shared-types';
 import { useMemo, useState } from 'react';
 
 import { SymptomCategoryCard } from './SymptomCategoryCard';
@@ -19,8 +20,8 @@ export const RECORD_PERIOD_SYMPTOM_CATEGORY_IDS: readonly SymptomCategoryId[] = 
 ];
 
 export type SymptomCategoryAccordionProps = {
-  selectedIds: ReadonlySet<string>;
-  onToggle: (symptomId: string) => void;
+  selectedIds: ReadonlySet<SymptomId>;
+  onToggle: (symptomId: SymptomId) => void;
   categoryIds?: readonly SymptomCategoryId[];
 };
 

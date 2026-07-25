@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { loadMoodLogs, saveMoodLogs, type MoodLogMap } from '@/lib/mood/moodLogStorage';
+import { getMoodLogs, replaceMoodLogs } from '@/lib/api';
+import type { MoodLogMap } from '@/lib/mood/moodLogStorage';
 
 export const useMoodLog = () => {
   const [logs, setLogs] = useState<MoodLogMap>({});
@@ -10,11 +11,20 @@ export const useMoodLog = () => {
     let isMounted = true;
 
     const load = async () => {
-      const stored = await loadMoodLogs();
+      try {
+        const { logs: stored } = await getMoodLogs();
 
-      if (isMounted) {
-        setLogs(stored);
-        setIsLoading(false);
+        if (isMounted) {
+          setLogs(stored);
+        }
+      } catch {
+        if (isMounted) {
+          setLogs({});
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -26,8 +36,8 @@ export const useMoodLog = () => {
   }, []);
 
   const persist = useCallback(async (nextLogs: MoodLogMap) => {
-    await saveMoodLogs(nextLogs);
-    setLogs(nextLogs);
+    const { logs: saved } = await replaceMoodLogs({ logs: nextLogs });
+    setLogs(saved);
   }, []);
 
   return { logs, isLoading, persist };

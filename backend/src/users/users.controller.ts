@@ -12,7 +12,11 @@ import { CurrentClerkUser } from '../auth/current-clerk-user.decorator';
 import { ApiStandardResponses } from '../common/decorators/api-standard-responses.decorator';
 import { SWAGGER_TAGS } from '../swagger/swagger.constants';
 
-import { UpdateUserProfileDto, UserDto } from './dto/user.dto';
+import {
+  UpdateUserHealthMetricsDto,
+  UpdateUserProfileDto,
+  UserDto,
+} from './dto/user.dto';
 import { UsersService } from './users.service';
 
 @ApiTags(SWAGGER_TAGS.users)
@@ -53,5 +57,23 @@ export class UsersController {
     @Body() dto: UpdateUserProfileDto,
   ): Promise<UserDto> {
     return this.usersService.updateCurrentUserProfile(clerkUser, dto);
+  }
+
+  @Patch('me/health-metrics')
+  @ApiOperation({
+    summary: 'Replace the current user health metrics snapshot',
+    description:
+      'Persists a typed JSONB snapshot of summarized wearable/health readings (steps, HR, sleep, etc.). Raw sample history is not stored.',
+  })
+  @ApiOkResponse({
+    description: 'Updated user including healthMetrics',
+    type: UserDto,
+  })
+  @ApiStandardResponses({ unauthorized: true })
+  updateHealthMetrics(
+    @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
+    @Body() dto: UpdateUserHealthMetricsDto,
+  ): Promise<UserDto> {
+    return this.usersService.updateCurrentUserHealthMetrics(clerkUser, dto);
   }
 }

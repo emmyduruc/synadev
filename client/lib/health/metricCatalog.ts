@@ -1,21 +1,11 @@
-export const HEALTH_METRIC_KEY = {
-  steps: 'steps',
-  heartRate: 'heart_rate',
-  restingHeartRate: 'resting_heart_rate',
-  hrvSdnn: 'hrv_sdnn',
-  hrvRmssd: 'hrv_rmssd',
-  respiratoryRate: 'respiratory_rate',
-  oxygenSaturation: 'oxygen_saturation',
-  wristTemperature: 'wrist_temperature',
-  bodyTemperature: 'body_temperature',
-  activeEnergy: 'active_energy',
-  activeCalories: 'active_calories',
-  exerciseMinutes: 'exercise_minutes',
-  sleepAnalysis: 'sleep_analysis',
-  sleepSessions: 'sleep_sessions',
-} as const;
+import {
+  HEALTH_METRIC_KEY,
+  isHealthMetricKey,
+  type HealthMetricKey,
+} from '@syna/shared-types';
 
-export type HealthMetricKey = (typeof HEALTH_METRIC_KEY)[keyof typeof HEALTH_METRIC_KEY];
+export { HEALTH_METRIC_KEY, isHealthMetricKey };
+export type { HealthMetricKey };
 
 export const HEALTH_METRIC_LABEL_KEY: Record<HealthMetricKey, string> = {
   [HEALTH_METRIC_KEY.steps]: 'health_metric_steps',
@@ -33,6 +23,3 @@ export const HEALTH_METRIC_LABEL_KEY: Record<HealthMetricKey, string> = {
   [HEALTH_METRIC_KEY.sleepAnalysis]: 'health_metric_sleep',
   [HEALTH_METRIC_KEY.sleepSessions]: 'health_metric_sleep',
 };
-
-export const isHealthMetricKey = (value: string): value is HealthMetricKey =>
-  value in HEALTH_METRIC_LABEL_KEY;

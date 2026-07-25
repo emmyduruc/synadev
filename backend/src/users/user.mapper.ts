@@ -1,4 +1,9 @@
-import type { UpdateUserProfile, User } from '@syna/shared-types';
+import type {
+  UpdateUserHealthMetrics,
+  UpdateUserProfile,
+  User,
+} from '@syna/shared-types';
+import { UserHealthMetricsSchema } from '@syna/shared-types';
 
 import type { UserEntity } from './user.entity';
 
@@ -23,6 +28,17 @@ export const isUserBioComplete = (user: {
   Boolean(user.lastName?.trim()) &&
   Boolean(toIsoDateString(user.dateOfBirth));
 
+const parseHealthMetrics = (
+  value: UserEntity['healthMetrics'],
+): User['healthMetrics'] => {
+  if (value === null) {
+    return null;
+  }
+
+  const parsed = UserHealthMetricsSchema.safeParse(value);
+  return parsed.success ? parsed.data : null;
+};
+
 export const mapUserEntityToDto = (entity: UserEntity): User => ({
   id: entity.id,
   clerkId: entity.clerkId,
@@ -31,6 +47,7 @@ export const mapUserEntityToDto = (entity: UserEntity): User => ({
   lastName: entity.lastName,
   dateOfBirth: toIsoDateString(entity.dateOfBirth),
   address: entity.address,
+  healthMetrics: parseHealthMetrics(entity.healthMetrics),
   isBioComplete: isUserBioComplete(entity),
   createdAt: entity.createdAt.toISOString(),
   updatedAt: entity.updatedAt.toISOString(),
@@ -44,4 +61,11 @@ export const applyProfileUpdate = (
   entity.lastName = input.lastName;
   entity.dateOfBirth = input.dateOfBirth;
   entity.address = input.address?.trim() ? input.address.trim() : entity.address;
+};
+
+export const applyHealthMetricsUpdate = (
+  entity: UserEntity,
+  input: UpdateUserHealthMetrics,
+): void => {
+  entity.healthMetrics = input;
 };

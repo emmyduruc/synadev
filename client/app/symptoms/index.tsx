@@ -1,3 +1,4 @@
+import type { SymptomId } from '@syna/shared-types';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -36,7 +37,7 @@ const SymptomsScreen = () => {
   );
 
   const handleToggle = useCallback(
-    (symptomId: string) => {
+    (symptomId: SymptomId) => {
       setDraft((previous) => {
         const current = new Set(previous[selectedDateKey] ?? []);
 

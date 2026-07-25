@@ -9,6 +9,9 @@ import { resolveEnvFilePaths } from './config/env-path';
 import { DatabaseModule } from './database/database.module';
 import { EmailModule } from './email/email.module';
 import { HealthController } from './health/health.controller';
+import { MoodModule } from './mood/mood.module';
+import { PeriodModule } from './period/period.module';
+import { SymptomsModule } from './symptoms/symptoms.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { UsersModule } from './users/users.module';
 
@@ -20,6 +23,9 @@ import { UsersModule } from './users/users.module';
     }),
     DatabaseModule,
     UsersModule,
+    PeriodModule,
+    MoodModule,
+    SymptomsModule,
     UploadsModule,
     EmailModule,
   ],

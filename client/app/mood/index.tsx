@@ -1,3 +1,4 @@
+import type { MoodId } from '@syna/shared-types';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -47,7 +48,7 @@ const MoodScreen = () => {
   );
 
   const handleSelectPrimary = useCallback(
-    (moodId: string) => {
+    (moodId: MoodId) => {
       updateEntry((previous) => {
         if (previous.primaryMood === moodId) {
           return { ...previous, primaryMood: null };
@@ -64,7 +65,7 @@ const MoodScreen = () => {
   );
 
   const handleToggleFeeling = useCallback(
-    (moodId: string) => {
+    (moodId: MoodId) => {
       updateEntry((previous) => {
         const feelings = previous.feelings.includes(moodId)
           ? previous.feelings.filter((id) => id !== moodId)

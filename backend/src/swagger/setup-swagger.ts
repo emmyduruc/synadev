@@ -38,6 +38,9 @@ export const setupSwagger = (app: INestApplication): void => {
     .addTag(SWAGGER_TAGS.app, 'Root application endpoints')
     .addTag(SWAGGER_TAGS.health, 'Service health and readiness checks')
     .addTag(SWAGGER_TAGS.users, 'User registration and profile management')
+    .addTag(SWAGGER_TAGS.period, 'Menstrual period day logging')
+    .addTag(SWAGGER_TAGS.mood, 'Daily mood check-ins')
+    .addTag(SWAGGER_TAGS.symptoms, 'Daily symptom logging and catalog')
     .addTag(SWAGGER_TAGS.uploads, 'Image and file upload endpoints')
     .addTag(SWAGGER_TAGS.emails, 'Transactional email delivery via Resend')
     .build();
