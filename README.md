@@ -63,6 +63,7 @@ Prefer a **single repo-root `.env`** — Nest and Expo both resolve it.
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
+| `CLERK_SECRET_KEY` | Yes (for `/users/me*`) | — | Verifies Clerk session JWTs |
 | `DATABASE_URL` | Yes | — | Postgres URL for the running API (pooled) |
 | `DIRECT_URL` | Yes | — | Postgres URL for TypeORM migrations |
 | `DATABASE_SYNCHRONIZE` | No | `false` | TypeORM `synchronize` (`true` \| `false`) |

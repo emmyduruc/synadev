@@ -1,5 +1,4 @@
-import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import { AppHeader, Box, Text } from '@/components/ui';
 
@@ -10,7 +9,7 @@ export type TabScreenLayoutProps = {
 
 export const TabScreenLayout = ({ title, body }: TabScreenLayoutProps) => (
   <SynaGradientBackground>
-    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: 'transparent' }}>
+    <SafeAreaScreen edges={SAFE_AREA_EDGES.top} style={{ backgroundColor: 'transparent' }}>
       <Box flex={1}>
         <AppHeader title={title} showBack={false} />
         <Box flex={1} align="center" justify="center" padding="lg">
@@ -19,6 +18,6 @@ export const TabScreenLayout = ({ title, body }: TabScreenLayoutProps) => (
           </Text>
         </Box>
       </Box>
-    </SafeAreaView>
+    </SafeAreaScreen>
   </SynaGradientBackground>
 );

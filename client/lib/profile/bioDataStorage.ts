@@ -67,7 +67,23 @@ export const loadBioData = async (): Promise<BioData> => {
 };
 
 export const saveBioData = async (bioData: BioData): Promise<void> => {
+  const isEmpty =
+    !bioData.firstName.trim()
+    && !bioData.lastName.trim()
+    && !bioData.dateOfBirth
+    && !bioData.address.trim();
+
+  if (isEmpty) {
+    await clearBioData();
+    return;
+  }
+
   await SecureStore.setItemAsync(BIO_DATA_STORAGE_KEY, JSON.stringify(bioData));
+};
+
+/** Clears the local cache — used when DB has no bio (null / incomplete). */
+export const clearBioData = async (): Promise<void> => {
+  await SecureStore.deleteItemAsync(BIO_DATA_STORAGE_KEY);
 };
 
 export const isBioFieldFilled = (bioData: BioData, fieldId: BioDataFieldId): boolean => {

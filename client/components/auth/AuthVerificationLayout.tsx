@@ -1,8 +1,8 @@
 import type { Href } from 'expo-router';
 import type { ReactNode } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { KeyboardStickyFooter } from '@/components/layout/KeyboardStickyFooter';
+import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { AppHeader } from '@/components/ui/AppHeader';
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
@@ -23,7 +23,7 @@ export const AuthVerificationLayout = ({
   children,
 }: AuthVerificationLayoutProps) => (
   <Box flex={1} fullWidth background="background">
-    <SafeAreaView className="flex-1">
+    <SafeAreaScreen edges={SAFE_AREA_EDGES.top}>
       <AppHeader
         title=""
         showBack
@@ -55,6 +55,6 @@ export const AuthVerificationLayout = ({
           </Box>
         </KeyboardStickyFooter>
       ) : null}
-    </SafeAreaView>
+    </SafeAreaScreen>
   </Box>
 );

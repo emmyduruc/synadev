@@ -1,15 +1,16 @@
 export {
   HealthResponseSchema,
-  CreateUserSchema,
+  IsoDateSchema,
   UserSchema,
+  UpdateUserProfileSchema,
   ApiValidationIssueSchema,
   ApiErrorSchema,
 } from './schemas/user.schema';
 
 export type {
   HealthResponse,
-  CreateUser,
   User,
+  UpdateUserProfile,
   ApiValidationIssue,
   ApiError,
 } from './schemas/user.schema';

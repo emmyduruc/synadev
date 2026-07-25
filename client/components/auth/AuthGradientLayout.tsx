@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { Keyboard, Platform, ScrollView, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { KeyboardStickyFooter } from '@/components/layout/KeyboardStickyFooter';
+import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import type { AppHeaderProps } from '@/components/ui/AppHeader';
 import { AppHeader } from '@/components/ui/AppHeader';
@@ -47,7 +47,7 @@ export const AuthGradientLayout = ({
 
   return (
     <SynaGradientBackground>
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
+      <SafeAreaScreen edges={SAFE_AREA_EDGES.top} style={{ backgroundColor: 'transparent' }}>
         {header ? (
           <AppHeader
             title={header.title}
@@ -60,7 +60,7 @@ export const AuthGradientLayout = ({
         <View style={{ flex: 1 }}>{body}</View>
 
         {footer ? <KeyboardStickyFooter>{footer}</KeyboardStickyFooter> : null}
-      </SafeAreaView>
+      </SafeAreaScreen>
     </SynaGradientBackground>
   );
 };

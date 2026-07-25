@@ -1,33 +1,35 @@
 import {
-  CreateUserSchema,
   HealthResponseSchema,
+  UpdateUserProfileSchema,
   UserSchema,
 } from '@syna/shared-types';
-import type { CreateUser, HealthResponse, User } from '@syna/shared-types';
+import type { HealthResponse, UpdateUserProfile, User } from '@syna/shared-types';
 
+import { HEALTH, USERS_ME } from './apiEndpoints';
 import { apiRequest } from './http';
 
 export const getHealth = (): Promise<HealthResponse> =>
   apiRequest({
-    url: '/health',
+    url: HEALTH,
     method: 'GET',
     responseSchema: HealthResponseSchema,
   });
 
-export const createUser = (input: CreateUser): Promise<User> =>
+/** Provisions the Syna user row on first call, then returns the profile. */
+export const getCurrentUser = (): Promise<User> =>
   apiRequest({
-    url: '/users',
-    method: 'POST',
-    body: input,
-    bodySchema: CreateUserSchema,
+    url: USERS_ME,
+    method: 'GET',
     responseSchema: UserSchema,
   });
 
-export const getUsers = (): Promise<User[]> =>
+export const updateCurrentUserProfile = (input: UpdateUserProfile): Promise<User> =>
   apiRequest({
-    url: '/users',
-    method: 'GET',
-    responseSchema: UserSchema.array(),
+    url: USERS_ME,
+    method: 'PATCH',
+    body: input,
+    bodySchema: UpdateUserProfileSchema,
+    responseSchema: UserSchema,
   });
 
 export { createApiClientError, isApiClientError, toApiClientError } from './http';

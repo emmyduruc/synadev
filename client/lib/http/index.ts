@@ -2,3 +2,4 @@ export { createApiClientError, isApiClientError, toApiClientError } from './erro
 export type { ApiClientError } from './errors';
 export { httpClient } from './client';
 export { apiRequest, type ApiRequestConfig } from './request';
+export { setAccessTokenGetter } from './authToken';

@@ -8,6 +8,7 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { ClerkAuthTokenBridge } from '@/components/auth/ClerkAuthTokenBridge';
 import { ConfettiProvider } from '@/components/gamification/ConfettiProvider';
 import { RootLayoutNav } from '@/components/layout/RootLayoutNav';
 import { MascotLoadingProvider } from '@/components/loading/MascotLoadingProvider';
@@ -53,6 +54,7 @@ const RootLayout = () => {
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <ClerkAuthTokenBridge />
       <GestureHandlerRootView style={styles.root}>
         <SafeAreaProvider>
           {isSplashVisible ? (

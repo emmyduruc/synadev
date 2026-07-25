@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
 import { ProfileMyProfileContent } from '@/components/profile/ProfileMyProfileContent';
@@ -31,7 +31,7 @@ const ProfileTabScreen = () => {
 
   return (
     <SynaGradientBackground>
-      <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: 'transparent' }}>
+      <SafeAreaScreen edges={SAFE_AREA_EDGES.top} style={{ backgroundColor: 'transparent' }}>
         <Box flex={1}>
           <AppHeader title={t('profile_page_title')} showBack={false} />
 
@@ -73,7 +73,7 @@ const ProfileTabScreen = () => {
             </Box>
           ) : null}
         </Box>
-      </SafeAreaView>
+      </SafeAreaScreen>
     </SynaGradientBackground>
   );
 };

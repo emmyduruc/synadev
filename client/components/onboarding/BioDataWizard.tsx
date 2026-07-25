@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
 import { TextInput } from '@/components/ui/TextInput';
@@ -171,7 +171,7 @@ export const BioDataWizard = ({
 
   return (
     <Box flex={1} fullWidth background="background">
-      <SafeAreaView className="flex-1">
+      <SafeAreaScreen edges={SAFE_AREA_EDGES.top}>
         <WizardShell
           skippable={skippable}
           onSkip={onSkip}
@@ -194,7 +194,7 @@ export const BioDataWizard = ({
           }>
           {stepContent}
         </WizardShell>
-      </SafeAreaView>
+      </SafeAreaScreen>
     </Box>
   );
 };

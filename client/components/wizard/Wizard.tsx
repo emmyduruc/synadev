@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { Box } from '@/components/ui/Box';
 import { WizardFooterActions } from '@/components/wizard/WizardFooterActions';
 import { WizardShell } from '@/components/wizard/WizardShell';
@@ -101,7 +101,7 @@ export const Wizard = <TContext,>({
 
   return (
     <Box flex={1} fullWidth background="background">
-      <SafeAreaView className="flex-1">
+      <SafeAreaScreen edges={SAFE_AREA_EDGES.top}>
         <WizardShell
           skippable={skippable}
           onSkip={onSkip}
@@ -125,7 +125,7 @@ export const Wizard = <TContext,>({
           }>
           {currentStep.render(stepRenderProps)}
         </WizardShell>
-      </SafeAreaView>
+      </SafeAreaScreen>
     </Box>
   );
 };

@@ -1,49 +1,57 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 
+import type { AuthenticatedClerkUser } from '../auth/auth.types';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
+import { CurrentClerkUser } from '../auth/current-clerk-user.decorator';
 import { ApiStandardResponses } from '../common/decorators/api-standard-responses.decorator';
 import { SWAGGER_TAGS } from '../swagger/swagger.constants';
 
-import { CreateUserDto, UserDto } from './dto/user.dto';
+import { UpdateUserProfileDto, UserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
 
 @ApiTags(SWAGGER_TAGS.users)
+@ApiBearerAuth('bearer')
+@UseGuards(ClerkAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  @Get('me')
   @ApiOperation({
-    summary: 'Create a user',
+    summary: 'Get or provision the current user',
     description:
-      'Registers a new user with email and display name. ' +
-      'Email must be unique and name must be between 1 and 100 characters.',
-  })
-  @ApiCreatedResponse({
-    description: 'User successfully created',
-    type: UserDto,
-  })
-  @ApiStandardResponses({ conflict: true })
-  create(@Body() dto: CreateUserDto): UserDto {
-    return this.usersService.create(dto);
-  }
-
-  @Get()
-  @ApiOperation({
-    summary: 'List all users',
-    description: 'Returns every registered user ordered by creation time.',
+      'Returns the authenticated Syna user. Creates a row on first call using the Clerk identity (clerk_id + email).',
   })
   @ApiOkResponse({
-    description: 'Array of user records',
+    description: 'Current user profile',
     type: UserDto,
-    isArray: true,
   })
-  findAll(): UserDto[] {
-    return this.usersService.findAll();
+  @ApiStandardResponses({ unauthorized: true })
+  getMe(@CurrentClerkUser() clerkUser: AuthenticatedClerkUser): Promise<UserDto> {
+    return this.usersService.ensureCurrentUser(clerkUser);
+  }
+
+  @Patch('me')
+  @ApiOperation({
+    summary: 'Update the current user bio profile',
+    description:
+      'Persists first name, last name, date of birth, and optional address collected in onboarding.',
+  })
+  @ApiOkResponse({
+    description: 'Updated user profile',
+    type: UserDto,
+  })
+  @ApiStandardResponses({ unauthorized: true })
+  updateMe(
+    @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
+    @Body() dto: UpdateUserProfileDto,
+  ): Promise<UserDto> {
+    return this.usersService.updateCurrentUserProfile(clerkUser, dto);
   }
 }

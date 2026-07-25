@@ -1,8 +1,9 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
 
+import { attachAuthorizationHeader } from './authToken';
 import { toApiClientError } from './errors';
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
+import { API_BASE_URL } from '@/lib/apiEndpoints';
 
 export const httpClient = axios.create({
   baseURL: API_BASE_URL,
@@ -14,12 +15,7 @@ export const httpClient = axios.create({
 });
 
 httpClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    // Attach auth token here when authentication is added.
-    // const token = getAccessToken();
-    // if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  },
+  async (config: InternalAxiosRequestConfig) => attachAuthorizationHeader(config),
   (error: unknown) => Promise.reject(toApiClientError(error)),
 );
 

@@ -1117,6 +1117,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@clerk/backend@npm:^3.13.1":
+  version: 3.13.1
+  resolution: "@clerk/backend@npm:3.13.1"
+  dependencies:
+    "@clerk/shared": "npm:^4.25.8"
+    standardwebhooks: "npm:^1.0.0"
+    tslib: "npm:2.8.1"
+  checksum: 10c0/a3a3813fdf7d3afb7000da5b93602275abdbedd100a9e7cae4707480a474f8fa368a5108f7d29a685668a8d1cbb023d59a84550f219f9b998198758687f071ba
+  languageName: node
+  linkType: hard
+
 "@clerk/clerk-js@npm:^6.23.0":
   version: 6.23.0
   resolution: "@clerk/clerk-js@npm:6.23.0"
@@ -1218,6 +1229,26 @@ __metadata:
     react-dom:
       optional: true
   checksum: 10c0/a71c5cc3e9a5aaf26669213c7b6e97078129834ee2bee87d774439901333c67f98c4690adc8cdcf5ad523f5f5fd9e60736529ae73607d6d96734778a1975c5b6
+  languageName: node
+  linkType: hard
+
+"@clerk/shared@npm:^4.25.8":
+  version: 4.25.8
+  resolution: "@clerk/shared@npm:4.25.8"
+  dependencies:
+    "@tanstack/query-core": "npm:^5.100.6"
+    dequal: "npm:2.0.3"
+    glob-to-regexp: "npm:0.4.1"
+    js-cookie: "npm:3.0.7"
+  peerDependencies:
+    react: ^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0
+    react-dom: ^18.0.0 || ~19.0.3 || ~19.1.4 || ~19.2.3 || ~19.3.0-0
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10c0/035fdbf8de478f000c00b3028bc7a82db386e95eee14bda64ac76c91465ca9b972c55db50d2b5b36d4ac4cdcbf95576aed85b8d4009f30b6423ca87ae4bf12b0
   languageName: node
   linkType: hard
 
@@ -4771,6 +4802,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@syna/backend@workspace:backend"
   dependencies:
+    "@clerk/backend": "npm:^3.13.1"
     "@eslint/eslintrc": "npm:^3.2.0"
     "@eslint/js": "npm:^9.18.0"
     "@nestjs/cli": "npm:^11.0.0"
@@ -14857,7 +14889,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"standardwebhooks@npm:1.0.0":
+"standardwebhooks@npm:1.0.0, standardwebhooks@npm:^1.0.0":
   version: 1.0.0
   resolution: "standardwebhooks@npm:1.0.0"
   dependencies:

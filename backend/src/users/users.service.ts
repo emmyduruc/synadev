@@ -1,25 +1,63 @@
-import { randomUUID } from 'crypto';
-
 import { Injectable } from '@nestjs/common';
-import type { CreateUser, User } from '@syna/shared-types';
+import { InjectRepository } from '@nestjs/typeorm';
+import type { UpdateUserProfile, User } from '@syna/shared-types';
+import { Repository } from 'typeorm';
+
+import type { AuthenticatedClerkUser } from '../auth/auth.types';
+
+import { UserEntity } from './user.entity';
+import { applyProfileUpdate, mapUserEntityToDto } from './user.mapper';
 
 @Injectable()
 export class UsersService {
-  private readonly users: User[] = [];
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
+  ) {}
 
-  create(input: CreateUser): User {
-    const user: User = {
-      id: randomUUID(),
-      email: input.email,
-      name: input.name,
-      createdAt: new Date().toISOString(),
-    };
+  /**
+   * Idempotent upsert keyed by clerk_id — creates the Syna user row on first API call.
+   */
+  async ensureCurrentUser(clerkUser: AuthenticatedClerkUser): Promise<User> {
+    const existing = await this.usersRepository.findOne({
+      where: { clerkId: clerkUser.clerkId },
+    });
 
-    this.users.push(user);
-    return user;
+    if (existing) {
+      if (existing.email !== clerkUser.email) {
+        existing.email = clerkUser.email;
+        const saved = await this.usersRepository.save(existing);
+        return mapUserEntityToDto(saved);
+      }
+
+      return mapUserEntityToDto(existing);
+    }
+
+    const created = this.usersRepository.create({
+      clerkId: clerkUser.clerkId,
+      email: clerkUser.email,
+      firstName: null,
+      lastName: null,
+      dateOfBirth: null,
+      address: null,
+    });
+
+    const saved = await this.usersRepository.save(created);
+    return mapUserEntityToDto(saved);
   }
 
-  findAll(): User[] {
-    return this.users;
+  async updateCurrentUserProfile(
+    clerkUser: AuthenticatedClerkUser,
+    input: UpdateUserProfile,
+  ): Promise<User> {
+    await this.ensureCurrentUser(clerkUser);
+
+    const entity = await this.usersRepository.findOneOrFail({
+      where: { clerkId: clerkUser.clerkId },
+    });
+
+    applyProfileUpdate(entity, input);
+    const saved = await this.usersRepository.save(entity);
+    return mapUserEntityToDto(saved);
   }
 }

@@ -27,6 +27,7 @@
     "db:migration:create": "node ./scripts/db-migration-create.mjs"
   },
   "dependencies": {
+    "@clerk/backend": "^3.13.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",

@@ -1,6 +1,5 @@
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DashboardCheckInCard } from '@/components/dashboard/DashboardCheckInCard';
 import { DashboardConnectHealthSection } from '@/components/dashboard/DashboardConnectHealthSection';
@@ -10,6 +9,7 @@ import { DashboardHealthMetricsRow } from '@/components/dashboard/DashboardHealt
 import { DashboardInsightsSection } from '@/components/dashboard/DashboardInsightsSection';
 import { DashboardWeekCalendarSection } from '@/components/dashboard/DashboardWeekCalendarSection';
 import { useConfettiCelebration } from '@/components/gamification/ConfettiProvider';
+import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
 import { AppHeader, Box } from '@/components/ui';
@@ -50,7 +50,7 @@ const StartTabScreen = () => {
 
   return (
     <SynaGradientBackground>
-      <SafeAreaView edges={['top']} className="flex-1 bg-transparent">
+      <SafeAreaScreen edges={SAFE_AREA_EDGES.top} style={{ backgroundColor: 'transparent' }}>
         <Box flex={1}>
           <AppHeader title={t('tab_start_title')} showBack={false} />
           <ScrollView
@@ -103,7 +103,7 @@ const StartTabScreen = () => {
             </Box>
           ) : null}
         </Box>
-      </SafeAreaView>
+      </SafeAreaScreen>
     </SynaGradientBackground>
   );
 };
