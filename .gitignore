@@ -10,9 +10,14 @@ dist
 .expo-shared
 *.log
 .DS_Store
+
+# Secrets — keep templates tracked
 .env
 .env.local
 .env.*.local
+!.env.example
+!**/.env.example
+
 coverage
 *.tsbuildinfo
 .yarn/*
@@ -25,5 +30,3 @@ coverage
 .cursor
 .vscode
 .idea
-.env.example
-.env.*

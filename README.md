@@ -48,11 +48,37 @@ Change a schema field → TypeScript errors on both sides.
 
 ## Environment
 
-Create `client/.env`:
+Copy the templates and fill in real values (never commit `.env`):
 
+```bash
+cp .env.example .env
+# or per package:
+cp backend/.env.example backend/.env
+cp client/.env.example client/.env
 ```
-EXPO_PUBLIC_API_URL=http://localhost:3000
-```
+
+Prefer a **single repo-root `.env`** — Nest and Expo both resolve it.
+
+### Backend (`@syna/backend`)
+
+| Variable | Required | Default | Purpose |
+|----------|----------|---------|---------|
+| `DATABASE_URL` | Yes | — | Postgres URL for the running API (pooled) |
+| `DIRECT_URL` | Yes | — | Postgres URL for TypeORM migrations |
+| `DATABASE_SYNCHRONIZE` | No | `false` | TypeORM `synchronize` (`true` \| `false`) |
+| `RESEND_API_KEY` | When sending email | — | Resend API key |
+| `RESEND_FROM_EMAIL` | When sending email | — | From address |
+| `RESEND_FROM_NAME` | No | `SYNA` | From display name |
+| `PORT` | No | `3000` | HTTP listen port |
+| `NODE_ENV` | No | — | Swagger off when `production` |
+| `SWAGGER_ENABLED` | No | on | Set `false` to disable Swagger |
+
+### Client (`@syna/client`)
+
+| Variable | Required | Default | Purpose |
+|----------|----------|---------|---------|
+| `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` | Yes | — | Clerk publishable key |
+| `EXPO_PUBLIC_API_URL` | No | `http://localhost:3000` | Nest API base URL |
 
 For Android emulator, use `http://10.0.2.2:3000` instead of `localhost`.
 

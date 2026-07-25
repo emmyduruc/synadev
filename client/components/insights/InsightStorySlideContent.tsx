@@ -15,8 +15,8 @@ export const InsightStorySlideContent = ({ slide }: InsightStorySlideContentProp
   const { t } = useTranslate();
 
   return (
-    <Box flex={1} justify="center" gap="md" className="px-2">
-      <Box align="center" className="mb-2">
+    <Box gap="md" className="px-2">
+      <Box align="center">
         {renderInsightIcon(slide.iconKey, {
           size: 40,
           color: semanticColors.dashboardIcon.insight,
@@ -38,7 +38,7 @@ export const InsightStorySlideContent = ({ slide }: InsightStorySlideContentProp
       </Text>
 
       {slide.badgeLabelKey ? (
-        <Box align="center" className="mt-2">
+        <Box align="center" className="mt-1">
           <Tag
             label={t(slide.badgeLabelKey)}
             icon={<BookIcon size={14} color={semanticColors.foregroundMuted} />}

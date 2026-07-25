@@ -1,4 +1,4 @@
-import { Modal, Pressable } from 'react-native';
+import { Modal, Pressable, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { InsightMedicalReviewerRow } from './InsightMedicalReviewer';
@@ -70,10 +70,16 @@ export const InsightStoryModal = ({
             </TouchableOpacity>
           </Box>
 
-          <Box flex={1} className="relative mt-2">
-            <Box flex={1} className="px-6" pointerEvents="none">
-              <InsightStorySlideContent slide={activeSlide} />
-            </Box>
+          <Box flex={1} className="relative mt-4">
+            <ScrollView
+              className="flex-1"
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingBottom: 16 }}
+              pointerEvents="box-none">
+              <Box pointerEvents="none">
+                <InsightStorySlideContent slide={activeSlide} />
+              </Box>
+            </ScrollView>
 
             <Pressable
               accessibilityRole="button"
@@ -99,28 +105,25 @@ export const InsightStoryModal = ({
                 width: '67%',
               }}
             />
+          </Box>
 
-            <Box
-              gap="lg"
-              className="absolute bottom-0 left-0 right-0 px-6 pb-4"
-              pointerEvents="box-none">
-              <Box pointerEvents="none">
-                <InsightMedicalReviewerRow
-                  reviewer={insight.reviewer}
-                  headingKey="insight_story_medical_review_heading"
-                />
-              </Box>
-              <Button
-                variant="outline"
-                size="lg"
-                fullWidth
-                leftIcon={<ChevronUpIcon size={18} color={semanticColors.foreground} />}
-                className="border-white bg-card"
-                textClassName="text-foreground"
-                onPress={onReadNow}>
-                {t('insight_story_read_now_button')}
-              </Button>
+          <Box gap="lg" className="px-6 pb-4 pt-2" pointerEvents="box-none">
+            <Box pointerEvents="none">
+              <InsightMedicalReviewerRow
+                reviewer={insight.reviewer}
+                headingKey="insight_story_medical_review_heading"
+              />
             </Box>
+            <Button
+              variant="outline"
+              size="lg"
+              fullWidth
+              leftIcon={<ChevronUpIcon size={18} color={semanticColors.foreground} />}
+              className="border-white bg-card"
+              textClassName="text-foreground"
+              onPress={onReadNow}>
+              {t('insight_story_read_now_button')}
+            </Button>
           </Box>
         </Box>
       </SynaGradientBackground>
