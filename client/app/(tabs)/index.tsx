@@ -14,6 +14,7 @@ import { SynaGradientBackground } from '@/components/layout/SynaGradientBackgrou
 import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
 import { AppHeader, Box } from '@/components/ui';
 import { useBioData } from '@/hooks/useBioData';
+import { useCyclePhase } from '@/hooks/useCyclePhase';
 import { useDashboardHealth } from '@/hooks/useDashboardHealth';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
@@ -31,6 +32,7 @@ const StartTabScreen = () => {
   const openBioDataWizard = useOpenBioDataWizard();
   const { percent, isVisible, isLoading, dismiss } = useProfileCompletionBanner();
   const { celebrate } = useConfettiCelebration();
+  const { snapshot: cycleSnapshot, isLoading: isCycleLoading } = useCyclePhase();
   const {
     healthSnapshot,
     metrics,
@@ -78,7 +80,10 @@ const StartTabScreen = () => {
                   onOpenMood={() => router.push(ROUTES.mood)}
                 />
               </Box>
-              <DashboardCyclePhaseCard />
+              <DashboardCyclePhaseCard
+                snapshot={cycleSnapshot}
+                isLoading={isCycleLoading}
+              />
               <DashboardInsightsSection />
               <DashboardConnectHealthSection
                 healthSnapshot={healthSnapshot}

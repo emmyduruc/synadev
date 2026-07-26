@@ -4,6 +4,7 @@ import type { PeriodDays, ReplacePeriodDays } from '@syna/shared-types';
 import { DataSource, Repository } from 'typeorm';
 
 import type { AuthenticatedClerkUser } from '../auth/auth.types';
+import { CycleService } from '../cycle/cycle.service';
 import { UsersService } from '../users/users.service';
 
 import { PeriodDayEntity } from './period-day.entity';
@@ -23,6 +24,7 @@ export class PeriodService {
     private readonly periodDaysRepository: Repository<PeriodDayEntity>,
     private readonly usersService: UsersService,
     private readonly dataSource: DataSource,
+    private readonly cycleService: CycleService,
   ) {}
 
   async listDays(clerkUser: AuthenticatedClerkUser): Promise<PeriodDays> {
@@ -56,6 +58,8 @@ export class PeriodService {
       );
       await manager.save(rows);
     });
+
+    await this.cycleService.syncUserPhase(userId);
 
     return { dateKeys: uniqueSorted };
   }

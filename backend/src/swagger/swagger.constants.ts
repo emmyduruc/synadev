@@ -3,8 +3,10 @@ export const SWAGGER_TAGS = {
   health: 'Health',
   users: 'Users',
   period: 'Period',
+  cycle: 'Cycle',
   mood: 'Mood',
   symptoms: 'Symptoms',
+  notifications: 'Notifications',
   uploads: 'Uploads',
   emails: 'Emails',
 } as const;

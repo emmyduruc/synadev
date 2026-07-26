@@ -12,6 +12,7 @@ import { ClerkAuthTokenBridge } from '@/components/auth/ClerkAuthTokenBridge';
 import { ConfettiProvider } from '@/components/gamification/ConfettiProvider';
 import { RootLayoutNav } from '@/components/layout/RootLayoutNav';
 import { MascotLoadingProvider } from '@/components/loading/MascotLoadingProvider';
+import { PushNotificationsBridge } from '@/components/notifications/PushNotificationsBridge';
 import { SplashScreen as BrandSplash } from '@/components/screens/SplashScreen';
 import { getClerkPublishableKey } from '@/lib/clerk/env';
 import { useAppFonts } from '@/lib/fonts/useAppFonts';
@@ -55,6 +56,7 @@ const RootLayout = () => {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <ClerkAuthTokenBridge />
+      <PushNotificationsBridge />
       <GestureHandlerRootView style={styles.root}>
         <SafeAreaProvider>
           {isSplashVisible ? (

@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { UserHealthMetricsSchema } from './health-metrics.schema';
 import { IsoDateSchema } from './iso-date.schema';
+import { AppLocaleSchema } from './locale.schema';
 
 export { IsoDateSchema } from './iso-date.schema';
 
@@ -30,6 +31,9 @@ export const UserSchema = z.object({
     .string()
     .nullable()
     .describe('Optional free-text address; reserved for future profile deepening'),
+  locale: AppLocaleSchema.describe(
+    'Preferred locale for emails and push notifications (defaults to de)',
+  ),
   healthMetrics: UserHealthMetricsSchema.nullable().describe(
     'Latest summarized health metrics snapshot (JSONB); null until first sync',
   ),

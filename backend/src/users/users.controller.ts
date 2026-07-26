@@ -14,6 +14,7 @@ import { SWAGGER_TAGS } from '../swagger/swagger.constants';
 
 import {
   UpdateUserHealthMetricsDto,
+  UpdateUserLocaleDto,
   UpdateUserProfileDto,
   UserDto,
 } from './dto/user.dto';
@@ -75,5 +76,23 @@ export class UsersController {
     @Body() dto: UpdateUserHealthMetricsDto,
   ): Promise<UserDto> {
     return this.usersService.updateCurrentUserHealthMetrics(clerkUser, dto);
+  }
+
+  @Patch('me/locale')
+  @ApiOperation({
+    summary: 'Update preferred locale',
+    description:
+      'Stores the device/app language used for transactional emails and push notifications. Defaults to German (de) when unset.',
+  })
+  @ApiOkResponse({
+    description: 'Updated user including locale',
+    type: UserDto,
+  })
+  @ApiStandardResponses({ unauthorized: true })
+  updateLocale(
+    @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
+    @Body() dto: UpdateUserLocaleDto,
+  ): Promise<UserDto> {
+    return this.usersService.updateCurrentUserLocale(clerkUser, dto.locale);
   }
 }

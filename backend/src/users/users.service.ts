@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type {
+  AppLocale,
   UpdateUserHealthMetrics,
   UpdateUserProfile,
   User,
 } from '@syna/shared-types';
+import { DEFAULT_APP_LOCALE } from '@syna/shared-types';
 import { Repository } from 'typeorm';
 
 import type { AuthenticatedClerkUser } from '../auth/auth.types';
@@ -12,6 +14,7 @@ import type { AuthenticatedClerkUser } from '../auth/auth.types';
 import { UserEntity } from './user.entity';
 import {
   applyHealthMetricsUpdate,
+  applyLocaleUpdate,
   applyProfileUpdate,
   mapUserEntityToDto,
 } from './user.mapper';
@@ -48,6 +51,7 @@ export class UsersService {
       lastName: null,
       dateOfBirth: null,
       address: null,
+      locale: DEFAULT_APP_LOCALE,
       healthMetrics: null,
     });
 
@@ -81,6 +85,21 @@ export class UsersService {
     });
 
     applyHealthMetricsUpdate(entity, input);
+    const saved = await this.usersRepository.save(entity);
+    return mapUserEntityToDto(saved);
+  }
+
+  async updateCurrentUserLocale(
+    clerkUser: AuthenticatedClerkUser,
+    locale: AppLocale,
+  ): Promise<User> {
+    await this.ensureCurrentUser(clerkUser);
+
+    const entity = await this.usersRepository.findOneOrFail({
+      where: { clerkId: clerkUser.clerkId },
+    });
+
+    applyLocaleUpdate(entity, locale);
     const saved = await this.usersRepository.save(entity);
     return mapUserEntityToDto(saved);
   }

@@ -1,9 +1,10 @@
 import type {
+  AppLocale,
   UpdateUserHealthMetrics,
   UpdateUserProfile,
   User,
 } from '@syna/shared-types';
-import { UserHealthMetricsSchema } from '@syna/shared-types';
+import { resolveAppLocale, UserHealthMetricsSchema } from '@syna/shared-types';
 
 import type { UserEntity } from './user.entity';
 
@@ -47,6 +48,7 @@ export const mapUserEntityToDto = (entity: UserEntity): User => ({
   lastName: entity.lastName,
   dateOfBirth: toIsoDateString(entity.dateOfBirth),
   address: entity.address,
+  locale: resolveAppLocale(entity.locale),
   healthMetrics: parseHealthMetrics(entity.healthMetrics),
   isBioComplete: isUserBioComplete(entity),
   createdAt: entity.createdAt.toISOString(),
@@ -68,4 +70,8 @@ export const applyHealthMetricsUpdate = (
   input: UpdateUserHealthMetrics,
 ): void => {
   entity.healthMetrics = input;
+};
+
+export const applyLocaleUpdate = (entity: UserEntity, locale: AppLocale): void => {
+  entity.locale = locale;
 };

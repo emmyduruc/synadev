@@ -39,6 +39,10 @@ export class UserEntity {
   @Column({ type: 'text', nullable: true })
   address!: string | null;
 
+  /** Preferred locale for emails / push (`de` default). */
+  @Column({ type: 'varchar', length: 8, default: 'de' })
+  locale!: string;
+
   @Column({ name: 'health_metrics', type: 'jsonb', nullable: true })
   healthMetrics!: UserHealthMetrics | null;
 

@@ -1,38 +1,49 @@
 import {
+  CyclePhaseSnapshotSchema,
   HealthResponseSchema,
   MoodLogsSchema,
   PeriodDaysSchema,
+  RegisterPushTokenResponseSchema,
+  RegisterPushTokenSchema,
   ReplaceMoodLogsSchema,
   ReplacePeriodDaysSchema,
   ReplaceSymptomLogsSchema,
   SymptomCatalogSchema,
   SymptomLogsSchema,
   UpdateUserHealthMetricsSchema,
+  UpdateUserLocaleSchema,
   UpdateUserProfileSchema,
   UserSchema,
 } from '@syna/shared-types';
 import type {
+  CyclePhaseSnapshotDto,
   HealthResponse,
   MoodLogs,
   PeriodDays,
+  RegisterPushToken,
+  RegisterPushTokenResponse,
   ReplaceMoodLogs,
   ReplacePeriodDays,
   ReplaceSymptomLogs,
   SymptomCatalog,
   SymptomLogs,
   UpdateUserHealthMetrics,
+  UpdateUserLocale,
   UpdateUserProfile,
   User,
 } from '@syna/shared-types';
 
 import {
+  CYCLE_PHASE,
   HEALTH,
   MOOD_LOGS,
+  NOTIFICATIONS_PUSH_TOKEN,
   PERIOD_DAYS,
   SYMPTOM_CATALOG,
   SYMPTOM_LOGS,
   USERS_ME,
   USERS_ME_HEALTH_METRICS,
+  USERS_ME_LOCALE,
 } from './apiEndpoints';
 import { apiRequest } from './http';
 
@@ -68,6 +79,15 @@ export const updateCurrentUserHealthMetrics = (
     method: 'PATCH',
     body: input,
     bodySchema: UpdateUserHealthMetricsSchema,
+    responseSchema: UserSchema,
+  });
+
+export const updateCurrentUserLocale = (input: UpdateUserLocale): Promise<User> =>
+  apiRequest({
+    url: USERS_ME_LOCALE,
+    method: 'PATCH',
+    body: input,
+    bodySchema: UpdateUserLocaleSchema,
     responseSchema: UserSchema,
   });
 
@@ -124,6 +144,24 @@ export const replaceSymptomLogs = (input: ReplaceSymptomLogs): Promise<SymptomLo
     body: input,
     bodySchema: ReplaceSymptomLogsSchema,
     responseSchema: SymptomLogsSchema,
+  });
+
+export const getCyclePhase = (): Promise<CyclePhaseSnapshotDto> =>
+  apiRequest({
+    url: CYCLE_PHASE,
+    method: 'GET',
+    responseSchema: CyclePhaseSnapshotSchema,
+  });
+
+export const registerPushToken = (
+  input: RegisterPushToken,
+): Promise<RegisterPushTokenResponse> =>
+  apiRequest({
+    url: NOTIFICATIONS_PUSH_TOKEN,
+    method: 'PUT',
+    body: input,
+    bodySchema: RegisterPushTokenSchema,
+    responseSchema: RegisterPushTokenResponseSchema,
   });
 
 export { createApiClientError, isApiClientError, toApiClientError } from './http';
