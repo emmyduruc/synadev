@@ -65,6 +65,8 @@ export const semanticColors = {
     calendar: colors.primary[600],
     insight: colors.primary[600],
     cycle: colors.primary[600],
+    /** Dark stroke on sage-mist follicular well — lavender-on-sage fails contrast */
+    follicular: colors.primary[700],
     onLavender: colors.primary[700],
     onApricot: colors.primary[700],
   },

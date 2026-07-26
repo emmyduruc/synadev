@@ -111,7 +111,12 @@ export const CyclePhaseAnimatedIcon = ({ phase }: CyclePhaseAnimatedIconProps) =
     }
 
     if (phase === 'follicular') {
-      return <FollicularPhaseIcon size={ICON_SIZE} />;
+      return (
+        <FollicularPhaseIcon
+          size={ICON_SIZE}
+          color={semanticColors.dashboardIcon.follicular}
+        />
+      );
     }
 
     if (phase === 'ovulation') {

@@ -41,7 +41,7 @@ export const DashboardInsightCard = ({
       <Text size="sm" weight="bold" className="leading-tight">
         {title}
       </Text>
-      <Text size="2xs" color="foreground-muted" className="mt-1 leading-snug" numberOfLines={2}>
+      <Text size="2xs" color="foreground" className="mt-1 leading-snug" numberOfLines={2}>
         {description}
       </Text>
     </Box>

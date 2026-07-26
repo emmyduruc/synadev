@@ -27,13 +27,13 @@ export const DashboardConnectHealthSection = ({
         <Text size="2xl" weight="bold" align="center">
           {t('health_connect_title')}
         </Text>
-        <Text size="sm" color="foreground-muted" align="center" className="leading-relaxed">
+        <Text size="sm" color="foreground" align="center" className="leading-relaxed">
           {t('health_connect_subtitle')}
         </Text>
         <Button fullWidth size="lg" loading={isConnecting} onPress={onConnect}>
           {t('health_connect_button')}
         </Button>
-        <Text size="2xs" color="foreground-muted" align="center" className="leading-relaxed">
+        <Text size="2xs" color="foreground" align="center" className="leading-relaxed">
           {t('health_connect_rebuild_hint')}
         </Text>
       </Box>
@@ -54,7 +54,7 @@ export const DashboardConnectHealthSection = ({
           <Text size="sm" weight="semibold">
             {t('health_connect_raw_payload_title')}
           </Text>
-          <Text size="2xs" color="foreground-muted">
+          <Text size="2xs" color="foreground">
             {t('health_connect_raw_payload_hint')}
           </Text>
           <Box className="rounded-xl bg-slate p-3">

@@ -57,7 +57,7 @@ export const DashboardInsightsSection = () => {
         <Text size="lg" weight="bold">
           {t('dashboard_insights_title')}
         </Text>
-        <Text size="sm" color="foreground-muted" className="leading-relaxed">
+        <Text size="sm" color="foreground" className="leading-relaxed">
           {t('dashboard_insights_subtitle')}
         </Text>
       </Box>

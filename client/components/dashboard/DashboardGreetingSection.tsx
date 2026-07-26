@@ -19,7 +19,7 @@ export const DashboardGreetingSection = ({ firstName }: DashboardGreetingSection
       <Text size="sm" weight="semibold" className="leading-snug">
         {t('dashboard_greeting_tagline')}
       </Text>
-      <Text size="xs" className="leading-relaxed text-black">
+      <Text size="xs" color="foreground" className="leading-relaxed">
         {t('dashboard_greeting_description')}
       </Text>
     </Box>

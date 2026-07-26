@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { getPeriodDays, replacePeriodDays } from '@/lib/api';
+import { emitPeriodDatesChanged } from '@/lib/period/periodDatesEvents';
 
 export const usePeriodDates = () => {
   const [dateKeys, setDateKeys] = useState<Set<string>>(new Set());
@@ -27,6 +28,7 @@ export const usePeriodDates = () => {
     const sorted = [...new Set(nextDateKeys)].sort();
     const { dateKeys: saved } = await replacePeriodDays({ dateKeys: sorted });
     setDateKeys(new Set(saved));
+    emitPeriodDatesChanged();
   }, []);
 
   return {

@@ -53,7 +53,7 @@ export const DashboardHealthMetricsRow = ({
     <Box gap="sm">
       <Box direction="row" align="center" justify="between" className="gap-3">
         {!isConnected ? (
-          <Text size="2xs" className="flex-1 leading-relaxed text-black">
+          <Text size="2xs" color="foreground" className="flex-1 leading-relaxed">
             {t('dashboard_health_connect_hint')}
           </Text>
         ) : (
@@ -63,7 +63,7 @@ export const DashboardHealthMetricsRow = ({
           align="center"
           justify="center"
           className="rounded-full border border-white bg-card/90 px-3 py-1 shadow-sm">
-          <Text size="2xs" weight="semibold" color="foreground-muted" responsive={false}>
+          <Text size="2xs" weight="semibold" color="foreground" responsive={false}>
             {t('dashboard_health_today_label')} · {todayLabel}
           </Text>
         </Box>

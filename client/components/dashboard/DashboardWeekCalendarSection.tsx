@@ -43,7 +43,7 @@ export const DashboardWeekCalendarSection = ({
 
           return (
             <Box key={day.dayKey} align="center" className="min-w-[36px]">
-              <Text size="2xs" color="foreground-muted" responsive={false}>
+              <Text size="2xs" color="foreground" responsive={false}>
                 {t(weekdayKey)}
               </Text>
               <Text

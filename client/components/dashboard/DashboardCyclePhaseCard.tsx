@@ -73,28 +73,30 @@ export const DashboardCyclePhaseCard = ({
         router.push(ROUTES.recordPeriod);
       }}
       className={cn(DASHBOARD_SURFACE.blushCard, 'p-5')}>
-      <Box direction="row" align="center" gap="md">
-        <Box flex={1} gap="xs">
-          <Text
-            size="2xs"
-            weight="semibold"
-            color="foreground-muted"
-            className="uppercase tracking-wide">
-            {t('dashboard_cycle_phase_label')}
-          </Text>
-          <Text size="2xl" weight="bold">
-            {title}
-          </Text>
-          <Text size="xs" color="foreground-muted" className="leading-relaxed">
-            {hint}
-          </Text>
-          {hasPhase ? (
-            <Text size="2xs" color="foreground-muted" className="mt-1 leading-relaxed">
-              {t('dashboard_cycle_phase_disclaimer')}
+      <Box gap="sm">
+        <Box direction="row" align="center" gap="md">
+          <Box flex={1} gap="xs">
+            <Text
+              size="2xs"
+              weight="semibold"
+              color="foreground"
+              className="uppercase tracking-wide">
+              {t('dashboard_cycle_phase_label')}
             </Text>
-          ) : null}
+            <Text size="2xl" weight="bold">
+              {title}
+            </Text>
+          </Box>
+          <CyclePhaseAnimatedIcon phase={phase} />
         </Box>
-        <CyclePhaseAnimatedIcon phase={phase} />
+        <Text size="xs" color="foreground" className="leading-relaxed">
+          {hint}
+        </Text>
+        {hasPhase ? (
+          <Text size="2xs" color="foreground" className="leading-relaxed">
+            {t('dashboard_cycle_phase_disclaimer')}
+          </Text>
+        ) : null}
       </Box>
     </TouchableOpacity>
   );

@@ -58,7 +58,7 @@ export const DashboardCheckInCard = ({
               <Text size="base" weight="semibold">
                 {t('dashboard_check_in_title')}
               </Text>
-              <Text size="xs" color="foreground-muted" className="leading-relaxed">
+              <Text size="xs" color="foreground" className="leading-relaxed">
                 {t('dashboard_check_in_subtitle')}
               </Text>
             </Box>

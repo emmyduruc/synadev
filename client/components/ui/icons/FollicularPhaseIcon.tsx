@@ -9,7 +9,7 @@ export type FollicularPhaseIconProps = {
 
 export const FollicularPhaseIcon = ({
   size = 24,
-  color = semanticColors.ovum.lavender,
+  color = semanticColors.dashboardIcon.follicular,
 }: FollicularPhaseIconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path

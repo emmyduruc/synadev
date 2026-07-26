@@ -39,7 +39,8 @@ export const DASHBOARD_ICON_WELL = {
   gem: `${iconWellBase} bg-card border-white`,
   primaryGem: `${iconWellBase} bg-primary-500 border-primary-400`,
   lavenderGem: `${iconWellBase} bg-lavender border-lavender-light`,
-  sageGem: `${iconWellBase} bg-sage-mist border-sage-mist-light`,
+  /** Soft sage wash — pairs with dark primary stroke for follicular phase */
+  sageGem: `${iconWellBase} bg-sage-mist-light border-sage-mist`,
   apricotGem: `${iconWellBase} bg-apricot border-apricot-light`,
   roseGem: `${iconWellBase} bg-dusty-rose border-dusty-rose-light`,
   steps: `${iconWellBase} bg-card border-primary-200`,

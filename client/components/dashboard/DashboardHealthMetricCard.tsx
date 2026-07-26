@@ -58,14 +58,14 @@ export const DashboardHealthMetricCard = ({
         </Text>
         <Text
           size="2xs"
-          color="foreground-muted"
+          color="foreground"
           responsive={false}
           className="mt-0.5 leading-tight"
           numberOfLines={1}>
           {t(labelKey)}
         </Text>
         {metric.trendDirection ? (
-          <Text size="2xs" color="foreground-muted" responsive={false} className="mt-0.5">
+          <Text size="2xs" color="foreground" responsive={false} className="mt-0.5">
             {getTrendSymbol(metric.trendDirection)} {t('dashboard_health_trend_label')}
           </Text>
         ) : null}
