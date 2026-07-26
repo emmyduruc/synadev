@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { BioDataWizard } from '@/components/onboarding/BioDataWizard';
 import { useBioData } from '@/hooks/useBioData';
@@ -8,12 +8,18 @@ import { EMPTY_BIO_DATA } from '@/lib/profile/bioDataStorage';
 import { ROUTES } from '@/lib/routes';
 
 /**
- * Account-creation bio flow — always starts from step 1 with empty fields
- * when the user has no complete DB profile (SecureStore is not used as input).
+ * Account-creation bio flow. If the DB profile is already complete (e.g. user
+ * was mis-routed after a transient auth error), send them home instead.
  */
 const BioDataOnboardingScreen = () => {
   const router = useRouter();
-  const { isLoading, persist } = useBioData();
+  const { isLoading, isComplete, persist } = useBioData();
+
+  useEffect(() => {
+    if (!isLoading && isComplete) {
+      router.replace(ROUTES.home);
+    }
+  }, [isComplete, isLoading, router]);
 
   const handleComplete = useCallback(
     async (nextBioData: BioData) => {
@@ -23,7 +29,7 @@ const BioDataOnboardingScreen = () => {
     [persist, router],
   );
 
-  if (isLoading) {
+  if (isLoading || isComplete) {
     return null;
   }
 

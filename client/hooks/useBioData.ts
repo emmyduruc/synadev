@@ -8,6 +8,7 @@ import {
   clearBioData,
   getBioDataCompletionPercent,
   isBioDataComplete,
+  loadBioData,
   saveBioData,
 } from '@/lib/profile/bioDataStorage';
 import { mapUserToBioData } from '@/lib/profile/mapUserToBioData';
@@ -45,8 +46,9 @@ export const useBioData = () => {
       await syncLocalCacheFromDb(next);
       setBioData(user.isBioComplete ? next : EMPTY_BIO_DATA);
     } catch {
-      await clearBioData();
-      setBioData(EMPTY_BIO_DATA);
+      // Keep local cache on transient API failures — do not wipe returning users.
+      const cached = await loadBioData();
+      setBioData(cached);
     } finally {
       setIsLoading(false);
     }
