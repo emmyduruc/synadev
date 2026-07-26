@@ -63,8 +63,7 @@ const StartTabScreen = () => {
   };
 
   const showProfileBanner = !isProfileBannerLoading && isProfileBannerVisible;
-  const showMrsBanner =
-    !isMrsBannerLoading && isMrsBannerVisible && !showProfileBanner;
+  const showMrsBanner = !isMrsBannerLoading && isMrsBannerVisible;
 
   return (
     <SynaGradientBackground>
@@ -112,26 +111,27 @@ const StartTabScreen = () => {
             </Box>
           </ScrollView>
 
-          {showProfileBanner ? (
-            <Box className="absolute left-4 right-4 top-2 z-10" pointerEvents="box-none">
-              <ProfileCompletionBanner
-                percent={percent}
-                onPress={openBioDataWizard}
-                onDismiss={() => {
-                  void dismissProfileBanner();
-                }}
-              />
-            </Box>
-          ) : null}
-
-          {showMrsBanner ? (
-            <Box className="absolute left-4 right-4 top-2 z-10" pointerEvents="box-none">
-              <MenopauseScaleBanner
-                onPress={() => router.push(ROUTES.assessment.mrsIi)}
-                onDismiss={() => {
-                  void dismissMrsBanner();
-                }}
-              />
+          {showProfileBanner || showMrsBanner ? (
+            <Box
+              className="absolute left-4 right-4 top-2 z-10 gap-2"
+              pointerEvents="box-none">
+              {showProfileBanner ? (
+                <ProfileCompletionBanner
+                  percent={percent}
+                  onPress={openBioDataWizard}
+                  onDismiss={() => {
+                    void dismissProfileBanner();
+                  }}
+                />
+              ) : null}
+              {showMrsBanner ? (
+                <MenopauseScaleBanner
+                  onPress={() => router.push(ROUTES.assessment.mrsIi)}
+                  onDismiss={() => {
+                    void dismissMrsBanner();
+                  }}
+                />
+              ) : null}
             </Box>
           ) : null}
         </Box>

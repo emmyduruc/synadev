@@ -1,4 +1,9 @@
-/** MRS-II response values — identical 0–4 scale for every item. */
+/** MRS-II response values: identical 0-4 scale for every item.
+ * Canonical German labels (ZEG Berlin / menopause-rating-scale.info):
+ * 0 keine, 1 leicht, 2 mittel, 3 stark, 4 sehr stark
+ * English official translation: None, Mild, Moderate, Severe, Very severe
+ * Do not use PAM-13 agree/disagree labels here.
+ */
 export const MRS_II_SEVERITY = {
   none: 0,
   mild: 1,

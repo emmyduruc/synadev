@@ -23,8 +23,9 @@ export const MrsIiSubscaleAccordion = ({
   onChangeItem,
 }: MrsIiSubscaleAccordionProps) => {
   const { t } = useTranslate();
-  const [expandedIds, setExpandedIds] = useState<ReadonlySet<MrsIiSubscaleId>>(
-    () => new Set([MRS_II_SUBSCALES[0].id]),
+  /** Exclusive accordion: only one subscale open at a time. */
+  const [expandedId, setExpandedId] = useState<MrsIiSubscaleId | null>(
+    MRS_II_SUBSCALES[0]?.id ?? null,
   );
 
   const itemsById = useMemo(
@@ -33,17 +34,7 @@ export const MrsIiSubscaleAccordion = ({
   );
 
   const handleToggleExpanded = (subscaleId: MrsIiSubscaleId) => {
-    setExpandedIds((previous) => {
-      const next = new Set(previous);
-
-      if (next.has(subscaleId)) {
-        next.delete(subscaleId);
-      } else {
-        next.add(subscaleId);
-      }
-
-      return next;
-    });
+    setExpandedId((previous) => (previous === subscaleId ? null : subscaleId));
   };
 
   return (
@@ -52,13 +43,13 @@ export const MrsIiSubscaleAccordion = ({
         <AccordionSection
           key={subscale.id}
           title={t(subscale.titleKey)}
-          isExpanded={expandedIds.has(subscale.id)}
+          isExpanded={expandedId === subscale.id}
           onToggle={() => handleToggleExpanded(subscale.id)}
           headerClassName={subscale.sectionClassName}>
           <Text size="xs" color="foreground" className="mb-2 leading-relaxed">
             {t(subscale.subtitleKey)}
           </Text>
-          <Box className="gap-1 divide-y divide-border/60">
+          <Box gap="md">
             {subscale.itemIds.map((itemId) => {
               const item = itemsById[itemId];
 
