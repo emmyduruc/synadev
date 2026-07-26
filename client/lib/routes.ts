@@ -7,6 +7,9 @@ export const ROUTES = {
   onboarding: {
     bioData: '/onboarding/bio-data',
   },
+  assessment: {
+    mrsIi: '/assessment/mrs-ii',
+  },
   calendar: '/calendar',
   calendarEditPeriod: '/calendar?mode=edit_period',
   recordPeriod: '/record-period',

@@ -7,6 +7,8 @@ export type ModalCancelSaveFooterProps = {
   onCancel: () => void;
   onSave: () => void;
   isSaving?: boolean;
+  /** When true, the primary (right) action is disabled. */
+  saveDisabled?: boolean;
   cancelLabelKey?: string;
   saveLabelKey?: string;
 };
@@ -18,10 +20,12 @@ export const ModalCancelSaveFooter = ({
   onCancel,
   onSave,
   isSaving = false,
+  saveDisabled = false,
   cancelLabelKey = 'calendar_cancel_button',
   saveLabelKey = 'calendar_save_button',
 }: ModalCancelSaveFooterProps) => {
   const { t } = useTranslate();
+  const isPrimaryDisabled = isSaving || saveDisabled;
 
   return (
     <Box
@@ -40,10 +44,14 @@ export const ModalCancelSaveFooter = ({
       </TouchableOpacity>
       <TouchableOpacity
         accessibilityRole="button"
-        disabled={isSaving}
+        disabled={isPrimaryDisabled}
         onPress={onSave}
         className="min-h-11 justify-center px-4 py-2">
-        <Text size="base" color="primary" weight="bold">
+        <Text
+          size="base"
+          color="primary"
+          weight="bold"
+          className={isPrimaryDisabled ? 'opacity-40' : undefined}>
           {t(saveLabelKey)}
         </Text>
       </TouchableOpacity>

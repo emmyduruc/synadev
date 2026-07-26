@@ -53,6 +53,13 @@ export const RootLayoutNav = () => {
             presentation: 'fullScreenModal',
           }}
         />
+        <Stack.Screen
+          name="assessment/mrs-ii"
+          options={{
+            presentation: 'fullScreenModal',
+            gestureEnabled: false,
+          }}
+        />
       </Stack>
       <Toaster
         position="top-center"

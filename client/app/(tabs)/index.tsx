@@ -11,11 +11,13 @@ import { DashboardWeekCalendarSection } from '@/components/dashboard/DashboardWe
 import { useConfettiCelebration } from '@/components/gamification/ConfettiProvider';
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
+import { MenopauseScaleBanner } from '@/components/mrs/MenopauseScaleBanner';
 import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
 import { AppHeader, Box } from '@/components/ui';
 import { useBioData } from '@/hooks/useBioData';
 import { useCyclePhase } from '@/hooks/useCyclePhase';
 import { useDashboardHealth } from '@/hooks/useDashboardHealth';
+import { useMenopauseScaleBanner } from '@/hooks/useMenopauseScaleBanner';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
 import { useTranslate } from '@/hooks/useTranslate';
@@ -30,7 +32,17 @@ const StartTabScreen = () => {
   const { t } = useTranslate();
   const { bioData } = useBioData();
   const openBioDataWizard = useOpenBioDataWizard();
-  const { percent, isVisible, isLoading, dismiss } = useProfileCompletionBanner();
+  const {
+    percent,
+    isVisible: isProfileBannerVisible,
+    isLoading: isProfileBannerLoading,
+    dismiss: dismissProfileBanner,
+  } = useProfileCompletionBanner();
+  const {
+    isVisible: isMrsBannerVisible,
+    isLoading: isMrsBannerLoading,
+    dismiss: dismissMrsBanner,
+  } = useMenopauseScaleBanner();
   const { celebrate } = useConfettiCelebration();
   const { snapshot: cycleSnapshot, isLoading: isCycleLoading } = useCyclePhase();
   const {
@@ -49,6 +61,10 @@ const StartTabScreen = () => {
       celebrate(CONFETTI_ACTION.healthConnected);
     }
   };
+
+  const showProfileBanner = !isProfileBannerLoading && isProfileBannerVisible;
+  const showMrsBanner =
+    !isMrsBannerLoading && isMrsBannerVisible && !showProfileBanner;
 
   return (
     <SynaGradientBackground>
@@ -96,13 +112,24 @@ const StartTabScreen = () => {
             </Box>
           </ScrollView>
 
-          {!isLoading && isVisible ? (
+          {showProfileBanner ? (
             <Box className="absolute left-4 right-4 top-2 z-10" pointerEvents="box-none">
               <ProfileCompletionBanner
                 percent={percent}
                 onPress={openBioDataWizard}
                 onDismiss={() => {
-                  void dismiss();
+                  void dismissProfileBanner();
+                }}
+              />
+            </Box>
+          ) : null}
+
+          {showMrsBanner ? (
+            <Box className="absolute left-4 right-4 top-2 z-10" pointerEvents="box-none">
+              <MenopauseScaleBanner
+                onPress={() => router.push(ROUTES.assessment.mrsIi)}
+                onDismiss={() => {
+                  void dismissMrsBanner();
                 }}
               />
             </Box>
