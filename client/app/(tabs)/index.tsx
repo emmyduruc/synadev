@@ -12,6 +12,7 @@ import { useConfettiCelebration } from '@/components/gamification/ConfettiProvid
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import { MenopauseScaleBanner } from '@/components/mrs/MenopauseScaleBanner';
+import { PatientActivationMeasureBanner } from '@/components/patientActivationMeasure/PatientActivationMeasureBanner';
 import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
 import { AppHeader, Box } from '@/components/ui';
 import { useBioData } from '@/hooks/useBioData';
@@ -19,6 +20,7 @@ import { useCyclePhase } from '@/hooks/useCyclePhase';
 import { useDashboardHealth } from '@/hooks/useDashboardHealth';
 import { useMenopauseScaleBanner } from '@/hooks/useMenopauseScaleBanner';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
+import { usePatientActivationMeasureBanner } from '@/hooks/usePatientActivationMeasureBanner';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
 import { useTranslate } from '@/hooks/useTranslate';
 import { DASHBOARD_SURFACE } from '@/lib/dashboard/surfaces';
@@ -43,6 +45,11 @@ const StartTabScreen = () => {
     isLoading: isMrsBannerLoading,
     dismiss: dismissMrsBanner,
   } = useMenopauseScaleBanner();
+  const {
+    isVisible: isPatientActivationMeasureBannerVisible,
+    isLoading: isPatientActivationMeasureBannerLoading,
+    dismiss: dismissPatientActivationMeasureBanner,
+  } = usePatientActivationMeasureBanner();
   const { celebrate } = useConfettiCelebration();
   const { snapshot: cycleSnapshot, isLoading: isCycleLoading } = useCyclePhase();
   const {
@@ -64,6 +71,11 @@ const StartTabScreen = () => {
 
   const showProfileBanner = !isProfileBannerLoading && isProfileBannerVisible;
   const showMrsBanner = !isMrsBannerLoading && isMrsBannerVisible;
+  const showPatientActivationMeasureBanner =
+    !isPatientActivationMeasureBannerLoading &&
+    isPatientActivationMeasureBannerVisible;
+  const showAnyBanner =
+    showProfileBanner || showMrsBanner || showPatientActivationMeasureBanner;
 
   return (
     <SynaGradientBackground>
@@ -111,7 +123,7 @@ const StartTabScreen = () => {
             </Box>
           </ScrollView>
 
-          {showProfileBanner || showMrsBanner ? (
+          {showAnyBanner ? (
             <Box
               className="absolute left-4 right-4 top-2 z-10 gap-2"
               pointerEvents="box-none">
@@ -129,6 +141,16 @@ const StartTabScreen = () => {
                   onPress={() => router.push(ROUTES.assessment.mrsIi)}
                   onDismiss={() => {
                     void dismissMrsBanner();
+                  }}
+                />
+              ) : null}
+              {showPatientActivationMeasureBanner ? (
+                <PatientActivationMeasureBanner
+                  onPress={() =>
+                    router.push(ROUTES.assessment.patientActivationMeasure)
+                  }
+                  onDismiss={() => {
+                    void dismissPatientActivationMeasureBanner();
                   }}
                 />
               ) : null}

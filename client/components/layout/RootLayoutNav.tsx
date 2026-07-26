@@ -60,6 +60,13 @@ export const RootLayoutNav = () => {
             gestureEnabled: false,
           }}
         />
+        <Stack.Screen
+          name="assessment/patient-activation-measure"
+          options={{
+            presentation: 'fullScreenModal',
+            gestureEnabled: false,
+          }}
+        />
       </Stack>
       <Toaster
         position="top-center"
