@@ -24,9 +24,3 @@ export const PROFILE_MISSING_FIELDS: readonly ProfileMissingFieldId[] = [
   PROFILE_MISSING_FIELD.smokingStatus,
   PROFILE_MISSING_FIELD.socialConnection,
 ];
-
-export const STATIC_PROFILE = {
-  name: 'Enrico',
-  ageYears: 48,
-  origin: null as string | null,
-};

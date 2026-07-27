@@ -23,4 +23,9 @@ export const ROUTES = {
     report: '/(tabs)/report',
     profile: '/(tabs)/profile',
   },
+  profile: {
+    /** Top-level paths — `/profile/...` clashes with the `(tabs)/profile` tab route. */
+    settings: '/profile-settings',
+    dataSources: '/profile-data-sources',
+  },
 } as const;

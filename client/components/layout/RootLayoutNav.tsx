@@ -67,6 +67,18 @@ export const RootLayoutNav = () => {
             gestureEnabled: false,
           }}
         />
+        <Stack.Screen
+          name="profile-settings"
+          options={{
+            presentation: 'fullScreenModal',
+          }}
+        />
+        <Stack.Screen
+          name="profile-data-sources"
+          options={{
+            presentation: 'fullScreenModal',
+          }}
+        />
       </Stack>
       <Toaster
         position="top-center"
