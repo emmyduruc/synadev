@@ -2,12 +2,17 @@ import { useSignIn } from '@clerk/expo';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginFormSchema, type LoginFormValues } from '@syna/shared-types';
 import { Link, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { AuthPrivacyNote } from '@/components/auth/AuthPrivacyNote';
 import { Box, Button, FormField, Text, TouchableOpacity } from '@/components/ui';
 import { useTranslate } from '@/hooks/useTranslate';
 import { completeAuthSession } from '@/lib/auth/completeAuthSession';
+import {
+  loadRememberedLoginEmail,
+  saveRememberedLoginEmail,
+} from '@/lib/auth/rememberedLoginEmailStorage';
 import { runAuthAction } from '@/lib/auth/runAuthAction';
 import { sendLoginVerificationCode } from '@/lib/auth/sendLoginVerificationCode';
 import { ROUTES } from '@/lib/routes';
@@ -20,13 +25,29 @@ export const LoginCredentialsStep = ({ onVerificationRequired }: LoginCredential
   const router = useRouter();
   const { t } = useTranslate();
   const { signIn } = useSignIn();
-  const { control, handleSubmit, formState } = useForm<LoginFormValues>({
+  const { control, handleSubmit, setValue, formState } = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: { email: '', password: '' },
   });
 
+  useEffect(() => {
+    let isMounted = true;
+
+    void loadRememberedLoginEmail().then((email) => {
+      if (isMounted && email) {
+        setValue('email', email);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [setValue]);
+
   const onLogin = handleSubmit(async ({ email, password }) => {
     await runAuthAction(async () => {
+      await saveRememberedLoginEmail(email);
+
       const { error } = await signIn.password({
         emailAddress: email,
         password,
@@ -66,6 +87,8 @@ export const LoginCredentialsStep = ({ onVerificationRequired }: LoginCredential
         label={t('login_email_label')}
         keyboardType="email-address"
         autoCapitalize="none"
+        autoComplete="email"
+        textContentType="emailAddress"
       />
       <FormField
         control={control}
