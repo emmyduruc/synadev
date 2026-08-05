@@ -2,12 +2,18 @@ import {
   CyclePhaseSnapshotSchema,
   HealthResponseSchema,
   MoodLogsSchema,
+  MrsIiAssessmentSubmissionSchema,
+  MrsIiLatestSchema,
+  Pam13AssessmentSubmissionSchema,
+  Pam13LatestSchema,
   PeriodDaysSchema,
   RegisterPushTokenResponseSchema,
   RegisterPushTokenSchema,
   ReplaceMoodLogsSchema,
   ReplacePeriodDaysSchema,
   ReplaceSymptomLogsSchema,
+  SubmitMrsIiAssessmentSchema,
+  SubmitPam13AssessmentSchema,
   SymptomCatalogSchema,
   SymptomLogsSchema,
   UpdateUserHealthMetricsSchema,
@@ -19,12 +25,18 @@ import type {
   CyclePhaseSnapshotDto,
   HealthResponse,
   MoodLogs,
+  MrsIiAssessmentSubmission,
+  MrsIiLatest,
+  Pam13AssessmentSubmission,
+  Pam13Latest,
   PeriodDays,
   RegisterPushToken,
   RegisterPushTokenResponse,
   ReplaceMoodLogs,
   ReplacePeriodDays,
   ReplaceSymptomLogs,
+  SubmitMrsIiAssessment,
+  SubmitPam13Assessment,
   SymptomCatalog,
   SymptomLogs,
   UpdateUserHealthMetrics,
@@ -34,6 +46,10 @@ import type {
 } from '@syna/shared-types';
 
 import {
+  ASSESSMENTS_MRS_II,
+  ASSESSMENTS_MRS_II_LATEST,
+  ASSESSMENTS_PAM_13,
+  ASSESSMENTS_PAM_13_LATEST,
   CYCLE_PHASE,
   HEALTH,
   MOOD_LOGS,
@@ -162,6 +178,42 @@ export const registerPushToken = (
     body: input,
     bodySchema: RegisterPushTokenSchema,
     responseSchema: RegisterPushTokenResponseSchema,
+  });
+
+export const submitMrsIiAssessment = (
+  input: SubmitMrsIiAssessment,
+): Promise<MrsIiAssessmentSubmission> =>
+  apiRequest({
+    url: ASSESSMENTS_MRS_II,
+    method: 'POST',
+    body: input,
+    bodySchema: SubmitMrsIiAssessmentSchema,
+    responseSchema: MrsIiAssessmentSubmissionSchema,
+  });
+
+export const getLatestMrsIiAssessment = (): Promise<MrsIiLatest> =>
+  apiRequest({
+    url: ASSESSMENTS_MRS_II_LATEST,
+    method: 'GET',
+    responseSchema: MrsIiLatestSchema,
+  });
+
+export const submitPam13Assessment = (
+  input: SubmitPam13Assessment,
+): Promise<Pam13AssessmentSubmission> =>
+  apiRequest({
+    url: ASSESSMENTS_PAM_13,
+    method: 'POST',
+    body: input,
+    bodySchema: SubmitPam13AssessmentSchema,
+    responseSchema: Pam13AssessmentSubmissionSchema,
+  });
+
+export const getLatestPam13Assessment = (): Promise<Pam13Latest> =>
+  apiRequest({
+    url: ASSESSMENTS_PAM_13_LATEST,
+    method: 'GET',
+    responseSchema: Pam13LatestSchema,
   });
 
 export { createApiClientError, isApiClientError, toApiClientError } from './http';

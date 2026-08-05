@@ -61,6 +61,20 @@ export const MOOD_LOGS = '/mood/logs';
 export const MOOD_LOGS_ABSOLUTE = absolute(MOOD_LOGS);
 
 // =============================================================================
+// ASSESSMENTS (MRS-II / PAM-13)
+// =============================================================================
+
+export const ASSESSMENTS_MRS_II = '/assessments/mrs-ii';
+export const ASSESSMENTS_MRS_II_ABSOLUTE = absolute(ASSESSMENTS_MRS_II);
+export const ASSESSMENTS_MRS_II_LATEST = '/assessments/mrs-ii/latest';
+export const ASSESSMENTS_MRS_II_LATEST_ABSOLUTE = absolute(ASSESSMENTS_MRS_II_LATEST);
+
+export const ASSESSMENTS_PAM_13 = '/assessments/pam-13';
+export const ASSESSMENTS_PAM_13_ABSOLUTE = absolute(ASSESSMENTS_PAM_13);
+export const ASSESSMENTS_PAM_13_LATEST = '/assessments/pam-13/latest';
+export const ASSESSMENTS_PAM_13_LATEST_ABSOLUTE = absolute(ASSESSMENTS_PAM_13_LATEST);
+
+// =============================================================================
 // NOTIFICATIONS
 // =============================================================================
 

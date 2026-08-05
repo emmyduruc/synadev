@@ -6,6 +6,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AssessmentsModule } from './assessments/assessments.module';
 import { resolveEnvFilePaths } from './config/env-path';
 import { CycleModule } from './cycle/cycle.module';
 import { DatabaseModule } from './database/database.module';
@@ -32,6 +33,7 @@ import { UsersModule } from './users/users.module';
     PeriodModule,
     MoodModule,
     SymptomsModule,
+    AssessmentsModule,
     UploadsModule,
     EmailModule,
   ],

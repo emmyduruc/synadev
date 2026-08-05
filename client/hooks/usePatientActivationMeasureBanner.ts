@@ -1,9 +1,11 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
+import { getLatestPam13Assessment } from '@/lib/api';
 import {
   getPatientActivationMeasureAssessmentCompleted,
   getPatientActivationMeasureBannerDismissed,
+  setPatientActivationMeasureAssessmentCompleted,
   setPatientActivationMeasureBannerDismissed,
 } from '@/lib/patientActivationMeasure/patientActivationMeasureBannerStorage';
 
@@ -12,12 +14,22 @@ export const usePatientActivationMeasureBanner = () => {
   const [isCompleted, setIsCompleted] = useState<boolean | null>(null);
 
   const refresh = useCallback(async () => {
-    const [dismissed, completed] = await Promise.all([
-      getPatientActivationMeasureBannerDismissed(),
-      getPatientActivationMeasureAssessmentCompleted(),
-    ]);
-
+    const dismissed = await getPatientActivationMeasureBannerDismissed();
     setIsDismissed(dismissed);
+
+    try {
+      const latest = await getLatestPam13Assessment();
+
+      if (latest.submission) {
+        await setPatientActivationMeasureAssessmentCompleted();
+        setIsCompleted(true);
+        return;
+      }
+    } catch {
+      // Fall back to local SecureStore when offline or API unavailable.
+    }
+
+    const completed = await getPatientActivationMeasureAssessmentCompleted();
     setIsCompleted(completed);
   }, []);
 

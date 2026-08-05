@@ -42,6 +42,7 @@ export const setupSwagger = (app: INestApplication): void => {
     .addTag(SWAGGER_TAGS.cycle, 'Cycle phase estimation and tips')
     .addTag(SWAGGER_TAGS.mood, 'Daily mood check-ins')
     .addTag(SWAGGER_TAGS.symptoms, 'Daily symptom logging and catalog')
+    .addTag(SWAGGER_TAGS.assessments, 'Clinical questionnaires (MRS-II, PAM-13)')
     .addTag(SWAGGER_TAGS.notifications, 'Push notification token registration')
     .addTag(SWAGGER_TAGS.uploads, 'Image and file upload endpoints')
     .addTag(SWAGGER_TAGS.emails, 'Transactional email delivery via Resend')

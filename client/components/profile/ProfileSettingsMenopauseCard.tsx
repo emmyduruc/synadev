@@ -20,7 +20,7 @@ export const ProfileSettingsMenopauseCard = ({
 }: ProfileSettingsMenopauseCardProps) => {
   const { t } = useTranslate();
   const router = useRouter();
-  const { isCompleted } = useMrsIiAssessmentStatus();
+  const { isCompleted, latestSubmission } = useMrsIiAssessmentStatus();
   const emptyValue = t('profile_personal_empty_value');
 
   const stageValue = data.stage
@@ -32,9 +32,16 @@ export const ProfileSettingsMenopauseCard = ({
   const hormoneValue = data.hormoneTherapy
     ? t(PROFILE_OPTION_LABEL_KEYS.hormoneTherapy[data.hormoneTherapy])
     : emptyValue;
-  const mrsScoreValue = isCompleted
-    ? t('profile_settings_mrs_score_placeholder')
-    : emptyValue;
+
+  let mrsScoreValue = emptyValue;
+
+  if (latestSubmission) {
+    mrsScoreValue = t('profile_settings_mrs_score_value', {
+      score: latestSubmission.total,
+    });
+  } else if (isCompleted) {
+    mrsScoreValue = t('profile_settings_mrs_score_placeholder');
+  }
 
   return (
     <ProfileSettingsSectionCard

@@ -122,6 +122,7 @@
   "profile_settings_hormone_therapy_label": "Hormone therapy (HRT/MHT)",
   "profile_settings_mrs_score_label": "MRS-II score",
   "profile_settings_mrs_score_placeholder": "-/44",
+  "profile_settings_mrs_score_value": "{{score}}/44",
   "profile_settings_body_section_label": "BODY MEASUREMENTS",
   "profile_settings_height_label": "Height",
   "profile_settings_weight_label": "Weight",

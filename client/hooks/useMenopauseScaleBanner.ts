@@ -1,6 +1,7 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
+import { getLatestMrsIiAssessment } from '@/lib/api';
 import {
   getMrsIiAssessmentCompleted,
   getMrsIiBannerDismissed,
@@ -13,12 +14,22 @@ export const useMenopauseScaleBanner = () => {
   const [isCompleted, setIsCompleted] = useState<boolean | null>(null);
 
   const refresh = useCallback(async () => {
-    const [dismissed, completed] = await Promise.all([
-      getMrsIiBannerDismissed(),
-      getMrsIiAssessmentCompleted(),
-    ]);
-
+    const dismissed = await getMrsIiBannerDismissed();
     setIsDismissed(dismissed);
+
+    try {
+      const latest = await getLatestMrsIiAssessment();
+
+      if (latest.submission) {
+        await setMrsIiAssessmentCompleted();
+        setIsCompleted(true);
+        return;
+      }
+    } catch {
+      // Fall back to local SecureStore when offline or API unavailable.
+    }
+
+    const completed = await getMrsIiAssessmentCompleted();
     setIsCompleted(completed);
   }, []);
 
