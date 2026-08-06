@@ -6,8 +6,8 @@ export type ProfileTabPlaceholderProps = {
 };
 
 export const ProfileTabPlaceholder = ({ message }: ProfileTabPlaceholderProps) => (
-  <Box align="center" justify="center" padding="lg" className="min-h-48">
-    <Text size="lg" weight="semibold" align="center" color="foreground-muted">
+  <Box flex={1} align="center" justify="center" padding="lg" className="w-full">
+    <Text size="lg" weight="semibold" align="center" color="foreground">
       {message}
     </Text>
   </Box>

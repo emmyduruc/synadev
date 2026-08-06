@@ -11,6 +11,8 @@ export type ProfileOptionChipsProps<T extends string> = {
   onChange: (value: T) => void;
   /** When true, chips stretch side-by-side in equal columns (e.g. Yes/No). */
   equalWidth?: boolean;
+  /** Vertical full-width chips (e.g. migraine diagnosis). */
+  stack?: boolean;
 };
 
 export const ProfileOptionChips = <T extends string>({
@@ -19,11 +21,15 @@ export const ProfileOptionChips = <T extends string>({
   value,
   onChange,
   equalWidth = false,
+  stack = false,
 }: ProfileOptionChipsProps<T>) => {
   const { t } = useTranslate();
 
   return (
-    <Box direction="row" className="flex-wrap gap-2">
+    <Box
+      direction={stack ? 'column' : 'row'}
+      gap={stack ? 'sm' : undefined}
+      className={stack ? 'w-full' : 'flex-wrap gap-2'}>
       {options.map((option) => {
         const isSelected = value === option;
 
@@ -35,7 +41,8 @@ export const ProfileOptionChips = <T extends string>({
             onPress={() => onChange(option)}
             className={cn(
               'items-center justify-center rounded-full px-4 py-2.5',
-              equalWidth ? 'min-w-[48%] flex-1' : undefined,
+              stack ? 'w-full' : undefined,
+              equalWidth && !stack ? 'min-w-[48%] flex-1' : undefined,
               isSelected ? 'bg-primary-600' : 'bg-muted',
             )}>
             <Text

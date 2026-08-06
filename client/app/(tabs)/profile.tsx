@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ScrollView } from 'react-native';
 
+import { DeepeningContent } from '@/components/deepening/DeepeningContent';
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
@@ -44,16 +45,22 @@ const ProfileTabScreen = () => {
           </Box>
 
           <ScrollView
-            contentContainerStyle={{ paddingBottom: 24 }}
+            className="flex-1"
+            contentContainerStyle={
+              isHealthRecordActive
+                ? { flexGrow: 1, paddingBottom: 24 }
+                : { paddingBottom: 24 }
+            }
             showsVerticalScrollIndicator={false}>
-            <Box paddingX="md" gap="md">
+            <Box
+              paddingX="md"
+              gap="md"
+              className={isHealthRecordActive ? 'flex-1' : undefined}>
               <Box style={isMyProfileActive ? undefined : { display: 'none' }}>
                 <ProfileMyProfileContent />
               </Box>
 
-              {isDeepeningActive ? (
-                <ProfileTabPlaceholder message={t('profile_tab_deepening_placeholder')} />
-              ) : null}
+              {isDeepeningActive ? <DeepeningContent /> : null}
 
               {isHealthRecordActive ? (
                 <ProfileTabPlaceholder message={t('profile_tab_health_record_placeholder')} />
