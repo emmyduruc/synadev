@@ -2,25 +2,21 @@ import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
 
 import { DashboardCheckInCard } from '@/components/dashboard/DashboardCheckInCard';
-import { DashboardConnectHealthSection } from '@/components/dashboard/DashboardConnectHealthSection';
 import { DashboardCyclePhaseCard } from '@/components/dashboard/DashboardCyclePhaseCard';
 import { DashboardGreetingSection } from '@/components/dashboard/DashboardGreetingSection';
 import { DashboardHealthMetricsRow } from '@/components/dashboard/DashboardHealthMetricsRow';
 import { DashboardInsightsSection } from '@/components/dashboard/DashboardInsightsSection';
+import { DashboardSetupProgress } from '@/components/dashboard/DashboardSetupProgress';
 import { DashboardWeekCalendarSection } from '@/components/dashboard/DashboardWeekCalendarSection';
 import { useConfettiCelebration } from '@/components/gamification/ConfettiProvider';
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
-import { MenopauseScaleBanner } from '@/components/mrs/MenopauseScaleBanner';
-import { PatientActivationMeasureBanner } from '@/components/patientActivationMeasure/PatientActivationMeasureBanner';
 import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
 import { AppHeader, Box } from '@/components/ui';
 import { useBioData } from '@/hooks/useBioData';
 import { useCyclePhase } from '@/hooks/useCyclePhase';
-import { useDashboardHealth } from '@/hooks/useDashboardHealth';
-import { useMenopauseScaleBanner } from '@/hooks/useMenopauseScaleBanner';
+import { useDashboardSetupProgress } from '@/hooks/useDashboardSetupProgress';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
-import { usePatientActivationMeasureBanner } from '@/hooks/usePatientActivationMeasureBanner';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
 import { useTranslate } from '@/hooks/useTranslate';
 import { DASHBOARD_SURFACE } from '@/lib/dashboard/surfaces';
@@ -40,25 +36,21 @@ const StartTabScreen = () => {
     isLoading: isProfileBannerLoading,
     dismiss: dismissProfileBanner,
   } = useProfileCompletionBanner();
-  const {
-    isVisible: isMrsBannerVisible,
-    isLoading: isMrsBannerLoading,
-    dismiss: dismissMrsBanner,
-  } = useMenopauseScaleBanner();
-  const {
-    isVisible: isPatientActivationMeasureBannerVisible,
-    isLoading: isPatientActivationMeasureBannerLoading,
-    dismiss: dismissPatientActivationMeasureBanner,
-  } = usePatientActivationMeasureBanner();
   const { celebrate } = useConfettiCelebration();
   const { snapshot: cycleSnapshot, isLoading: isCycleLoading } = useCyclePhase();
   const {
     metrics,
+    isConnected,
     isConnecting,
     errorMessage,
-    isConnected,
     connectHealth,
-  } = useDashboardHealth();
+    steps,
+    completedCount,
+    totalCount,
+    currentStepId,
+    isFullyComplete,
+    isSetupLoading,
+  } = useDashboardSetupProgress();
 
   const handleConnectHealth = async () => {
     const connected = await connectHealth();
@@ -69,12 +61,7 @@ const StartTabScreen = () => {
   };
 
   const showProfileBanner = !isProfileBannerLoading && isProfileBannerVisible;
-  const showMrsBanner = !isMrsBannerLoading && isMrsBannerVisible;
-  const showPatientActivationMeasureBanner =
-    !isPatientActivationMeasureBannerLoading &&
-    isPatientActivationMeasureBannerVisible;
-  const showAnyBanner =
-    showProfileBanner || showMrsBanner || showPatientActivationMeasureBanner;
+  const showSetupProgress = !isSetupLoading && !isFullyComplete;
 
   return (
     <SynaGradientBackground>
@@ -86,6 +73,25 @@ const StartTabScreen = () => {
             showsVerticalScrollIndicator={false}>
             <Box padding="lg" gap="lg">
               <DashboardGreetingSection firstName={bioData.firstName} />
+              {showSetupProgress ? (
+                <DashboardSetupProgress
+                  steps={steps}
+                  completedCount={completedCount}
+                  totalCount={totalCount}
+                  currentStepId={currentStepId}
+                  isConnectingHealth={isConnecting}
+                  healthErrorMessage={errorMessage}
+                  onConnectHealth={() => {
+                    void handleConnectHealth();
+                  }}
+                  onStartMrsIi={() => {
+                    router.push(ROUTES.assessment.mrsIi);
+                  }}
+                  onStartPam13={() => {
+                    router.push(ROUTES.assessment.patientActivationMeasure);
+                  }}
+                />
+              ) : null}
               <DashboardHealthMetricsRow metrics={metrics} isConnected={isConnected} />
               <Box className={cn(DASHBOARD_SURFACE.lavenderShell, 'gap-4 p-4')}>
                 <DashboardWeekCalendarSection
@@ -111,47 +117,20 @@ const StartTabScreen = () => {
                 isLoading={isCycleLoading}
               />
               <DashboardInsightsSection />
-              <DashboardConnectHealthSection
-                errorMessage={errorMessage}
-                isConnecting={isConnecting}
-                onConnect={() => {
-                  void handleConnectHealth();
-                }}
-              />
             </Box>
           </ScrollView>
 
-          {showAnyBanner ? (
+          {showProfileBanner ? (
             <Box
-              className="absolute left-4 right-4 top-2 z-10 gap-2"
+              className="absolute left-4 right-4 top-2 z-10"
               pointerEvents="box-none">
-              {showProfileBanner ? (
-                <ProfileCompletionBanner
-                  percent={percent}
-                  onPress={openBioDataWizard}
-                  onDismiss={() => {
-                    void dismissProfileBanner();
-                  }}
-                />
-              ) : null}
-              {showMrsBanner ? (
-                <MenopauseScaleBanner
-                  onPress={() => router.push(ROUTES.assessment.mrsIi)}
-                  onDismiss={() => {
-                    void dismissMrsBanner();
-                  }}
-                />
-              ) : null}
-              {showPatientActivationMeasureBanner ? (
-                <PatientActivationMeasureBanner
-                  onPress={() =>
-                    router.push(ROUTES.assessment.patientActivationMeasure)
-                  }
-                  onDismiss={() => {
-                    void dismissPatientActivationMeasureBanner();
-                  }}
-                />
-              ) : null}
+              <ProfileCompletionBanner
+                percent={percent}
+                onPress={openBioDataWizard}
+                onDismiss={() => {
+                  void dismissProfileBanner();
+                }}
+              />
             </Box>
           ) : null}
         </Box>

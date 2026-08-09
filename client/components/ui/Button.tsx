@@ -7,14 +7,13 @@ import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import {
   buttonSizeClasses,
   buttonTextClasses,
-  buttonTextSizeClasses,
   buttonVariantClasses,
   cn,
   isLightButtonVariant,
   radiusClasses,
   semanticColors,
 } from '@/lib/ui';
-import type { ButtonSize, ButtonVariant } from '@/lib/ui';
+import type { ButtonSize, ButtonVariant, FontSize } from '@/lib/ui';
 
 export type ButtonProps = Omit<TouchableOpacityProps, 'children'> & {
   children: ReactNode;
@@ -26,6 +25,12 @@ export type ButtonProps = Omit<TouchableOpacityProps, 'children'> & {
   fullWidth?: boolean;
   className?: string;
   textClassName?: string;
+};
+
+const buttonLabelSize: Record<ButtonSize, FontSize> = {
+  sm: 'sm',
+  md: 'base',
+  lg: 'lg',
 };
 
 export const Button = ({
@@ -69,12 +74,12 @@ export const Button = ({
         <>
           {leftIcon ? <Box className="mr-2">{leftIcon}</Box> : null}
           <Text
+            size={buttonLabelSize[size]}
             weight="semibold"
-            className={cn(
-              buttonTextClasses[variant],
-              buttonTextSizeClasses[size],
-              textClassName,
-            )}>
+            align="center"
+            responsive={false}
+            numberOfLines={1}
+            className={cn(buttonTextClasses[variant], textClassName)}>
             {children}
           </Text>
           {rightIcon ? <Box className="ml-2">{rightIcon}</Box> : null}

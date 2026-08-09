@@ -59,6 +59,7 @@ export const useMenopauseScaleBanner = () => {
   return {
     isVisible,
     isLoading,
+    isCompleted: Boolean(isCompleted),
     dismiss,
     markCompleted,
     refresh,

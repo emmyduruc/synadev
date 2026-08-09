@@ -54,6 +54,7 @@ export const usePatientActivationMeasureBanner = () => {
   return {
     isVisible,
     isLoading,
+    isCompleted: Boolean(isCompleted),
     dismiss,
     refresh,
   };
