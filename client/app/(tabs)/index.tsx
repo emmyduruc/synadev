@@ -53,7 +53,6 @@ const StartTabScreen = () => {
   const { celebrate } = useConfettiCelebration();
   const { snapshot: cycleSnapshot, isLoading: isCycleLoading } = useCyclePhase();
   const {
-    healthSnapshot,
     metrics,
     isConnecting,
     errorMessage,
@@ -113,7 +112,6 @@ const StartTabScreen = () => {
               />
               <DashboardInsightsSection />
               <DashboardConnectHealthSection
-                healthSnapshot={healthSnapshot}
                 errorMessage={errorMessage}
                 isConnecting={isConnecting}
                 onConnect={() => {

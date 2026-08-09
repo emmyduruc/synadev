@@ -19,7 +19,8 @@
     "prepare": "husky",
     "ios": "yarn workspace @syna/client ios",
     "android": "yarn workspace @syna/client android",
-    "start:client": "yarn workspace @syna/client start"
+    "start:client": "yarn workspace @syna/client start",
+    "deploy:backend": "./scripts/deploy-backend-cloud-run.sh"
   },
   "devDependencies": {
     "eslint": "^9.39.4",

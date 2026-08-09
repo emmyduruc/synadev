@@ -1,0 +1,32 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "APP_ENV": "development",
+        "EXPO_PUBLIC_API_URL": "http://localhost:3000"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "APP_ENV": "preview",
+        "EXPO_PUBLIC_API_URL": "https://syna-backend-jdnrx5h3xa-ew.a.run.app"
+      }
+    },
+    "production": {
+      "env": {
+        "APP_ENV": "production",
+        "EXPO_PUBLIC_API_URL": "https://syna-backend-jdnrx5h3xa-ew.a.run.app"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

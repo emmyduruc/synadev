@@ -1,0 +1,115 @@
+# Deploy @syna/backend to Google Cloud Run on every push to main.
+#
+# One-time GCP + GitHub setup: see README "Deploy (Cloud Run)" section.
+#
+# Required GitHub repository variables:
+#   GCP_PROJECT_ID
+#   GCP_REGION              (e.g. europe-west1)
+#   GCP_ARTIFACT_REGISTRY  (e.g. syna)
+#   GCP_CLOUD_RUN_SERVICE  (e.g. syna-backend)
+#
+# Required GitHub repository secrets (Workload Identity Federation):
+#   GCP_WORKLOAD_IDENTITY_PROVIDER  (projects/.../locations/global/workloadIdentityPools/.../providers/...)
+#   GCP_SERVICE_ACCOUNT             (deployer@PROJECT_ID.iam.gserviceaccount.com)
+
+name: Deploy backend to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-backend-cloud-run
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+  REGION: ${{ vars.GCP_REGION }}
+  ARTIFACT_REGISTRY: ${{ vars.GCP_ARTIFACT_REGISTRY }}
+  SERVICE: ${{ vars.GCP_CLOUD_RUN_SERVICE }}
+
+jobs:
+  deploy:
+    name: Build & deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required configuration
+        run: |
+          missing=0
+          for name in PROJECT_ID REGION ARTIFACT_REGISTRY SERVICE; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing GitHub Actions variable mapped to env.$name"
+              missing=1
+            fi
+          done
+          if [ -z "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}" ] || [ -z "${{ secrets.GCP_SERVICE_ACCOUNT }}" ]; then
+            echo "::error::Missing secrets GCP_WORKLOAD_IDENTITY_PROVIDER and/or GCP_SERVICE_ACCOUNT"
+            missing=1
+          fi
+          exit "$missing"
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+
+      - name: Build and push image
+        id: image
+        run: |
+          IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${ARTIFACT_REGISTRY}/${SERVICE}"
+          TAG="${IMAGE}:${GITHUB_SHA}"
+          LATEST="${IMAGE}:latest"
+
+          docker build \
+            --tag "${TAG}" \
+            --tag "${LATEST}" \
+            --file Dockerfile \
+            .
+
+          docker push "${TAG}"
+          docker push "${LATEST}"
+
+          echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE }}
+          region: ${{ env.REGION }}
+          image: ${{ steps.image.outputs.tag }}
+          flags: >-
+            --port=8080
+            --cpu=1
+            --memory=512Mi
+            --concurrency=80
+            --min-instances=0
+            --max-instances=10
+            --timeout=300
+            --cpu-boost
+
+      - name: Show service URL
+        run: |
+          URL="$(gcloud run services describe "${SERVICE}" --region="${REGION}" --format='value(status.url)')"
+          echo "### Deployed" >> "${GITHUB_STEP_SUMMARY}"
+          echo "- Service: \`${SERVICE}\`" >> "${GITHUB_STEP_SUMMARY}"
+          echo "- Image: \`${{ steps.image.outputs.tag }}\`" >> "${GITHUB_STEP_SUMMARY}"
+          echo "- URL: ${URL}" >> "${GITHUB_STEP_SUMMARY}"
+          echo "Cloud Run URL: ${URL}"
