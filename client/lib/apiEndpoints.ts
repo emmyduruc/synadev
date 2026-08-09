@@ -34,6 +34,10 @@ export const USERS_ME_LOCALE_ABSOLUTE = absolute(USERS_ME_LOCALE);
 export const USERS_ME_HEALTH_METRICS = '/users/me/health-metrics';
 export const USERS_ME_HEALTH_METRICS_ABSOLUTE = absolute(USERS_ME_HEALTH_METRICS);
 
+/** GET/PUT — per-day wearable aggregates for Patterns */
+export const HEALTH_DAILY = '/health/daily';
+export const HEALTH_DAILY_ABSOLUTE = absolute(HEALTH_DAILY);
+
 // =============================================================================
 // MENSTRUAL CYCLE / PERIOD
 // =============================================================================

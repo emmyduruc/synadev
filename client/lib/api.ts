@@ -1,5 +1,6 @@
 import {
   CyclePhaseSnapshotSchema,
+  HealthDailyMetricsSchema,
   HealthResponseSchema,
   MoodLogsSchema,
   MrsIiAssessmentSubmissionSchema,
@@ -19,10 +20,13 @@ import {
   UpdateUserHealthMetricsSchema,
   UpdateUserLocaleSchema,
   UpdateUserProfileSchema,
+  UpsertHealthDailyMetricsSchema,
   UserSchema,
 } from '@syna/shared-types';
 import type {
   CyclePhaseSnapshotDto,
+  GetHealthDailyMetricsQuery,
+  HealthDailyMetrics,
   HealthResponse,
   MoodLogs,
   MrsIiAssessmentSubmission,
@@ -42,6 +46,7 @@ import type {
   UpdateUserHealthMetrics,
   UpdateUserLocale,
   UpdateUserProfile,
+  UpsertHealthDailyMetrics,
   User,
 } from '@syna/shared-types';
 
@@ -52,6 +57,7 @@ import {
   ASSESSMENTS_PAM_13_LATEST,
   CYCLE_PHASE,
   HEALTH,
+  HEALTH_DAILY,
   MOOD_LOGS,
   NOTIFICATIONS_PUSH_TOKEN,
   PERIOD_DAYS,
@@ -96,6 +102,27 @@ export const updateCurrentUserHealthMetrics = (
     body: input,
     bodySchema: UpdateUserHealthMetricsSchema,
     responseSchema: UserSchema,
+  });
+
+export const getHealthDailyMetrics = (
+  query: GetHealthDailyMetricsQuery,
+): Promise<HealthDailyMetrics> =>
+  apiRequest({
+    url: HEALTH_DAILY,
+    method: 'GET',
+    params: query,
+    responseSchema: HealthDailyMetricsSchema,
+  });
+
+export const upsertHealthDailyMetrics = (
+  input: UpsertHealthDailyMetrics,
+): Promise<HealthDailyMetrics> =>
+  apiRequest({
+    url: HEALTH_DAILY,
+    method: 'PUT',
+    body: input,
+    bodySchema: UpsertHealthDailyMetricsSchema,
+    responseSchema: HealthDailyMetricsSchema,
   });
 
 export const updateCurrentUserLocale = (input: UpdateUserLocale): Promise<User> =>

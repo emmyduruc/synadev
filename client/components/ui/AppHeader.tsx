@@ -35,7 +35,7 @@ export const AppHeader = ({
       ) : null}
     </Box>
 
-    <Box className="w-12" align="end">
+    <Box className="min-w-12 shrink-0" align="end" direction="row">
       {right}
     </Box>
   </Box>

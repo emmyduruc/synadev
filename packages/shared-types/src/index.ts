@@ -38,6 +38,21 @@ export type {
 } from './schemas/health-metrics.schema';
 
 export {
+  HEALTH_DAILY_MAX_RANGE_DAYS,
+  HealthDailyMetricRowSchema,
+  HealthDailyMetricsSchema,
+  UpsertHealthDailyMetricsSchema,
+  GetHealthDailyMetricsQuerySchema,
+} from './schemas/health-daily.schema';
+
+export type {
+  HealthDailyMetricRow,
+  HealthDailyMetrics,
+  UpsertHealthDailyMetrics,
+  GetHealthDailyMetricsQuery,
+} from './schemas/health-daily.schema';
+
+export {
   PeriodDaysSchema,
   ReplacePeriodDaysSchema,
 } from './schemas/period.schema';

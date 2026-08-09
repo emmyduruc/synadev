@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { useProfileHealthConnection } from '@/hooks/useProfileHealthConnection';
-import { updateCurrentUserHealthMetrics } from '@/lib/api';
+import { updateCurrentUserHealthMetrics, upsertHealthDailyMetrics } from '@/lib/api';
 import { readHealthSnapshot } from '@/lib/health/healthData';
 import { logHealthSnapshotDebug } from '@/lib/health/healthDebug';
 import {
@@ -9,6 +9,7 @@ import {
   parseDashboardHealthMetrics,
   type DashboardHealthMetricDisplay,
 } from '@/lib/health/healthMetricDisplay';
+import { toUpsertHealthDailyMetrics } from '@/lib/health/toHealthDailyMetrics';
 import { toUserHealthMetrics } from '@/lib/health/toUserHealthMetrics';
 import type { HealthRawSnapshot } from '@/lib/health/types';
 
@@ -17,6 +18,16 @@ const persistHealthMetricsSnapshot = async (snapshot: HealthRawSnapshot): Promis
     await updateCurrentUserHealthMetrics(toUserHealthMetrics(snapshot));
   } catch {
     // Device read still succeeds; DB sync is best-effort until offline queue exists.
+  }
+
+  try {
+    const daily = toUpsertHealthDailyMetrics(snapshot);
+
+    if (daily.rows.length > 0) {
+      await upsertHealthDailyMetrics(daily);
+    }
+  } catch {
+    // Daily series sync is best-effort; Patterns will show needs_more_data until synced.
   }
 };
 

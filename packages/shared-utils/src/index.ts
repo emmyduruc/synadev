@@ -33,3 +33,30 @@ export type {
   CycleDayMarker,
   BuildCycleDayMarkersInput,
 } from './cycleDayMarkers';
+
+export {
+  PATTERN_WINDOW_DAYS,
+  PATTERN_MIN_OVERLAP_DAYS,
+  PATTERN_HRV_BASELINE_NIGHTS,
+  PATTERN_STATUS,
+  PATTERN_CONTEXT_ID,
+  PATTERN_AXIS_ID,
+  computePatterns,
+} from './patterns/computePatterns';
+
+export type {
+  PatternStatus,
+  PatternContextId,
+  PatternAxisId,
+  PatternDailyHealth,
+  PatternDailyMood,
+  PatternDailySymptoms,
+  PatternSparkPoint,
+  PatternContextResult,
+  PatternAxisResult,
+  PatternHeatmapCell,
+  PatternHeatmapRow,
+  PatternHeatmapResult,
+  ComputePatternsInput,
+  PatternsComputation,
+} from './patterns/computePatterns';

@@ -3,7 +3,7 @@
     "name": "SYNA",
     "slug": "syna",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "syna",
     "userInterfaceStyle": "automatic",
@@ -42,6 +42,7 @@
         }
       ],
       "react-native-health-connect",
+      "expo-screen-orientation",
       [
         "expo-splash-screen",
         {

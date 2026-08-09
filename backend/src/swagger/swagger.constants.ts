@@ -1,6 +1,7 @@
 export const SWAGGER_TAGS = {
   app: 'App',
   health: 'Health',
+  healthMetrics: 'HealthMetrics',
   users: 'Users',
   period: 'Period',
   cycle: 'Cycle',

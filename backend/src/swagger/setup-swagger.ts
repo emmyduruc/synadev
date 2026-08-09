@@ -37,6 +37,7 @@ export const setupSwagger = (app: INestApplication): void => {
     )
     .addTag(SWAGGER_TAGS.app, 'Root application endpoints')
     .addTag(SWAGGER_TAGS.health, 'Service health and readiness checks')
+    .addTag(SWAGGER_TAGS.healthMetrics, 'Daily wearable health metric series')
     .addTag(SWAGGER_TAGS.users, 'User registration and profile management')
     .addTag(SWAGGER_TAGS.period, 'Menstrual period day logging')
     .addTag(SWAGGER_TAGS.cycle, 'Cycle phase estimation and tips')

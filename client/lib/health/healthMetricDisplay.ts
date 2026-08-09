@@ -19,7 +19,7 @@ export type DashboardHealthMetricDisplay = {
   trendDirection: HealthTrendDirection | null;
 };
 
-const LOOKBACK_DAYS = 14;
+const LOOKBACK_DAYS = 28;
 
 const getMetricByKey = (
   metrics: HealthRawMetric[],
