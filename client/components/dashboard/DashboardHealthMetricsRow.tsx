@@ -12,6 +12,10 @@ import { SleepIcon } from '@/components/ui/icons/SleepIcon';
 import { StepsIcon } from '@/components/ui/icons/StepsIcon';
 import { Text } from '@/components/ui/Text';
 import { useTranslate } from '@/hooks/useTranslate';
+import {
+  dashboardHorizontalScrollContentStyle,
+  dashboardHorizontalScrollStyle,
+} from '@/lib/dashboard/horizontalScrollStyles';
 import { formatTodayDisplayDate } from '@/lib/date/formatDisplayDate';
 import {
   DASHBOARD_HEALTH_METRIC,
@@ -71,7 +75,8 @@ export const DashboardHealthMetricsRow = ({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 12, paddingRight: 4 }}>
+        style={dashboardHorizontalScrollStyle}
+        contentContainerStyle={[dashboardHorizontalScrollContentStyle, { gap: 12, paddingRight: 4 }]}>
         {metrics.map((metric) => {
           const config = DASHBOARD_HEALTH_METRIC_CONFIG[metric.id];
 

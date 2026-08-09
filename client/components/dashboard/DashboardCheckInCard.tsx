@@ -12,6 +12,10 @@ import { Text } from '@/components/ui/Text';
 import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import { useTranslate } from '@/hooks/useTranslate';
 import {
+  dashboardHorizontalScrollContentStyle,
+  dashboardHorizontalScrollStyle,
+} from '@/lib/dashboard/horizontalScrollStyles';
+import {
   DASHBOARD_ICON_WELL,
   DASHBOARD_QUICK_ACTION_SURFACE,
   DASHBOARD_SURFACE,
@@ -43,7 +47,7 @@ export const DashboardCheckInCard = ({
       className={cn(
         embedded ? undefined : cn(DASHBOARD_SURFACE.lavenderShell, 'p-4'),
       )}>
-      <Box className={cn(DASHBOARD_SURFACE.nestedLift, 'px-4 py-4')}>
+      <Box className={cn(DASHBOARD_SURFACE.nestedLift, 'px-4 pt-4 pb-4')}>
         <TouchableOpacity
           accessibilityRole="button"
           onPress={() => onCelebrate(CONFETTI_ACTION.dailyCheckInCompleted)}>
@@ -69,7 +73,11 @@ export const DashboardCheckInCard = ({
           horizontal
           showsHorizontalScrollIndicator={false}
           className="mt-4"
-          contentContainerStyle={{ gap: 8, paddingRight: 4 }}>
+          style={dashboardHorizontalScrollStyle}
+          contentContainerStyle={[
+            dashboardHorizontalScrollContentStyle,
+            { gap: 8, paddingRight: 4 },
+          ]}>
           <DashboardQuickActionButton
             label={t('dashboard_quick_action_record_period')}
             icon={

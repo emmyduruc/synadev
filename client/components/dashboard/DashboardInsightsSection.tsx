@@ -11,6 +11,10 @@ import { SleepIcon } from '@/components/ui/icons/SleepIcon';
 import { Text } from '@/components/ui/Text';
 import { useInsightStoryFlow } from '@/hooks/useInsightStoryFlow';
 import { useTranslate } from '@/hooks/useTranslate';
+import {
+  dashboardHorizontalScrollContentStyle,
+  dashboardHorizontalScrollStyle,
+} from '@/lib/dashboard/horizontalScrollStyles';
 import { DASHBOARD_INSIGHT_SURFACE } from '@/lib/dashboard/surfaces';
 import { INSIGHT_ICON_KEY } from '@/lib/insights/constants';
 import { INSIGHT_CONTENT_MOCK } from '@/lib/insights/insightContentMock';
@@ -62,7 +66,11 @@ export const DashboardInsightsSection = () => {
         </Text>
       </Box>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={dashboardHorizontalScrollStyle}
+        contentContainerStyle={dashboardHorizontalScrollContentStyle}>
         <Box direction="row" className="pr-2">
           {INSIGHT_CONTENT_MOCK.map((insight) => (
             <DashboardInsightCard

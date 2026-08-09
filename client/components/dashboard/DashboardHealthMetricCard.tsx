@@ -45,7 +45,7 @@ export const DashboardHealthMetricCard = ({
       direction="row"
       align="center"
       gap="sm"
-      className={cn(surfaceClassName, 'w-[148px] shrink-0 px-3 py-2.5')}>
+      className={cn(surfaceClassName, 'w-[148px] shrink-0 px-3 py-2.5 shadow-none')}>
       <Box
         align="center"
         justify="center"

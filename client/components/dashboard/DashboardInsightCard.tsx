@@ -28,7 +28,7 @@ export const DashboardInsightCard = ({
     activeOpacity={0.92}
     disabled={!onPress}
     onPress={onPress}>
-    <Box className={cn('mr-3 w-[227px] rounded-3xl px-3.5 py-3', backgroundClassName)}>
+    <Box className={cn('mr-3 w-[227px] rounded-3xl px-3.5 py-3 shadow-none', backgroundClassName)}>
       <Text size="2xs" weight="semibold" className="tracking-wide">
         {eyebrow}
       </Text>

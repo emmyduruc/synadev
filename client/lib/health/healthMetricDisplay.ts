@@ -269,10 +269,10 @@ const buildMetricDisplay = (
 });
 
 export const EMPTY_DASHBOARD_HEALTH_METRICS: readonly DashboardHealthMetricDisplay[] = [
-  buildMetricDisplay(DASHBOARD_HEALTH_METRIC.steps, '—'),
-  buildMetricDisplay(DASHBOARD_HEALTH_METRIC.activity, '—'),
-  buildMetricDisplay(DASHBOARD_HEALTH_METRIC.hrv, '—'),
-  buildMetricDisplay(DASHBOARD_HEALTH_METRIC.sleep, '—'),
+  buildMetricDisplay(DASHBOARD_HEALTH_METRIC.steps, '-'),
+  buildMetricDisplay(DASHBOARD_HEALTH_METRIC.activity, '-'),
+  buildMetricDisplay(DASHBOARD_HEALTH_METRIC.hrv, '-'),
+  buildMetricDisplay(DASHBOARD_HEALTH_METRIC.sleep, '-'),
 ];
 
 export const parseDashboardHealthMetrics = (
@@ -305,19 +305,19 @@ export const parseDashboardHealthMetrics = (
   return [
     buildMetricDisplay(
       DASHBOARD_HEALTH_METRIC.steps,
-      stepsDisplay === null ? '—' : formatCount(stepsDisplay),
+      stepsDisplay === null ? '-' : formatCount(stepsDisplay),
     ),
     buildMetricDisplay(
       DASHBOARD_HEALTH_METRIC.activity,
-      activityDisplay === null ? '—' : `${formatCount(activityDisplay)} min`,
+      activityDisplay === null ? '-' : `${formatCount(activityDisplay)} min`,
     ),
     buildMetricDisplay(
       DASHBOARD_HEALTH_METRIC.hrv,
-      hrvAverage === null ? '—' : `${formatCount(hrvAverage)} ms`,
+      hrvAverage === null ? '-' : `${formatCount(hrvAverage)} ms`,
     ),
     buildMetricDisplay(
       DASHBOARD_HEALTH_METRIC.sleep,
-      sleepHours === null ? '—' : `${formatDecimal(sleepHours)} h`,
+      sleepHours === null ? '-' : `${formatDecimal(sleepHours)} h`,
     ),
   ];
 };
