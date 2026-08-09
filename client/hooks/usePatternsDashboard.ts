@@ -19,6 +19,11 @@ import { usePeriodDates } from '@/hooks/usePeriodDates';
 import { useSymptomLog } from '@/hooks/useSymptomLog';
 import { getHealthDailyMetrics, getLatestPam13Assessment } from '@/lib/api';
 import { addDaysToKey, toDateKey } from '@/lib/date/dateKeys';
+import { buildPatternChartSeries } from '@/lib/patterns/buildPatternChartSeries';
+import {
+  PATTERN_CHART_FUTURE_DAYS,
+  PATTERN_CHART_LOOKBACK_DAYS,
+} from '@/lib/patterns/patternChartConstants';
 
 const CHALLENGING_MOOD_IDS = new Set([
   'irritable',
@@ -61,7 +66,9 @@ const toHealthDailyMap = (
 
 export const usePatternsDashboard = () => {
   const todayKey = toDateKey(new Date());
-  const fromKey = addDaysToKey(todayKey, -(PATTERN_WINDOW_DAYS - 1));
+  const patternFromKey = addDaysToKey(todayKey, -(PATTERN_WINDOW_DAYS - 1));
+  const chartFromKey = addDaysToKey(todayKey, -(PATTERN_CHART_LOOKBACK_DAYS - 1));
+  const chartToKey = addDaysToKey(todayKey, PATTERN_CHART_FUTURE_DAYS);
 
   const { dateKeys: periodDateKeys, isLoading: isPeriodLoading } = usePeriodDates();
   const { logs: symptomLogs, isLoading: isSymptomLoading } = useSymptomLog();
@@ -80,7 +87,7 @@ export const usePatternsDashboard = () => {
 
     try {
       const [healthResult, pamResult] = await Promise.all([
-        getHealthDailyMetrics({ from: fromKey, to: todayKey }),
+        getHealthDailyMetrics({ from: chartFromKey, to: todayKey }),
         getLatestPam13Assessment(),
       ]);
       setHealthRows(healthResult.rows);
@@ -92,7 +99,7 @@ export const usePatternsDashboard = () => {
       setIsHealthLoading(false);
       setIsPamLoading(false);
     }
-  }, [fromKey, todayKey]);
+  }, [chartFromKey, todayKey]);
 
   useEffect(() => {
     void refreshHealthAndPam();
@@ -139,9 +146,56 @@ export const usePatternsDashboard = () => {
     });
   }, [healthRows, isLoading, moodLogs, periodDateKeys, symptomLogs, todayKey]);
 
+  const chartSeries = useMemo(() => {
+    if (isLoading) {
+      return [];
+    }
+
+    const symptomsByDate = new Map<string, readonly string[]>();
+
+    for (const [dateKey, ids] of Object.entries(symptomLogs)) {
+      symptomsByDate.set(dateKey, ids);
+    }
+
+    const moodsByDate = new Map<string, PatternDailyMood>();
+
+    for (const [dateKey, entry] of Object.entries(moodLogs)) {
+      moodsByDate.set(dateKey, {
+        dateKey,
+        energy: entry.energy,
+        stress: entry.stress,
+        isChallenging: entry.primaryMood
+          ? CHALLENGING_MOOD_IDS.has(entry.primaryMood)
+          : false,
+      });
+    }
+
+    const dateKeys: string[] = [];
+    let cursor = chartFromKey;
+
+    while (cursor <= chartToKey) {
+      dateKeys.push(cursor);
+      cursor = addDaysToKey(cursor, 1);
+    }
+
+    return buildPatternChartSeries({
+      dateKeys,
+      healthByDate: toHealthDailyMap(healthRows),
+      moodsByDate,
+      symptomsByDate,
+    });
+  }, [chartFromKey, chartToKey, healthRows, isLoading, moodLogs, symptomLogs]);
+
   return {
     isLoading,
     computation,
+    chartSeries,
+    chartWindow: {
+      from: chartFromKey,
+      to: chartToKey,
+      todayKey,
+      patternFrom: patternFromKey,
+    },
     mrsLatest: mrsLatest as MrsIiAssessmentSubmission | null,
     pamLatest,
     refresh: () => {

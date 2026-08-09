@@ -43,6 +43,7 @@
       ],
       "react-native-health-connect",
       "expo-screen-orientation",
+      "expo-sharing",
       [
         "expo-splash-screen",
         {

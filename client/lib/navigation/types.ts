@@ -8,6 +8,14 @@ export type SynaTabBarProps = {
     index: number;
     routes: SynaTabBarRoute[];
   };
+  descriptors: Record<
+    string,
+    {
+      options: {
+        tabBarStyle?: { display?: string } | unknown;
+      };
+    }
+  >;
   navigation: {
     emit: (event: {
       type: 'tabPress';

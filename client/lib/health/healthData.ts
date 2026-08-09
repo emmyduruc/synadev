@@ -4,7 +4,7 @@ import type * as HealthConnect from 'react-native-health-connect';
 
 import type { HealthRawMetric, HealthRawSnapshot } from '@/lib/health/types';
 
-const LOOKBACK_DAYS = 28;
+const LOOKBACK_DAYS = 90;
 const IOS_SAMPLE_LIMIT = 20;
 const ANDROID_RECORD_LIMIT = 20;
 

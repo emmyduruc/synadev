@@ -16,6 +16,8 @@ export const SAFE_AREA_EDGES = {
    * (tab bar, `KeyboardStickyFooter`, or a sticky modal footer).
    */
   top: ['top', 'left', 'right'] as const satisfies readonly Edge[],
+  /** No automatic insets — handle padding manually (e.g. landscape graph mode). */
+  none: [] as const satisfies readonly Edge[],
 } as const;
 
 export type SafeAreaScreenProps = {

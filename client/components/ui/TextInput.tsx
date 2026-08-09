@@ -46,6 +46,7 @@ export const TextInput = ({
   className,
   autoFocus = false,
   focusKey,
+  multiline = false,
   onFocus,
   onBlur,
   ...props
@@ -106,6 +107,17 @@ export const TextInput = ({
     );
   }
 
+  const fieldClassName = cn(
+    'w-full border bg-white/90 font-sans text-foreground',
+    radiusClasses.xl,
+    inputPaddingClasses[size],
+    resolveBorderColorClass(),
+    disabled && 'opacity-50',
+    multiline ? 'min-h-24 py-3' : undefined,
+    inputClassName,
+    className,
+  );
+
   return (
     <Box className={cn('w-full', containerClassName)}>
       {label ? (
@@ -114,39 +126,55 @@ export const TextInput = ({
         </Text>
       ) : null}
 
-      <Box
-        direction="row"
-        align="center"
-        className={cn(
-          'w-full border bg-white/90',
-          radiusClasses.xl,
-          inputSizeClasses[size],
-          resolveBorderColorClass(),
-          disabled && 'opacity-50',
-        )}>
-        {leftIcon ? <Box paddingX="sm">{leftIcon}</Box> : null}
-
+      {multiline ? (
         <RNTextInput
           ref={inputRef}
-          className={cn(
-            'flex-1 font-sans text-foreground',
-            inputPaddingClasses[size],
-            leftIcon ? 'pl-0' : undefined,
-            rightIcon ? 'pr-0' : undefined,
-            inputClassName,
-            className,
-          )}
+          className={fieldClassName}
           style={{ fontFamily: FONT_FAMILY.regular }}
           editable={!disabled}
           placeholderTextColor={semanticColors.placeholder}
           autoFocus={autoFocus}
+          multiline
+          textAlignVertical="top"
           onFocus={handleFocus}
           onBlur={handleBlur}
           {...props}
         />
+      ) : (
+        <Box
+          direction="row"
+          align="center"
+          className={cn(
+            'w-full border bg-white/90',
+            radiusClasses.xl,
+            inputSizeClasses[size],
+            resolveBorderColorClass(),
+            disabled && 'opacity-50',
+          )}>
+          {leftIcon ? <Box paddingX="sm">{leftIcon}</Box> : null}
 
-        {rightIcon ? <Box paddingX="sm">{rightIcon}</Box> : null}
-      </Box>
+          <RNTextInput
+            ref={inputRef}
+            className={cn(
+              'flex-1 font-sans text-foreground',
+              inputPaddingClasses[size],
+              leftIcon ? 'pl-0' : undefined,
+              rightIcon ? 'pr-0' : undefined,
+              inputClassName,
+              className,
+            )}
+            style={{ fontFamily: FONT_FAMILY.regular }}
+            editable={!disabled}
+            placeholderTextColor={semanticColors.placeholder}
+            autoFocus={autoFocus}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            {...props}
+          />
+
+          {rightIcon ? <Box paddingX="sm">{rightIcon}</Box> : null}
+        </Box>
+      )}
 
       {footer}
     </Box>

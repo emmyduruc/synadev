@@ -87,19 +87,17 @@ export const DeepeningFieldForm = ({
     field.inputKind === DEEPENING_FIELD_INPUT.text
     && value.kind === DEEPENING_FIELD_INPUT.text
   ) {
+    // Sheet title already shows the field name; avoid a duplicate label.
     return (
-      <ProfileEditField label={t(field.labelKey)}>
-        <TextInput
-          value={value.text}
-          onChangeText={(text) =>
-            onChange({ kind: DEEPENING_FIELD_INPUT.text, text })
-          }
-          placeholder={t('deepening_text_placeholder')}
-          multiline
-          containerClassName="rounded-2xl"
-          inputClassName="rounded-2xl bg-muted min-h-20"
-        />
-      </ProfileEditField>
+      <TextInput
+        value={value.text}
+        onChangeText={(text) =>
+          onChange({ kind: DEEPENING_FIELD_INPUT.text, text })
+        }
+        placeholder={t('deepening_text_placeholder')}
+        multiline
+        inputClassName="rounded-2xl bg-muted"
+      />
     );
   }
 
@@ -108,18 +106,16 @@ export const DeepeningFieldForm = ({
     && value.kind === DEEPENING_FIELD_INPUT.number
   ) {
     return (
-      <ProfileEditField label={t(field.labelKey)}>
-        <TextInput
-          value={value.amount}
-          onChangeText={(amount) =>
-            onChange({ kind: DEEPENING_FIELD_INPUT.number, amount })
-          }
-          keyboardType="number-pad"
-          placeholder={t('deepening_number_placeholder')}
-          containerClassName="rounded-full"
-          inputClassName="rounded-full bg-muted"
-        />
-      </ProfileEditField>
+      <TextInput
+        value={value.amount}
+        onChangeText={(amount) =>
+          onChange({ kind: DEEPENING_FIELD_INPUT.number, amount })
+        }
+        keyboardType="number-pad"
+        placeholder={t('deepening_number_placeholder')}
+        containerClassName="rounded-full"
+        inputClassName="rounded-full bg-muted"
+      />
     );
   }
 
@@ -130,16 +126,14 @@ export const DeepeningFieldForm = ({
     && field.labelKeyByOption
   ) {
     return (
-      <ProfileEditField label={t(field.labelKey)}>
-        <ProfileOptionChips
-          options={field.optionKeys}
-          labelKeys={field.labelKeyByOption}
-          value={value.option}
-          onChange={(option) =>
-            onChange({ kind: DEEPENING_FIELD_INPUT.singleSelect, option })
-          }
-        />
-      </ProfileEditField>
+      <ProfileOptionChips
+        options={field.optionKeys}
+        labelKeys={field.labelKeyByOption}
+        value={value.option}
+        onChange={(option) =>
+          onChange({ kind: DEEPENING_FIELD_INPUT.singleSelect, option })
+        }
+      />
     );
   }
 

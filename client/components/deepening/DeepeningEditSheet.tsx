@@ -40,7 +40,7 @@ export const DeepeningEditSheet = ({
       presentationStyle="pageSheet"
       onRequestClose={onCancel}>
       <Box flex={1} background="background" style={{ paddingTop: safeAreaTop }}>
-        <Box align="center" paddingX="lg" paddingY="sm" gap="xs">
+        <Box align="center" paddingX="lg" className="pt-4 pb-2" gap="xs">
           <Text size="lg" weight="bold" align="center">
             {title}
           </Text>
@@ -57,7 +57,7 @@ export const DeepeningEditSheet = ({
           keyboardDismissMode="on-drag"
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 24 }}>
-          <Box paddingX="lg" paddingY="md" gap="lg">
+          <Box paddingX="lg" className="pt-6 pb-4" gap="lg">
             {children}
           </Box>
         </ScrollView>

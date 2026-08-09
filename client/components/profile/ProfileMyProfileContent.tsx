@@ -1,6 +1,5 @@
 import { useRouter } from 'expo-router';
 
-import { ProfileMissingPatternsCard } from '@/components/profile/ProfileMissingPatternsCard';
 import { ProfileNavRow } from '@/components/profile/ProfileNavRow';
 import { Box } from '@/components/ui/Box';
 import { useProfileHealthConnection } from '@/hooks/useProfileHealthConnection';
@@ -18,8 +17,6 @@ export const ProfileMyProfileContent = () => {
 
   return (
     <Box gap="md">
-      <ProfileMissingPatternsCard />
-
       <ProfileNavRow
         title={t('profile_settings_nav_title')}
         subtitle={t('profile_settings_nav_subtitle')}

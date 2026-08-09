@@ -9,6 +9,10 @@ import { TAB_BAR, TAB_ROUTE, type TabRouteName } from '@/lib/navigation/constant
 import type { SynaTabBarProps } from '@/lib/navigation/types';
 import { semanticColors } from '@/lib/ui';
 
+const TAB_BAR_DISPLAY = {
+  none: 'none',
+} as const;
+
 type TabIconName = SymbolViewProps['name'];
 
 const TAB_ICON: Record<TabRouteName, TabIconName> = {
@@ -71,9 +75,17 @@ const resolveTabColors = (isFocused: boolean, isCenter: boolean) => {
   };
 };
 
-export const SynaTabBar = ({ state, navigation }: SynaTabBarProps) => {
+export const SynaTabBar = ({ state, descriptors, navigation }: SynaTabBarProps) => {
   const insets = useSafeAreaInsets();
   const { t } = useTranslate();
+  const focusedOptions = descriptors[state.routes[state.index]?.key]?.options;
+  const tabBarStyle = focusedOptions?.tabBarStyle as
+    | { display?: string }
+    | undefined;
+
+  if (tabBarStyle?.display === TAB_BAR_DISPLAY.none) {
+    return null;
+  }
 
   return (
     <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>

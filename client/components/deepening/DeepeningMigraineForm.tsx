@@ -62,8 +62,7 @@ export const DeepeningMigraineForm = ({
           onChangeText={(medication) => onChange({ ...value, medication })}
           placeholder={t('deepening_migraine_medication_placeholder')}
           multiline
-          containerClassName="rounded-2xl"
-          inputClassName="rounded-2xl bg-muted min-h-16"
+          inputClassName="rounded-2xl bg-muted"
         />
       </ProfileEditField>
 
