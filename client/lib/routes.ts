@@ -13,7 +13,9 @@ export const ROUTES = {
   },
   calendar: '/calendar',
   calendarEditPeriod: '/calendar?mode=edit_period',
+  cycleInsights: '/cycle-insights',
   recordPeriod: '/record-period',
+  periodEnded: '/period-ended',
   symptoms: '/symptoms',
   mood: '/mood',
   tabs: {

@@ -14,7 +14,7 @@ import { SynaGradientBackground } from '@/components/layout/SynaGradientBackgrou
 import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
 import { AppHeader, Box } from '@/components/ui';
 import { useBioData } from '@/hooks/useBioData';
-import { useCyclePhase } from '@/hooks/useCyclePhase';
+import { useCycleCalendarMarkers } from '@/hooks/useCycleCalendarMarkers';
 import { useDashboardSetupProgress } from '@/hooks/useDashboardSetupProgress';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
@@ -37,7 +37,11 @@ const StartTabScreen = () => {
     dismiss: dismissProfileBanner,
   } = useProfileCompletionBanner();
   const { celebrate } = useConfettiCelebration();
-  const { snapshot: cycleSnapshot, isLoading: isCycleLoading } = useCyclePhase();
+  const {
+    snapshot: cycleSnapshot,
+    isLoading: isCycleLoading,
+    getPrimaryMarker,
+  } = useCycleCalendarMarkers();
   const {
     metrics,
     isConnected,
@@ -96,6 +100,7 @@ const StartTabScreen = () => {
               <Box className={cn(DASHBOARD_SURFACE.lavenderShell, 'gap-4 p-4')}>
                 <DashboardWeekCalendarSection
                   embedded
+                  getPrimaryMarker={getPrimaryMarker}
                   onOpenCalendar={() => router.push(ROUTES.calendar)}
                 />
                 <DashboardCheckInCard

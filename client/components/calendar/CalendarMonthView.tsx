@@ -1,6 +1,8 @@
+import { CYCLE_DAY_MARKER, type CycleDayMarker } from '@syna/shared-utils';
 import type { RefObject } from 'react';
 import { View } from 'react-native';
 
+import { CycleDayMarkerBadge } from '@/components/cycle/CycleDayMarkerBadge';
 import { Box } from '@/components/ui/Box';
 import { CheckIcon } from '@/components/ui/icons/CheckIcon';
 import { Text } from '@/components/ui/Text';
@@ -14,15 +16,49 @@ import { cn } from '@/lib/ui';
 export type CalendarMonthViewProps = {
   months: CalendarMonth[];
   selectedDateKeys?: ReadonlySet<string>;
+  markerByDateKey?: ReadonlyMap<string, CycleDayMarker | null>;
   onToggleDate?: (dateKey: string) => void;
   scrollTargetMonthIndex?: number;
   scrollTargetRef?: RefObject<View | null>;
   onScrollTargetReady?: () => void;
 };
 
+const circleClassForMarker = (
+  isSelected: boolean,
+  isToday: boolean,
+  marker: CycleDayMarker | null,
+): string => {
+  if (isSelected) {
+    return 'bg-primary-500';
+  }
+
+  if (marker === CYCLE_DAY_MARKER.period) {
+    return 'border-2 border-primary-500 bg-primary-500/15';
+  }
+
+  if (marker === CYCLE_DAY_MARKER.predictedPeriod) {
+    return 'border-2 border-dusty-rose bg-dusty-rose-light';
+  }
+
+  if (marker === CYCLE_DAY_MARKER.ovulation) {
+    return 'border-2 border-lavender bg-lavender-light';
+  }
+
+  if (marker === CYCLE_DAY_MARKER.fertile) {
+    return 'border-2 border-sage-mist bg-sage-mist-light';
+  }
+
+  if (isToday) {
+    return 'bg-primary-500/15';
+  }
+
+  return 'border border-foreground-muted/30';
+};
+
 export const CalendarMonthView = ({
   months,
   selectedDateKeys,
+  markerByDateKey,
   onToggleDate,
   scrollTargetMonthIndex,
   scrollTargetRef,
@@ -60,29 +96,35 @@ export const CalendarMonthView = ({
             {week.map((day) => {
               const dateKey = toDateKey(day.date);
               const isSelected = selectedDateKeys?.has(dateKey) ?? false;
+              const marker = markerByDateKey?.get(dateKey) ?? null;
 
               const dayCircle = (
-                <Box
-                  align="center"
-                  justify="center"
-                  className={cn(
-                    'mt-1 h-9 w-9 rounded-full',
-                    isSelected && 'bg-primary-500',
-                    !isSelected && day.isToday && 'bg-primary-500/15',
-                    !isSelected && !day.isToday && 'border border-foreground-muted/30',
-                    !day.isCurrentMonth && 'opacity-35',
-                  )}>
-                  {isSelected ? (
-                    <CheckIcon size={16} />
-                  ) : (
-                    <Text
-                      size="sm"
-                      weight={day.isToday ? 'bold' : 'medium'}
-                      color={day.isToday ? 'primary' : 'foreground'}
-                      responsive={false}>
-                      {day.dayNumber}
-                    </Text>
-                  )}
+                <Box align="center">
+                  <Box
+                    align="center"
+                    justify="center"
+                    className={cn(
+                      'mt-1 h-9 w-9 rounded-full',
+                      circleClassForMarker(isSelected, day.isToday, marker),
+                      !day.isCurrentMonth && 'opacity-35',
+                    )}>
+                    {isSelected ? (
+                      <CheckIcon size={16} />
+                    ) : (
+                      <Text
+                        size="sm"
+                        weight={day.isToday ? 'bold' : 'medium'}
+                        color={day.isToday ? 'primary' : 'foreground'}
+                        responsive={false}>
+                        {day.dayNumber}
+                      </Text>
+                    )}
+                  </Box>
+                  {!isSelectable ? (
+                    <Box className="mt-0.5 h-3 items-center justify-center">
+                      <CycleDayMarkerBadge marker={marker} size="sm" />
+                    </Box>
+                  ) : null}
                 </Box>
               );
 

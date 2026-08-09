@@ -56,10 +56,10 @@ export const CyclePhaseAnimatedIcon = ({ phase }: CyclePhaseAnimatedIconProps) =
     }
 
     if (phase === 'follicular') {
-      motion.value = withRepeat(
+      scale.value = withRepeat(
         withSequence(
-          withTiming(-4, { duration: 900, easing: Easing.inOut(Easing.sin) }),
-          withTiming(0, { duration: 900, easing: Easing.inOut(Easing.sin) }),
+          withTiming(1.14, { duration: 520, easing: Easing.out(Easing.quad) }),
+          withTiming(1, { duration: 520, easing: Easing.inOut(Easing.sin) }),
         ),
         -1,
         false,

@@ -55,6 +55,8 @@ export const DashboardCyclePhaseCard = ({
   const router = useRouter();
   const phase = snapshot?.phase ?? null;
   const hasPhase = phase !== null;
+  const cycleDay = snapshot?.cycleDay ?? null;
+  const isPeriodPhase = phase === 'period';
 
   const title = (() => {
     if (isLoading || !hasPhase) {
@@ -67,37 +69,55 @@ export const DashboardCyclePhaseCard = ({
   const hint = hasPhase ? t(phaseHintKey(phase)) : t('dashboard_cycle_phase_hint');
 
   return (
-    <TouchableOpacity
-      accessibilityRole="button"
-      onPress={() => {
-        router.push(ROUTES.recordPeriod);
-      }}
-      className={cn(DASHBOARD_SURFACE.blushCard, 'p-5')}>
-      <Box gap="sm">
-        <Box direction="row" align="center" gap="md">
-          <Box flex={1} gap="xs">
-            <Text
-              size="2xs"
-              weight="semibold"
-              color="foreground"
-              className="uppercase tracking-wide">
-              {t('dashboard_cycle_phase_label')}
-            </Text>
-            <Text size="2xl" weight="bold">
-              {title}
-            </Text>
+    <Box className={cn(DASHBOARD_SURFACE.blushCard, 'gap-3 p-4')}>
+      <TouchableOpacity
+        accessibilityRole="button"
+        onPress={() => {
+          router.push(ROUTES.cycleInsights);
+        }}>
+        <Box gap="sm">
+          <Box direction="row" align="center" gap="md">
+            <Box flex={1} gap="xs">
+              <Text
+                size="2xs"
+                weight="semibold"
+                color="foreground"
+                className="uppercase tracking-wide">
+                {t('dashboard_cycle_phase_label')}
+              </Text>
+              <Text size="xl" weight="bold">
+                {title}
+              </Text>
+              {cycleDay !== null ? (
+                <Text size="2xs" weight="semibold" color="primary">
+                  {t('dashboard_cycle_phase_day', { day: cycleDay })}
+                </Text>
+              ) : null}
+            </Box>
+            <CyclePhaseAnimatedIcon phase={phase} />
           </Box>
-          <CyclePhaseAnimatedIcon phase={phase} />
-        </Box>
-        <Text size="xs" color="foreground" className="leading-relaxed">
-          {hint}
-        </Text>
-        {hasPhase ? (
-          <Text size="2xs" color="foreground" className="leading-relaxed">
-            {t('dashboard_cycle_phase_disclaimer')}
+          <Text size="xs" color="foreground" className="leading-relaxed">
+            {hint}
           </Text>
-        ) : null}
-      </Box>
-    </TouchableOpacity>
+          <Text size="2xs" weight="semibold" color="primary">
+            {t('dashboard_cycle_phase_open_insights')}
+          </Text>
+        </Box>
+      </TouchableOpacity>
+
+      {isPeriodPhase ? (
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={t('dashboard_cycle_phase_period_ended')}
+          onPress={() => {
+            router.push(ROUTES.periodEnded);
+          }}
+          className="rounded-2xl border border-primary-200 bg-card/80 px-3 py-2.5">
+          <Text size="xs" weight="semibold" color="primary" align="center">
+            {t('dashboard_cycle_phase_period_ended')}
+          </Text>
+        </TouchableOpacity>
+      ) : null}
+    </Box>
   );
 };

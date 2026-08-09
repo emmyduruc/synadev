@@ -1,3 +1,4 @@
+import { getPrimaryCycleDayMarker, type CycleDayMarker } from '@syna/shared-utils';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { InteractionManager, ScrollView, View, type View as ViewType } from 'react-native';
@@ -13,6 +14,7 @@ import { Box } from '@/components/ui/Box';
 import { CloseIcon } from '@/components/ui/icons/CloseIcon';
 import { Text } from '@/components/ui/Text';
 import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
+import { useCycleCalendarMarkers } from '@/hooks/useCycleCalendarMarkers';
 import { usePeriodDates } from '@/hooks/usePeriodDates';
 import { useTranslate } from '@/hooks/useTranslate';
 import {
@@ -47,6 +49,21 @@ const CalendarScreen = () => {
   const currentMonthIndex = new Date().getMonth();
   const months = useMemo(() => buildYearMonths(currentYear), [currentYear]);
   const { dateKeys, isLoading, persist } = usePeriodDates();
+  const yearFromKey = `${currentYear}-01-01`;
+  const yearToKey = `${currentYear}-12-31`;
+  const { markersByDate } = useCycleCalendarMarkers({
+    fromDateKey: yearFromKey,
+    toDateKey: yearToKey,
+  });
+  const markerByDateKey = useMemo(() => {
+    const map = new Map<string, CycleDayMarker | null>();
+
+    markersByDate.forEach((markers, dateKey) => {
+      map.set(dateKey, getPrimaryCycleDayMarker(markers));
+    });
+
+    return map;
+  }, [markersByDate]);
   const showMonthGrid = isEditPeriodMode || activeView === CALENDAR_VIEW.month;
   const shouldScrollToCurrentMonth = showMonthGrid;
   const isPeriodDataReady = !isEditPeriodMode || !isLoading;
@@ -194,6 +211,7 @@ const CalendarScreen = () => {
                 <CalendarMonthView
                   months={months}
                   selectedDateKeys={isEditPeriodMode ? draftDateKeys : dateKeys}
+                  markerByDateKey={isEditPeriodMode ? undefined : markerByDateKey}
                   onToggleDate={isEditPeriodMode ? handleToggleDate : undefined}
                   scrollTargetMonthIndex={shouldScrollToCurrentMonth ? currentMonthIndex : undefined}
                   scrollTargetRef={scrollTargetRef}

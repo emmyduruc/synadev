@@ -36,7 +36,19 @@ export const RootLayoutNav = () => {
           }}
         />
         <Stack.Screen
+          name="cycle-insights/index"
+          options={{
+            presentation: 'fullScreenModal',
+          }}
+        />
+        <Stack.Screen
           name="record-period/index"
+          options={{
+            presentation: 'fullScreenModal',
+          }}
+        />
+        <Stack.Screen
+          name="period-ended/index"
           options={{
             presentation: 'fullScreenModal',
           }}

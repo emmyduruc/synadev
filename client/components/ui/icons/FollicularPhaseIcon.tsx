@@ -7,19 +7,14 @@ export type FollicularPhaseIconProps = {
   color?: string;
 };
 
+/** Energy flash for follicular phase (rising estrogen / vitality). */
 export const FollicularPhaseIcon = ({
   size = 24,
   color = semanticColors.dashboardIcon.follicular,
 }: FollicularPhaseIconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path
-      d="M12 14C12 14 8.5 11.5 8.5 8.5C8.5 6.57 10.07 5 12 5C13.93 5 15.5 6.57 15.5 8.5C15.5 11.5 12 14 12 14Z"
-      stroke={color}
-      strokeWidth={1.7}
-      strokeLinejoin="round"
-    />
-    <Path
-      d="M12 14V19M12 19L9.5 16.5M12 19L14.5 16.5"
+      d="M13.5 2.5L6.5 13H11.5L10.5 21.5L17.5 11H12.5L13.5 2.5Z"
       stroke={color}
       strokeWidth={1.7}
       strokeLinecap="round"

@@ -1,3 +1,6 @@
+import { type CycleDayMarker } from '@syna/shared-utils';
+
+import { CycleDayMarkerBadge } from '@/components/cycle/CycleDayMarkerBadge';
 import { Box } from '@/components/ui/Box';
 import { CalendarIcon } from '@/components/ui/icons/CalendarIcon';
 import { Text } from '@/components/ui/Text';
@@ -8,16 +11,19 @@ import {
   getCurrentWeekDays,
 } from '@/lib/dashboard/calendarUtils';
 import { DASHBOARD_ICON_WELL, DASHBOARD_SURFACE } from '@/lib/dashboard/surfaces';
+import { toDateKey } from '@/lib/date/dateKeys';
 import { cn, semanticColors } from '@/lib/ui';
 
 export type DashboardWeekCalendarSectionProps = {
   onOpenCalendar: () => void;
   embedded?: boolean;
+  getPrimaryMarker?: (dateKey: string) => CycleDayMarker | null;
 };
 
 export const DashboardWeekCalendarSection = ({
   onOpenCalendar,
   embedded = false,
+  getPrimaryMarker,
 }: DashboardWeekCalendarSectionProps) => {
   const { t } = useTranslate();
   const weekDays = getCurrentWeekDays();
@@ -40,9 +46,11 @@ export const DashboardWeekCalendarSection = ({
       <Box direction="row" justify="between" className="px-1">
         {weekDays.map((day, index) => {
           const weekdayKey = CALENDAR_WEEKDAY_HEADER_KEYS[index];
+          const dateKey = toDateKey(day.date);
+          const marker = getPrimaryMarker?.(dateKey) ?? null;
 
           return (
-            <Box key={day.dayKey} align="center" className="min-w-[36px]">
+            <Box key={dateKey} align="center" className="min-w-[36px]">
               <Text size="2xs" color="foreground" responsive={false}>
                 {t(weekdayKey)}
               </Text>
@@ -53,12 +61,20 @@ export const DashboardWeekCalendarSection = ({
                 className="mt-1">
                 {day.date.getDate()}
               </Text>
-              <Box
-                className={cn(
-                  'mt-2 h-2 w-2 rounded-full',
-                  day.isToday ? 'bg-primary-500' : 'border border-foreground-muted bg-card',
+              <Box className="mt-1.5 h-3.5 items-center justify-center">
+                {marker ? (
+                  <CycleDayMarkerBadge marker={marker} size="sm" />
+                ) : (
+                  <Box
+                    className={cn(
+                      'h-2 w-2 rounded-full',
+                      day.isToday
+                        ? 'bg-primary-500'
+                        : 'border border-foreground-muted bg-card',
+                    )}
+                  />
                 )}
-              />
+              </Box>
             </Box>
           );
         })}

@@ -20,3 +20,16 @@ export type {
   CyclePhaseSnapshot,
   CalculateCyclePhaseInput,
 } from './cyclePhase';
+
+export {
+  CYCLE_DAY_MARKER,
+  FERTILE_DAYS_BEFORE_OVULATION,
+  buildCycleDayMarkers,
+  getPrimaryCycleDayMarker,
+  resolveStatusPhaseTone,
+} from './cycleDayMarkers';
+
+export type {
+  CycleDayMarker,
+  BuildCycleDayMarkersInput,
+} from './cycleDayMarkers';
