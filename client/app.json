@@ -2,6 +2,7 @@
   "expo": {
     "name": "SYNA",
     "slug": "syna",
+    "owner": "emmydurucultry",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
@@ -55,6 +56,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e755f5e8-5a0f-43c3-a3cd-2a1b703def52"
+      }
     }
   }
 }

@@ -58,6 +58,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "@syna/eslint-config": "workspace:*",
     "@types/react": "~19.2.2",
+    "eas-cli": "^21.7.0",
     "eslint": "^9.39.4",
     "sonner": "^2.0.7",
     "tailwindcss": "^3.4.17",
@@ -74,7 +75,14 @@
     "web": "expo start --web",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
-    "build": "expo export --platform web"
+    "build": "expo export --platform web",
+    "eas-build-post-install": "cd .. && yarn turbo run build --filter=@syna/client^...",
+    "deploy:preview": "eas build --profile preview --platform all",
+    "deploy:preview:android": "eas build --profile preview --platform android",
+    "deploy:preview:ios": "eas build --profile preview --platform ios",
+    "deploy:production": "eas build --profile production --platform all",
+    "deploy:production:android": "eas build --profile production --platform android",
+    "deploy:production:ios": "eas build --profile production --platform ios"
   },
   "private": true
 }

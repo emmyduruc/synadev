@@ -93,6 +93,28 @@ For Android emulator, use `http://10.0.2.2:3000` instead of `localhost`.
 | `yarn check` | **Run before commit** — lint (zero warnings), typecheck, i18n validation |
 | `yarn lint` | Lint all packages |
 | `yarn lint:fix` | Auto-fix lint issues |
+| `yarn deploy:preview` | EAS preview builds (Android APK + iOS) |
+| `yarn deploy:preview:android` | EAS preview Android APK only |
+| `yarn deploy:preview:ios` | EAS preview iOS only |
+
+## Deploy (EAS mobile)
+
+Preview builds target the Cloud Run API and produce an installable **Android APK** (plus an iOS internal build).
+
+```bash
+# Both platforms
+yarn deploy:preview
+
+# Android APK only (download from the Expo build page and sideload)
+yarn deploy:preview:android
+
+# iOS only (internal distribution / TestFlight-style install link)
+yarn deploy:preview:ios
+```
+
+First iOS build will prompt for Apple credentials / provisioning. Android APK builds usually need no store credentials.
+
+Project: [expo.dev/@emmydurucultry/syna](https://expo.dev/accounts/emmydurucultry/projects/syna)
 
 ## Deploy (Cloud Run)
 

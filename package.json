@@ -20,7 +20,13 @@
     "ios": "yarn workspace @syna/client ios",
     "android": "yarn workspace @syna/client android",
     "start:client": "yarn workspace @syna/client start",
-    "deploy:backend": "./scripts/deploy-backend-cloud-run.sh"
+    "deploy:backend": "./scripts/deploy-backend-cloud-run.sh",
+    "deploy:preview": "yarn workspace @syna/client deploy:preview",
+    "deploy:preview:android": "yarn workspace @syna/client deploy:preview:android",
+    "deploy:preview:ios": "yarn workspace @syna/client deploy:preview:ios",
+    "deploy:production": "yarn workspace @syna/client deploy:production",
+    "deploy:production:android": "yarn workspace @syna/client deploy:production:android",
+    "deploy:production:ios": "yarn workspace @syna/client deploy:production:ios"
   },
   "devDependencies": {
     "eslint": "^9.39.4",

@@ -14,15 +14,23 @@
     },
     "preview": {
       "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
       "env": {
         "APP_ENV": "preview",
-        "EXPO_PUBLIC_API_URL": "https://syna-backend-jdnrx5h3xa-ew.a.run.app"
+        "EXPO_PUBLIC_API_URL": "https://syna-backend-jdnrx5h3xa-ew.a.run.app",
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_c21hcnQtdW5pY29ybi0xMS5jbGVyay5hY2NvdW50cy5kZXYk"
       }
     },
     "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
       "env": {
         "APP_ENV": "production",
-        "EXPO_PUBLIC_API_URL": "https://syna-backend-jdnrx5h3xa-ew.a.run.app"
+        "EXPO_PUBLIC_API_URL": "https://syna-backend-jdnrx5h3xa-ew.a.run.app",
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_c21hcnQtdW5pY29ybi0xMS5jbGVyay5hY2NvdW50cy5kZXYk"
       }
     }
   },
