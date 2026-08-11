@@ -14,7 +14,6 @@
     },
     "android": {
       "package": "com.syna.app",
-      "minSdkVersion": 26,
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "backgroundColor": "#A55972",
@@ -30,6 +29,14 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ],
       "expo-router",
       "expo-secure-store",
       "expo-notifications",

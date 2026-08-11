@@ -5760,6 +5760,7 @@ __metadata:
     eslint: "npm:^9.39.4"
     expo: "npm:~57.0.11"
     expo-auth-session: "npm:~57.0.6"
+    expo-build-properties: "npm:~57.0.10"
     expo-constants: "npm:~57.0.9"
     expo-dev-client: "npm:~57.0.10"
     expo-font: "npm:~57.0.1"
@@ -10166,6 +10167,19 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/80f3cf8a805cca1a62ea7aa3c5f1c51e6b977ccf6c81616a6fc177607f8e8c5e3505f0818caced28e9760d4e1ed7636352d3a7bd30c8c6a24909ada4a5f30ec1
+  languageName: node
+  linkType: hard
+
+"expo-build-properties@npm:~57.0.10":
+  version: 57.0.10
+  resolution: "expo-build-properties@npm:57.0.10"
+  dependencies:
+    "@expo/schema-utils": "npm:^57.0.2"
+    resolve-from: "npm:^5.0.0"
+    semver: "npm:^7.6.0"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/83dc6f99b47862597624451b543473a638c249bfbac034f024233dc21cb761eff5e1ac1509134b1ad217caaf5b839250f4f2ffd6553138ba2c440edd909688a1
   languageName: node
   linkType: hard
 
