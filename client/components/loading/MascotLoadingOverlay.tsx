@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Modal } from 'react-native';
 import Animated, {
   Easing,
+  cancelAnimation,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
@@ -38,6 +39,12 @@ export const MascotLoadingOverlay = ({
   const overlayOpacity = useSharedValue(0);
 
   useEffect(() => {
+    if (isExiting) {
+      cancelAnimation(bounceY);
+      bounceY.value = withTiming(0, { duration: MASCOT_LOADING_FADE_MS });
+      return;
+    }
+
     bounceY.value = withRepeat(
       withSequence(
         withTiming(-14, { duration: 420, easing: Easing.out(Easing.quad) }),
@@ -46,7 +53,7 @@ export const MascotLoadingOverlay = ({
       -1,
       false,
     );
-  }, [bounceY]);
+  }, [bounceY, isExiting]);
 
   useEffect(() => {
     if (isExiting) {
@@ -73,7 +80,7 @@ export const MascotLoadingOverlay = ({
 
   const content = (
     <Animated.View
-      pointerEvents="auto"
+      pointerEvents={isExiting ? 'none' : 'auto'}
       className="absolute inset-0 z-50 items-center justify-center bg-lavender-light"
       style={overlayStyle}>
       <Box align="center" gap="lg" paddingX="xl" className="max-w-sm">

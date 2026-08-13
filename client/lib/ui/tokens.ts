@@ -226,9 +226,9 @@ export const buttonTextSizeClasses: Record<ButtonSize, string> = {
 };
 
 export const inputSizeClasses: Record<InputSize, string> = {
-  sm: 'h-10 text-sm',
-  md: 'h-12 text-base',
-  lg: 'h-14 text-lg',
+  sm: 'min-h-10 text-sm',
+  md: 'min-h-12 text-base',
+  lg: 'min-h-14 text-lg',
 };
 
 export const inputPaddingClasses: Record<InputSize, string> = {

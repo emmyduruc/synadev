@@ -4,16 +4,16 @@ import { useCallback, useEffect } from 'react';
 import { BioDataWizard } from '@/components/onboarding/BioDataWizard';
 import { useBioData } from '@/hooks/useBioData';
 import type { BioData } from '@/lib/profile/bioDataStorage';
-import { EMPTY_BIO_DATA } from '@/lib/profile/bioDataStorage';
 import { ROUTES } from '@/lib/routes';
 
 /**
  * Account-creation bio flow. If the DB profile is already complete (e.g. user
  * was mis-routed after a transient auth error), send them home instead.
+ * Prefills any fields already stored in Nest so returning users are not re-asked.
  */
 const BioDataOnboardingScreen = () => {
   const router = useRouter();
-  const { isLoading, isComplete, persist } = useBioData();
+  const { bioData, isLoading, isComplete, persist } = useBioData();
 
   useEffect(() => {
     if (!isLoading && isComplete) {
@@ -35,7 +35,7 @@ const BioDataOnboardingScreen = () => {
 
   return (
     <BioDataWizard
-      initialBioData={EMPTY_BIO_DATA}
+      initialBioData={bioData}
       skippable={false}
       onComplete={handleComplete}
     />

@@ -5,7 +5,6 @@ import { getCurrentUser, updateCurrentUserProfile } from '@/lib/api';
 import type { BioData } from '@/lib/profile/bioDataStorage';
 import {
   EMPTY_BIO_DATA,
-  clearBioData,
   getBioDataCompletionPercent,
   isBioDataComplete,
   loadBioData,
@@ -21,13 +20,8 @@ const toUpdatePayload = (bioData: BioData): UpdateUserProfile => ({
 });
 
 const syncLocalCacheFromDb = async (bioData: BioData): Promise<void> => {
-  if (isBioDataComplete(bioData)) {
-    await saveBioData(bioData);
-    return;
-  }
-
-  // DB empty / incomplete → SecureStore must not keep stale values.
-  await clearBioData();
+  // Always mirror DB into SecureStore so incomplete profiles still prefill onboarding.
+  await saveBioData(bioData);
 };
 
 /**
@@ -44,7 +38,7 @@ export const useBioData = () => {
       const user = await getCurrentUser();
       const next = mapUserToBioData(user);
       await syncLocalCacheFromDb(next);
-      setBioData(user.isBioComplete ? next : EMPTY_BIO_DATA);
+      setBioData(next);
     } catch {
       // Keep local cache on transient API failures — do not wipe returning users.
       const cached = await loadBioData();

@@ -96,6 +96,8 @@ For Android emulator, use `http://10.0.2.2:3000` instead of `localhost`.
 | `yarn deploy:preview` | EAS preview builds (Android APK + iOS) |
 | `yarn deploy:preview:android` | EAS preview Android APK only |
 | `yarn deploy:preview:ios` | EAS preview iOS only |
+| `yarn deploy:update:preview` | Publish OTA JS update to preview channel |
+| `yarn deploy:update:production` | Publish OTA JS update to production channel |
 
 ## Deploy (EAS mobile)
 
@@ -111,6 +113,18 @@ yarn deploy:preview:android
 # iOS only (internal distribution / TestFlight-style install link)
 yarn deploy:preview:ios
 ```
+
+### OTA updates (no reinstall)
+
+After a preview/production binary that includes `expo-updates` is installed, ship JS-only fixes with:
+
+```bash
+# Optional message: yarn deploy:update:preview -- --message "fix onboarding"
+yarn deploy:update:preview
+yarn deploy:update:production
+```
+
+The app checks for updates on open and when returning to foreground. Close and reopen once to download, then again to apply (or one reopen cycle after the fetch completes).
 
 First iOS build will prompt for Apple credentials / provisioning. Android APK builds usually need no store credentials.
 

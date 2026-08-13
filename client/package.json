@@ -33,6 +33,7 @@
     "expo-splash-screen": "~57.0.5",
     "expo-status-bar": "~57.0.1",
     "expo-symbols": "~57.0.2",
+    "expo-updates": "~57.0.13",
     "expo-web-browser": "~57.0.2",
     "i18next": "^26.3.4",
     "nativewind": "^4.2.1",
@@ -83,7 +84,9 @@
     "deploy:preview:ios": "eas build --profile preview --platform ios",
     "deploy:production": "eas build --profile production --platform all",
     "deploy:production:android": "eas build --profile production --platform android",
-    "deploy:production:ios": "eas build --profile production --platform ios"
+    "deploy:production:ios": "eas build --profile production --platform ios",
+    "deploy:update:preview": "eas update --channel preview --environment preview",
+    "deploy:update:production": "eas update --channel production --environment production"
   },
   "private": true
 }

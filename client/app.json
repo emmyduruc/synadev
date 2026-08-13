@@ -8,13 +8,21 @@
     "icon": "./assets/images/icon.png",
     "scheme": "syna",
     "userInterfaceStyle": "automatic",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e755f5e8-5a0f-43c3-a3cd-2a1b703def52",
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.syna.app"
     },
     "android": {
       "package": "com.syna.app",
-      "softwareKeyboardLayoutMode": "resize",
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "backgroundColor": "#A55972",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -52,6 +60,7 @@
       "react-native-health-connect",
       "expo-screen-orientation",
       "expo-sharing",
+      "expo-updates",
       [
         "expo-splash-screen",
         {

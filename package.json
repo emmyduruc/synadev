@@ -26,7 +26,9 @@
     "deploy:preview:ios": "yarn workspace @syna/client deploy:preview:ios",
     "deploy:production": "yarn workspace @syna/client deploy:production",
     "deploy:production:android": "yarn workspace @syna/client deploy:production:android",
-    "deploy:production:ios": "yarn workspace @syna/client deploy:production:ios"
+    "deploy:production:ios": "yarn workspace @syna/client deploy:production:ios",
+    "deploy:update:preview": "yarn workspace @syna/client deploy:update:preview",
+    "deploy:update:production": "yarn workspace @syna/client deploy:update:production"
   },
   "devDependencies": {
     "eslint": "^9.39.4",

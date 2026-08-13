@@ -2,8 +2,10 @@ import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import {
   InteractionManager,
+  Platform,
   TextInput as RNTextInput,
   type TextInputProps as RNTextInputProps,
+  type TextStyle,
 } from 'react-native';
 
 import { Box } from '@/components/ui/Box';
@@ -33,6 +35,66 @@ export type TextInputProps = Omit<RNTextInputProps, 'editable'> & {
   focusKey?: string | number;
 };
 
+const resolveBorderColorClass = (hasError: boolean, isFocused: boolean): string => {
+  if (hasError) {
+    return borderColorClasses.error;
+  }
+
+  if (isFocused) {
+    return borderColorClasses.primary;
+  }
+
+  return borderColorClasses['foreground-muted'];
+};
+
+const resolveFooter = (
+  errorMessage: string | undefined,
+  helperText: string | undefined,
+): ReactNode => {
+  if (errorMessage) {
+    return (
+      <Text size="xs" color="error" className="mt-1.5">
+        {errorMessage}
+      </Text>
+    );
+  }
+
+  if (helperText) {
+    return (
+      <Text size="xs" color="foreground-muted" className="mt-1.5">
+        {helperText}
+      </Text>
+    );
+  }
+
+  return null;
+};
+
+// Android includes extra font padding that clips glyphs inside fixed-height rows.
+const androidSingleLineStyle: TextStyle = {
+  includeFontPadding: false,
+  textAlignVertical: 'center',
+  paddingVertical: 0,
+};
+
+const buildInputStyle = (multiline: boolean): TextStyle => {
+  if (Platform.OS !== 'android') {
+    return { fontFamily: FONT_FAMILY.regular };
+  }
+
+  if (multiline) {
+    return {
+      fontFamily: FONT_FAMILY.regular,
+      includeFontPadding: false,
+    };
+  }
+
+  return {
+    fontFamily: FONT_FAMILY.regular,
+    ...androidSingleLineStyle,
+  };
+};
+
 export const TextInput = ({
   label,
   helperText,
@@ -54,6 +116,9 @@ export const TextInput = ({
   const inputRef = useRef<RNTextInput>(null);
   const [isFocused, setIsFocused] = useState(false);
   const hasError = Boolean(errorMessage);
+  const borderColorClass = resolveBorderColorClass(hasError, isFocused);
+  const footer = resolveFooter(errorMessage, helperText);
+  const inputStyle = buildInputStyle(multiline);
 
   useEffect(() => {
     if (!autoFocus || disabled) {
@@ -79,39 +144,11 @@ export const TextInput = ({
     onBlur?.(event);
   };
 
-  const resolveBorderColorClass = (): string => {
-    if (hasError) {
-      return borderColorClasses.error;
-    }
-
-    if (isFocused) {
-      return borderColorClasses.primary;
-    }
-
-    return borderColorClasses['foreground-muted'];
-  };
-
-  let footer: ReactNode = null;
-
-  if (hasError) {
-    footer = (
-      <Text size="xs" color="error" className="mt-1.5">
-        {errorMessage}
-      </Text>
-    );
-  } else if (helperText) {
-    footer = (
-      <Text size="xs" color="foreground-muted" className="mt-1.5">
-        {helperText}
-      </Text>
-    );
-  }
-
   const fieldClassName = cn(
     'w-full border bg-white/90 font-sans text-foreground',
     radiusClasses.xl,
     inputPaddingClasses[size],
-    resolveBorderColorClass(),
+    borderColorClass,
     disabled && 'opacity-50',
     multiline ? 'min-h-24 py-3' : undefined,
     inputClassName,
@@ -130,7 +167,7 @@ export const TextInput = ({
         <RNTextInput
           ref={inputRef}
           className={fieldClassName}
-          style={{ fontFamily: FONT_FAMILY.regular }}
+          style={inputStyle}
           editable={!disabled}
           placeholderTextColor={semanticColors.placeholder}
           autoFocus={autoFocus}
@@ -145,10 +182,10 @@ export const TextInput = ({
           direction="row"
           align="center"
           className={cn(
-            'w-full border bg-white/90',
+            'w-full border bg-white/90 overflow-hidden',
             radiusClasses.xl,
             inputSizeClasses[size],
-            resolveBorderColorClass(),
+            borderColorClass,
             disabled && 'opacity-50',
           )}>
           {leftIcon ? <Box paddingX="sm">{leftIcon}</Box> : null}
@@ -156,14 +193,14 @@ export const TextInput = ({
           <RNTextInput
             ref={inputRef}
             className={cn(
-              'flex-1 font-sans text-foreground',
+              'flex-1 h-full font-sans text-foreground',
               inputPaddingClasses[size],
               leftIcon ? 'pl-0' : undefined,
               rightIcon ? 'pr-0' : undefined,
               inputClassName,
               className,
             )}
-            style={{ fontFamily: FONT_FAMILY.regular }}
+            style={inputStyle}
             editable={!disabled}
             placeholderTextColor={semanticColors.placeholder}
             autoFocus={autoFocus}

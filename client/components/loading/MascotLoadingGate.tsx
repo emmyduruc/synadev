@@ -37,25 +37,45 @@ export const MascotLoadingGate = ({
   const mountedAtRef = useRef(Date.now());
   const dismissTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasScheduledDismissRef = useRef(false);
   const [phase, setPhase] = useState<GatePhase>(enabled ? 'loading' : 'done');
+
+  const clearTimers = () => {
+    if (dismissTimeoutRef.current) {
+      clearTimeout(dismissTimeoutRef.current);
+      dismissTimeoutRef.current = null;
+    }
+
+    if (exitTimeoutRef.current) {
+      clearTimeout(exitTimeoutRef.current);
+      exitTimeoutRef.current = null;
+    }
+  };
 
   useEffect(() => {
     if (!enabled) {
+      clearTimers();
+      hasScheduledDismissRef.current = false;
       setPhase('done');
       return undefined;
     }
 
+    clearTimers();
+    hasScheduledDismissRef.current = false;
     mountedAtRef.current = Date.now();
     setPhase('loading');
 
     return undefined;
   }, [enabled, variant]);
 
+  // Schedule dismiss once when ready. Do not depend on `phase` — that cleared the
+  // exit timer on Android and left an invisible touch-blocking overlay forever.
   useEffect(() => {
-    if (!enabled || !isReady || phase !== 'loading') {
+    if (!enabled || !isReady || hasScheduledDismissRef.current) {
       return undefined;
     }
 
+    hasScheduledDismissRef.current = true;
     const elapsed = Date.now() - mountedAtRef.current;
     const remaining = Math.max(0, minDurationMs - elapsed);
 
@@ -67,28 +87,12 @@ export const MascotLoadingGate = ({
       }, MASCOT_LOADING_FADE_MS);
     }, remaining);
 
-    return () => {
-      if (dismissTimeoutRef.current) {
-        clearTimeout(dismissTimeoutRef.current);
-        dismissTimeoutRef.current = null;
-      }
-
-      if (exitTimeoutRef.current) {
-        clearTimeout(exitTimeoutRef.current);
-        exitTimeoutRef.current = null;
-      }
-    };
-  }, [enabled, isReady, minDurationMs, phase]);
+    return undefined;
+  }, [enabled, isReady, minDurationMs]);
 
   useEffect(
     () => () => {
-      if (dismissTimeoutRef.current) {
-        clearTimeout(dismissTimeoutRef.current);
-      }
-
-      if (exitTimeoutRef.current) {
-        clearTimeout(exitTimeoutRef.current);
-      }
+      clearTimers();
     },
     [],
   );

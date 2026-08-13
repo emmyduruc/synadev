@@ -45,7 +45,17 @@ export const BioDataWizard = ({
   onComplete,
 }: BioDataWizardProps) => {
   const { t } = useTranslate();
-  const [stepIndex, setStepIndex] = useState(0);
+  const [stepIndex, setStepIndex] = useState(() => {
+    if (!initialBioData.firstName.trim()) {
+      return 0;
+    }
+
+    if (!initialBioData.lastName.trim()) {
+      return 1;
+    }
+
+    return 2;
+  });
   const [bioData, setBioData] = useState<BioData>(initialBioData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDateValid, setIsDateValid] = useState(() => {
@@ -117,8 +127,9 @@ export const BioDataWizard = ({
                 void handleNext();
               }
             }}
-            inputClassName="text-3xl font-semibold text-center"
+            inputClassName="py-3 text-2xl font-semibold text-center"
             containerClassName="px-2"
+            size="lg"
           />
         </WizardQuestionLayout>
       );
@@ -142,8 +153,9 @@ export const BioDataWizard = ({
                 void handleNext();
               }
             }}
-            inputClassName="text-3xl font-semibold text-center"
+            inputClassName="py-3 text-2xl font-semibold text-center"
             containerClassName="px-2"
+            size="lg"
           />
         </WizardQuestionLayout>
       );

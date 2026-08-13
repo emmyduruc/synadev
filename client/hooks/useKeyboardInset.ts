@@ -6,18 +6,12 @@ const readKeyboardHeight = (event: KeyboardEvent): number =>
 
 /**
  * Returns the keyboard overlap height from the bottom of the screen.
- * iOS: keyboard overlays content — apply this as bottom inset on footers.
- * Android: relies on `softwareKeyboardLayoutMode: "resize"` in app.json; returns 0
- * to avoid double-offset when the window already resizes.
+ * Used to lift sticky footers above the software keyboard on iOS and Android.
  */
 export const useKeyboardInset = (): number => {
   const [inset, setInset] = useState(0);
 
   useEffect(() => {
-    if (Platform.OS !== 'ios') {
-      return undefined;
-    }
-
     const onShow = (event: KeyboardEvent) => {
       setInset(readKeyboardHeight(event));
     };
@@ -26,8 +20,13 @@ export const useKeyboardInset = (): number => {
       setInset(0);
     };
 
-    const showSubscription = Keyboard.addListener('keyboardWillShow', onShow);
-    const hideSubscription = Keyboard.addListener('keyboardWillHide', onHide);
+    // iOS: Will* fires before the animation so the footer tracks smoothly.
+    // Android: Did* is the reliable pair (Will* is often a no-op).
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const showSubscription = Keyboard.addListener(showEvent, onShow);
+    const hideSubscription = Keyboard.addListener(hideEvent, onHide);
 
     return () => {
       showSubscription.remove();

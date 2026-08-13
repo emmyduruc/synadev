@@ -1,6 +1,7 @@
-import { useNavigation } from 'expo-router';
+import { useFocusEffect, useNavigation } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { BackHandler, Platform } from 'react-native';
 
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
@@ -19,6 +20,14 @@ const TAB_BAR_DISPLAY = {
   none: 'none',
 } as const;
 
+const lockPortrait = async () => {
+  if (Platform.OS === 'android') {
+    await ScreenOrientation.unlockAsync();
+  }
+
+  await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+};
+
 const PatternsTabScreen = () => {
   const { t } = useTranslate();
   const navigation = useNavigation();
@@ -26,12 +35,18 @@ const PatternsTabScreen = () => {
     usePatternsDashboard();
   const [isGraphMode, setIsGraphMode] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const isGraphModeRef = useRef(isGraphMode);
+  isGraphModeRef.current = isGraphMode;
 
   useLayoutEffect(() => {
     navigation.setOptions({
       tabBarStyle: isGraphMode ? { display: TAB_BAR_DISPLAY.none } : undefined,
     });
   }, [isGraphMode, navigation]);
+
+  const exitGraphMode = useCallback(() => {
+    setIsGraphMode(false);
+  }, []);
 
   useEffect(() => {
     const applyOrientation = async () => {
@@ -42,15 +57,33 @@ const PatternsTabScreen = () => {
         return;
       }
 
-      await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+      await lockPortrait();
     };
 
     void applyOrientation();
-
-    return () => {
-      void ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
-    };
   }, [isGraphMode]);
+
+  // Tab screens stay mounted — restore portrait only when this screen loses focus.
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (!isGraphModeRef.current) {
+          return false;
+        }
+
+        setIsGraphMode(false);
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        subscription.remove();
+        setIsGraphMode(false);
+        void lockPortrait();
+      };
+    }, []),
+  );
 
   const handleExport = useCallback(async () => {
     if (!computation || isExporting) {
@@ -70,10 +103,6 @@ const PatternsTabScreen = () => {
       setIsExporting(false);
     }
   }, [computation, isExporting, mrsLatest, pamLatest, t]);
-
-  const exitGraphMode = useCallback(() => {
-    setIsGraphMode(false);
-  }, []);
 
   return (
     <SynaGradientBackground>

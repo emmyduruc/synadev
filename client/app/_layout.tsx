@@ -14,6 +14,7 @@ import { RootLayoutNav } from '@/components/layout/RootLayoutNav';
 import { MascotLoadingProvider } from '@/components/loading/MascotLoadingProvider';
 import { PushNotificationsBridge } from '@/components/notifications/PushNotificationsBridge';
 import { SplashScreen as BrandSplash } from '@/components/screens/SplashScreen';
+import { useEasUpdates } from '@/hooks/useEasUpdates';
 import { getClerkPublishableKey } from '@/lib/clerk/env';
 import { useAppFonts } from '@/lib/fonts/useAppFonts';
 import '@/lib/i18n';
@@ -34,6 +35,7 @@ const RootLayout = () => {
   const publishableKey = getClerkPublishableKey();
   const [loaded, error] = useAppFonts();
   const [isSplashVisible, setIsSplashVisible] = useState(true);
+  useEasUpdates();
 
   useEffect(() => {
     if (error) {
