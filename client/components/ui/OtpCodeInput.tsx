@@ -76,7 +76,6 @@ export const OtpCodeInput = ({
         maxLength={length}
         autoFocus={autoFocus}
         caretHidden
-        showSoftInputOnFocus={false}
         style={hiddenOtpInputStyle}
       />
     </Box>

@@ -32,6 +32,3 @@ export type { CircularProgressProps } from './CircularProgress';
 
 export { OtpCodeInput, OTP_CODE_LENGTH } from './OtpCodeInput';
 export type { OtpCodeInputProps } from './OtpCodeInput';
-
-export { OtpNumericKeypad } from './OtpNumericKeypad';
-export type { OtpNumericKeypadProps } from './OtpNumericKeypad';

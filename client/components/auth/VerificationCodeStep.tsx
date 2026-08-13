@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { AuthVerificationLayout } from '@/components/auth/AuthVerificationLayout';
 import { Box, Button, Text, TouchableOpacity } from '@/components/ui';
 import { OtpCodeInput, OTP_CODE_LENGTH } from '@/components/ui/OtpCodeInput';
-import { OtpNumericKeypad } from '@/components/ui/OtpNumericKeypad';
 import { useTranslate } from '@/hooks/useTranslate';
 
 export type VerificationCodeStepProps = {
@@ -27,18 +26,6 @@ export const VerificationCodeStep = ({
   const { t } = useTranslate();
   const [code, setCode] = useState('');
 
-  const handleDigitPress = (digit: string) => {
-    if (code.length >= OTP_CODE_LENGTH || isSubmitting) {
-      return;
-    }
-
-    setCode((previous) => `${previous}${digit}`.slice(0, OTP_CODE_LENGTH));
-  };
-
-  const handleBackspacePress = () => {
-    setCode((previous) => previous.slice(0, -1));
-  };
-
   const handleVerify = async () => {
     if (code.length !== OTP_CODE_LENGTH || isSubmitting) {
       return;
@@ -53,23 +40,16 @@ export const VerificationCodeStep = ({
       subtitle={identifier}
       fallbackHref={fallbackHref}
       footer={
-        <>
-          <Button
-            fullWidth
-            size="lg"
-            loading={isSubmitting}
-            disabled={code.length !== OTP_CODE_LENGTH}
-            onPress={() => {
-              void handleVerify();
-            }}>
-            {t('wizard_next_button')}
-          </Button>
-          <OtpNumericKeypad
-            disabled={isSubmitting}
-            onDigitPress={handleDigitPress}
-            onBackspacePress={handleBackspacePress}
-          />
-        </>
+        <Button
+          fullWidth
+          size="lg"
+          loading={isSubmitting}
+          disabled={code.length !== OTP_CODE_LENGTH}
+          onPress={() => {
+            void handleVerify();
+          }}>
+          {t('wizard_next_button')}
+        </Button>
       }>
       <Box gap="md">
         <OtpCodeInput
