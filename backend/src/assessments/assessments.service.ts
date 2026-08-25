@@ -4,17 +4,23 @@ import {
   ASSESSMENT_INSTRUMENT,
   MRS_II_ITEM_KEYS,
   PAM13_ITEM_KEYS,
+  PHQ2_ITEM_KEYS,
   computeMrsIiSubscores,
   computeMrsIiTotal,
   computePam13RawTotal,
+  computePhq2Total,
   type MrsIiAssessmentSubmission,
   type MrsIiLatest,
   type MrsIiSeverityValue,
   type Pam13AssessmentSubmission,
   type Pam13Latest,
   type Pam13ResponseValue,
+  type Phq2AssessmentSubmission,
+  type Phq2Latest,
+  type Phq2SeverityValue,
   type SubmitMrsIiAssessment,
   type SubmitPam13Assessment,
+  type SubmitPhq2Assessment,
 } from '@syna/shared-types';
 import { Repository } from 'typeorm';
 
@@ -118,6 +124,45 @@ export class AssessmentsService {
     };
   }
 
+  async submitPhq2(
+    clerkUser: AuthenticatedClerkUser,
+    input: SubmitPhq2Assessment,
+  ): Promise<Phq2AssessmentSubmission> {
+    const userId = await this.usersService.resolveUserId(clerkUser);
+    const answers = input.answers as Phq2SeverityValue[];
+    const total = computePhq2Total(answers);
+
+    const submission = this.submissionsRepository.create({
+      userId,
+      instrument: ASSESSMENT_INSTRUMENT.phq2,
+      assessmentId: input.assessmentId,
+      timepoint: input.timepoint,
+      totalScore: total,
+      scaledScore: null,
+      somatic: null,
+      psychological: null,
+      urogenital: null,
+      answers: PHQ2_ITEM_KEYS.map((itemKey, itemIndex) => ({
+        itemKey,
+        itemIndex,
+        value: answers[itemIndex],
+      })),
+    });
+
+    const saved = await this.submissionsRepository.save(submission);
+
+    return this.toPhq2Submission(saved);
+  }
+
+  async getLatestPhq2(clerkUser: AuthenticatedClerkUser): Promise<Phq2Latest> {
+    const userId = await this.usersService.resolveUserId(clerkUser);
+    const submission = await this.findLatest(userId, ASSESSMENT_INSTRUMENT.phq2);
+
+    return {
+      submission: submission ? this.toPhq2Submission(submission) : null,
+    };
+  }
+
   private async findLatest(
     userId: string,
     instrument: string,
@@ -160,6 +205,21 @@ export class AssessmentsService {
       answers: ordered.map((answer) => answer.value as Pam13ResponseValue),
       rawTotal: entity.totalScore ?? 0,
       scaledScore: entity.scaledScore,
+      completedAt: toIsoDateTime(entity.completedAt),
+    };
+  }
+
+  private toPhq2Submission(
+    entity: AssessmentSubmissionEntity,
+  ): Phq2AssessmentSubmission {
+    const ordered = sortAnswersByIndex(entity.answers ?? []);
+
+    return {
+      id: entity.id,
+      assessmentId: entity.assessmentId as Phq2AssessmentSubmission['assessmentId'],
+      timepoint: entity.timepoint as Phq2AssessmentSubmission['timepoint'],
+      answers: ordered.map((answer) => answer.value as Phq2SeverityValue),
+      total: entity.totalScore ?? 0,
       completedAt: toIsoDateTime(entity.completedAt),
     };
   }

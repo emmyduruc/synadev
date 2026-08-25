@@ -1,10 +1,15 @@
 import type {
   AppLocale,
   UpdateUserHealthMetrics,
+  UpdateUserHealthRecord,
   UpdateUserProfile,
   User,
 } from '@syna/shared-types';
-import { resolveAppLocale, UserHealthMetricsSchema } from '@syna/shared-types';
+import {
+  resolveAppLocale,
+  UserHealthMetricsSchema,
+  UserHealthRecordSchema,
+} from '@syna/shared-types';
 
 import type { UserEntity } from './user.entity';
 
@@ -40,6 +45,17 @@ const parseHealthMetrics = (
   return parsed.success ? parsed.data : null;
 };
 
+const parseHealthRecord = (
+  value: UserEntity['healthRecord'],
+): User['healthRecord'] => {
+  if (value === null) {
+    return null;
+  }
+
+  const parsed = UserHealthRecordSchema.safeParse(value);
+  return parsed.success ? parsed.data : null;
+};
+
 export const mapUserEntityToDto = (entity: UserEntity): User => ({
   id: entity.id,
   clerkId: entity.clerkId,
@@ -50,6 +66,7 @@ export const mapUserEntityToDto = (entity: UserEntity): User => ({
   address: entity.address,
   locale: resolveAppLocale(entity.locale),
   healthMetrics: parseHealthMetrics(entity.healthMetrics),
+  healthRecord: parseHealthRecord(entity.healthRecord),
   isBioComplete: isUserBioComplete(entity),
   createdAt: entity.createdAt.toISOString(),
   updatedAt: entity.updatedAt.toISOString(),
@@ -70,6 +87,13 @@ export const applyHealthMetricsUpdate = (
   input: UpdateUserHealthMetrics,
 ): void => {
   entity.healthMetrics = input;
+};
+
+export const applyHealthRecordUpdate = (
+  entity: UserEntity,
+  input: UpdateUserHealthRecord,
+): void => {
+  entity.healthRecord = input;
 };
 
 export const applyLocaleUpdate = (entity: UserEntity, locale: AppLocale): void => {

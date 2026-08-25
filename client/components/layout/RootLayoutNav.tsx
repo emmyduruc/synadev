@@ -80,6 +80,13 @@ export const RootLayoutNav = () => {
           }}
         />
         <Stack.Screen
+          name="assessment/phq-2"
+          options={{
+            presentation: 'fullScreenModal',
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
           name="profile-settings"
           options={{
             presentation: 'fullScreenModal',

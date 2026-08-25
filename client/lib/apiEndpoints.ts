@@ -34,6 +34,10 @@ export const USERS_ME_LOCALE_ABSOLUTE = absolute(USERS_ME_LOCALE);
 export const USERS_ME_HEALTH_METRICS = '/users/me/health-metrics';
 export const USERS_ME_HEALTH_METRICS_ABSOLUTE = absolute(USERS_ME_HEALTH_METRICS);
 
+/** PATCH — replace clinical health-record JSONB document */
+export const USERS_ME_HEALTH_RECORD = '/users/me/health-record';
+export const USERS_ME_HEALTH_RECORD_ABSOLUTE = absolute(USERS_ME_HEALTH_RECORD);
+
 /** GET/PUT — per-day wearable aggregates for Patterns */
 export const HEALTH_DAILY = '/health/daily';
 export const HEALTH_DAILY_ABSOLUTE = absolute(HEALTH_DAILY);
@@ -65,7 +69,7 @@ export const MOOD_LOGS = '/mood/logs';
 export const MOOD_LOGS_ABSOLUTE = absolute(MOOD_LOGS);
 
 // =============================================================================
-// ASSESSMENTS (MRS-II / PAM-13)
+// ASSESSMENTS (MRS-II / PAM-13 / PHQ-2)
 // =============================================================================
 
 export const ASSESSMENTS_MRS_II = '/assessments/mrs-ii';
@@ -77,6 +81,11 @@ export const ASSESSMENTS_PAM_13 = '/assessments/pam-13';
 export const ASSESSMENTS_PAM_13_ABSOLUTE = absolute(ASSESSMENTS_PAM_13);
 export const ASSESSMENTS_PAM_13_LATEST = '/assessments/pam-13/latest';
 export const ASSESSMENTS_PAM_13_LATEST_ABSOLUTE = absolute(ASSESSMENTS_PAM_13_LATEST);
+
+export const ASSESSMENTS_PHQ_2 = '/assessments/phq-2';
+export const ASSESSMENTS_PHQ_2_ABSOLUTE = absolute(ASSESSMENTS_PHQ_2);
+export const ASSESSMENTS_PHQ_2_LATEST = '/assessments/phq-2/latest';
+export const ASSESSMENTS_PHQ_2_LATEST_ABSOLUTE = absolute(ASSESSMENTS_PHQ_2_LATEST);
 
 // =============================================================================
 // NOTIFICATIONS

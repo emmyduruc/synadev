@@ -14,6 +14,7 @@ import { SWAGGER_TAGS } from '../swagger/swagger.constants';
 
 import {
   UpdateUserHealthMetricsDto,
+  UpdateUserHealthRecordDto,
   UpdateUserLocaleDto,
   UpdateUserProfileDto,
   UserDto,
@@ -76,6 +77,24 @@ export class UsersController {
     @Body() dto: UpdateUserHealthMetricsDto,
   ): Promise<UserDto> {
     return this.usersService.updateCurrentUserHealthMetrics(clerkUser, dto);
+  }
+
+  @Patch('me/health-record')
+  @ApiOperation({
+    summary: 'Replace the current user health-record document',
+    description:
+      'Persists labs, medications, and patient concerns as a typed JSONB document for the doctor report.',
+  })
+  @ApiOkResponse({
+    description: 'Updated user including healthRecord',
+    type: UserDto,
+  })
+  @ApiStandardResponses({ unauthorized: true })
+  updateHealthRecord(
+    @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
+    @Body() dto: UpdateUserHealthRecordDto,
+  ): Promise<UserDto> {
+    return this.usersService.updateCurrentUserHealthRecord(clerkUser, dto);
   }
 
   @Patch('me/locale')

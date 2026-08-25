@@ -8,6 +8,8 @@ import {
   Pam13AssessmentSubmissionSchema,
   Pam13LatestSchema,
   PeriodDaysSchema,
+  Phq2AssessmentSubmissionSchema,
+  Phq2LatestSchema,
   RegisterPushTokenResponseSchema,
   RegisterPushTokenSchema,
   ReplaceMoodLogsSchema,
@@ -15,9 +17,11 @@ import {
   ReplaceSymptomLogsSchema,
   SubmitMrsIiAssessmentSchema,
   SubmitPam13AssessmentSchema,
+  SubmitPhq2AssessmentSchema,
   SymptomCatalogSchema,
   SymptomLogsSchema,
   UpdateUserHealthMetricsSchema,
+  UpdateUserHealthRecordSchema,
   UpdateUserLocaleSchema,
   UpdateUserProfileSchema,
   UpsertHealthDailyMetricsSchema,
@@ -34,6 +38,8 @@ import type {
   Pam13AssessmentSubmission,
   Pam13Latest,
   PeriodDays,
+  Phq2AssessmentSubmission,
+  Phq2Latest,
   RegisterPushToken,
   RegisterPushTokenResponse,
   ReplaceMoodLogs,
@@ -41,9 +47,11 @@ import type {
   ReplaceSymptomLogs,
   SubmitMrsIiAssessment,
   SubmitPam13Assessment,
+  SubmitPhq2Assessment,
   SymptomCatalog,
   SymptomLogs,
   UpdateUserHealthMetrics,
+  UpdateUserHealthRecord,
   UpdateUserLocale,
   UpdateUserProfile,
   UpsertHealthDailyMetrics,
@@ -55,6 +63,8 @@ import {
   ASSESSMENTS_MRS_II_LATEST,
   ASSESSMENTS_PAM_13,
   ASSESSMENTS_PAM_13_LATEST,
+  ASSESSMENTS_PHQ_2,
+  ASSESSMENTS_PHQ_2_LATEST,
   CYCLE_PHASE,
   HEALTH,
   HEALTH_DAILY,
@@ -65,6 +75,7 @@ import {
   SYMPTOM_LOGS,
   USERS_ME,
   USERS_ME_HEALTH_METRICS,
+  USERS_ME_HEALTH_RECORD,
   USERS_ME_LOCALE,
 } from './apiEndpoints';
 import { apiRequest } from './http';
@@ -101,6 +112,17 @@ export const updateCurrentUserHealthMetrics = (
     method: 'PATCH',
     body: input,
     bodySchema: UpdateUserHealthMetricsSchema,
+    responseSchema: UserSchema,
+  });
+
+export const updateCurrentUserHealthRecord = (
+  input: UpdateUserHealthRecord,
+): Promise<User> =>
+  apiRequest({
+    url: USERS_ME_HEALTH_RECORD,
+    method: 'PATCH',
+    body: input,
+    bodySchema: UpdateUserHealthRecordSchema,
     responseSchema: UserSchema,
   });
 
@@ -241,6 +263,24 @@ export const getLatestPam13Assessment = (): Promise<Pam13Latest> =>
     url: ASSESSMENTS_PAM_13_LATEST,
     method: 'GET',
     responseSchema: Pam13LatestSchema,
+  });
+
+export const submitPhq2Assessment = (
+  input: SubmitPhq2Assessment,
+): Promise<Phq2AssessmentSubmission> =>
+  apiRequest({
+    url: ASSESSMENTS_PHQ_2,
+    method: 'POST',
+    body: input,
+    bodySchema: SubmitPhq2AssessmentSchema,
+    responseSchema: Phq2AssessmentSubmissionSchema,
+  });
+
+export const getLatestPhq2Assessment = (): Promise<Phq2Latest> =>
+  apiRequest({
+    url: ASSESSMENTS_PHQ_2_LATEST,
+    method: 'GET',
+    responseSchema: Phq2LatestSchema,
   });
 
 export { createApiClientError, isApiClientError, toApiClientError } from './http';

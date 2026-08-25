@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import type {
   AppLocale,
   UpdateUserHealthMetrics,
+  UpdateUserHealthRecord,
   UpdateUserProfile,
   User,
 } from '@syna/shared-types';
@@ -14,6 +15,7 @@ import type { AuthenticatedClerkUser } from '../auth/auth.types';
 import { UserEntity } from './user.entity';
 import {
   applyHealthMetricsUpdate,
+  applyHealthRecordUpdate,
   applyLocaleUpdate,
   applyProfileUpdate,
   mapUserEntityToDto,
@@ -53,6 +55,7 @@ export class UsersService {
       address: null,
       locale: DEFAULT_APP_LOCALE,
       healthMetrics: null,
+      healthRecord: null,
     });
 
     const saved = await this.usersRepository.save(created);
@@ -85,6 +88,21 @@ export class UsersService {
     });
 
     applyHealthMetricsUpdate(entity, input);
+    const saved = await this.usersRepository.save(entity);
+    return mapUserEntityToDto(saved);
+  }
+
+  async updateCurrentUserHealthRecord(
+    clerkUser: AuthenticatedClerkUser,
+    input: UpdateUserHealthRecord,
+  ): Promise<User> {
+    await this.ensureCurrentUser(clerkUser);
+
+    const entity = await this.usersRepository.findOneOrFail({
+      where: { clerkId: clerkUser.clerkId },
+    });
+
+    applyHealthRecordUpdate(entity, input);
     const saved = await this.usersRepository.save(entity);
     return mapUserEntityToDto(saved);
   }

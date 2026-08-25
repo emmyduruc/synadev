@@ -19,8 +19,11 @@ import {
   MrsIiLatestDto,
   Pam13AssessmentSubmissionDto,
   Pam13LatestDto,
+  Phq2AssessmentSubmissionDto,
+  Phq2LatestDto,
   SubmitMrsIiAssessmentDto,
   SubmitPam13AssessmentDto,
+  SubmitPhq2AssessmentDto,
 } from './dto/assessments.dto';
 
 @ApiTags(SWAGGER_TAGS.assessments)
@@ -94,5 +97,38 @@ export class AssessmentsController {
     @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
   ): Promise<Pam13LatestDto> {
     return this.assessmentsService.getLatestPam13(clerkUser);
+  }
+
+  @Post('phq-2')
+  @ApiOperation({
+    summary: 'Submit PHQ-2 assessment',
+    description:
+      'Persists a PHQ-2 (2-item depression screen) questionnaire in 1NF. '
+      + 'Server recomputes the total score (0-6) from answers (0-3 each).',
+  })
+  @ApiCreatedResponse({
+    description: 'PHQ-2 submission saved',
+    type: Phq2AssessmentSubmissionDto,
+  })
+  @ApiStandardResponses({ unauthorized: true })
+  submitPhq2(
+    @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
+    @Body() dto: SubmitPhq2AssessmentDto,
+  ): Promise<Phq2AssessmentSubmissionDto> {
+    return this.assessmentsService.submitPhq2(clerkUser, dto);
+  }
+
+  @Get('phq-2/latest')
+  @ApiOperation({
+    summary: 'Get latest PHQ-2 assessment',
+    description:
+      'Returns the most recent PHQ-2 submission for the authenticated user, or null if none.',
+  })
+  @ApiOkResponse({ description: 'Latest PHQ-2 submission', type: Phq2LatestDto })
+  @ApiStandardResponses({ unauthorized: true })
+  getLatestPhq2(
+    @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
+  ): Promise<Phq2LatestDto> {
+    return this.assessmentsService.getLatestPhq2(clerkUser);
   }
 }

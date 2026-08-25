@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { ScrollView } from 'react-native';
 
 import { DeepeningContent } from '@/components/deepening/DeepeningContent';
+import { HealthRecordContent } from '@/components/healthRecord/HealthRecordContent';
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
 import { ProfileMyProfileContent } from '@/components/profile/ProfileMyProfileContent';
 import { ProfileTabBar, type ProfileTabOption } from '@/components/profile/ProfileTabBar';
-import { ProfileTabPlaceholder } from '@/components/profile/ProfileTabPlaceholder';
 import { AppHeader, Box } from '@/components/ui';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
@@ -46,25 +46,16 @@ const ProfileTabScreen = () => {
 
           <ScrollView
             className="flex-1"
-            contentContainerStyle={
-              isHealthRecordActive
-                ? { flexGrow: 1, paddingBottom: 24 }
-                : { paddingBottom: 24 }
-            }
+            contentContainerStyle={{ paddingBottom: 24 }}
             showsVerticalScrollIndicator={false}>
-            <Box
-              paddingX="md"
-              gap="md"
-              className={isHealthRecordActive ? 'flex-1' : undefined}>
+            <Box paddingX="md" gap="md">
               <Box style={isMyProfileActive ? undefined : { display: 'none' }}>
                 <ProfileMyProfileContent />
               </Box>
 
               {isDeepeningActive ? <DeepeningContent /> : null}
 
-              {isHealthRecordActive ? (
-                <ProfileTabPlaceholder message={t('profile_tab_health_record_placeholder')} />
-              ) : null}
+              {isHealthRecordActive ? <HealthRecordContent /> : null}
             </Box>
           </ScrollView>
 

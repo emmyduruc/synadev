@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { UserHealthMetricsSchema } from './health-metrics.schema';
+import { UserHealthRecordSchema } from './health-record.schema';
 import { IsoDateSchema } from './iso-date.schema';
 import { AppLocaleSchema } from './locale.schema';
 
@@ -36,6 +37,9 @@ export const UserSchema = z.object({
   ),
   healthMetrics: UserHealthMetricsSchema.nullable().describe(
     'Latest summarized health metrics snapshot (JSONB); null until first sync',
+  ),
+  healthRecord: UserHealthRecordSchema.nullable().describe(
+    'Clinical health-record document (labs, meds, concerns); null until first save',
   ),
   isBioComplete: z
     .boolean()

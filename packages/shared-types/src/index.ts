@@ -38,6 +38,21 @@ export type {
 } from './schemas/health-metrics.schema';
 
 export {
+  HealthRecordLabsSchema,
+  HealthRecordMedicationSchema,
+  UserHealthRecordSchema,
+  UpdateUserHealthRecordSchema,
+  createEmptyUserHealthRecord,
+} from './schemas/health-record.schema';
+
+export type {
+  HealthRecordLabs,
+  HealthRecordMedication,
+  UserHealthRecord,
+  UpdateUserHealthRecord,
+} from './schemas/health-record.schema';
+
+export {
   HEALTH_DAILY_MAX_RANGE_DAYS,
   HealthDailyMetricRowSchema,
   HealthDailyMetricsSchema,
@@ -208,6 +223,17 @@ export {
   Pam13AssessmentSubmissionSchema,
   Pam13LatestSchema,
   computePam13RawTotal,
+  PHQ2_ASSESSMENT_ID,
+  PHQ2_ASSESSMENT_IDS,
+  Phq2AssessmentIdSchema,
+  PHQ2_ITEM_KEYS,
+  PHQ2_ITEM_COUNT,
+  Phq2SeverityValueSchema,
+  Phq2AnswersSchema,
+  SubmitPhq2AssessmentSchema,
+  Phq2AssessmentSubmissionSchema,
+  Phq2LatestSchema,
+  computePhq2Total,
 } from './schemas/assessments.schema';
 
 export type {
@@ -226,4 +252,10 @@ export type {
   SubmitPam13Assessment,
   Pam13AssessmentSubmission,
   Pam13Latest,
+  Phq2AssessmentId,
+  Phq2ItemKey,
+  Phq2SeverityValue,
+  SubmitPhq2Assessment,
+  Phq2AssessmentSubmission,
+  Phq2Latest,
 } from './schemas/assessments.schema';

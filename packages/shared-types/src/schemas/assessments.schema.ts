@@ -4,11 +4,13 @@ import { z } from 'zod';
 export const ASSESSMENT_INSTRUMENT = {
   mrsIi: 'mrs_ii',
   pam13: 'pam13',
+  phq2: 'phq2',
 } as const;
 
 export const ASSESSMENT_INSTRUMENTS = [
   ASSESSMENT_INSTRUMENT.mrsIi,
   ASSESSMENT_INSTRUMENT.pam13,
+  ASSESSMENT_INSTRUMENT.phq2,
 ] as const;
 
 export type AssessmentInstrument =
@@ -262,4 +264,89 @@ export type Pam13Latest = z.infer<typeof Pam13LatestSchema>;
 
 export const computePam13RawTotal = (
   answers: readonly Pam13ResponseValue[],
+): number => answers.reduce<number>((sum, value) => sum + value, 0);
+
+// ---------------------------------------------------------------------------
+// PHQ-2 (Patient Health Questionnaire-2)
+// ---------------------------------------------------------------------------
+
+export const PHQ2_ASSESSMENT_ID = {
+  baseline: 'phq2_baseline',
+  followUp: 'phq2',
+} as const;
+
+export const PHQ2_ASSESSMENT_IDS = [
+  PHQ2_ASSESSMENT_ID.baseline,
+  PHQ2_ASSESSMENT_ID.followUp,
+] as const;
+
+export type Phq2AssessmentId = (typeof PHQ2_ASSESSMENT_IDS)[number];
+
+export const Phq2AssessmentIdSchema = z
+  .enum(PHQ2_ASSESSMENT_IDS)
+  .describe('PHQ-2 assessment variant (baseline or follow-up)');
+
+/** Fixed PHQ-2 item order — do not reorder. */
+export const PHQ2_ITEM_KEYS = ['little_interest', 'feeling_down'] as const;
+
+export type Phq2ItemKey = (typeof PHQ2_ITEM_KEYS)[number];
+
+export const PHQ2_ITEM_COUNT = PHQ2_ITEM_KEYS.length;
+
+export const Phq2SeverityValueSchema = z
+  .number()
+  .int()
+  .min(0)
+  .max(3)
+  .describe(
+    'PHQ-2 item frequency 0 (not at all) to 3 (nearly every day)',
+  );
+
+export type Phq2SeverityValue = z.infer<typeof Phq2SeverityValueSchema>;
+
+export const Phq2AnswersSchema = z
+  .array(Phq2SeverityValueSchema)
+  .length(PHQ2_ITEM_COUNT)
+  .describe('PHQ-2 answers in fixed instrument order (2 values, each 0-3)');
+
+export const SubmitPhq2AssessmentSchema = z
+  .object({
+    assessmentId: Phq2AssessmentIdSchema,
+    timepoint: AssessmentTimepointSchema,
+    answers: Phq2AnswersSchema,
+  })
+  .describe('Submit a completed PHQ-2 questionnaire (server recomputes total)');
+
+export type SubmitPhq2Assessment = z.infer<typeof SubmitPhq2AssessmentSchema>;
+
+export const Phq2AssessmentSubmissionSchema = z
+  .object({
+    id: z.string().uuid().describe('Submission id'),
+    assessmentId: Phq2AssessmentIdSchema,
+    timepoint: AssessmentTimepointSchema,
+    answers: Phq2AnswersSchema,
+    total: z
+      .number()
+      .int()
+      .min(0)
+      .max(6)
+      .describe('PHQ-2 total score (0-6)'),
+    completedAt: z.string().datetime().describe('ISO timestamp when saved'),
+  })
+  .describe('Persisted PHQ-2 submission with server-computed total');
+
+export type Phq2AssessmentSubmission = z.infer<typeof Phq2AssessmentSubmissionSchema>;
+
+export const Phq2LatestSchema = z
+  .object({
+    submission: Phq2AssessmentSubmissionSchema.nullable().describe(
+      'Most recent PHQ-2 submission, or null if none',
+    ),
+  })
+  .describe('Latest PHQ-2 submission for the authenticated user');
+
+export type Phq2Latest = z.infer<typeof Phq2LatestSchema>;
+
+export const computePhq2Total = (
+  answers: readonly Phq2SeverityValue[],
 ): number => answers.reduce<number>((sum, value) => sum + value, 0);

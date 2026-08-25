@@ -1,5 +1,6 @@
 import {
   UpdateUserHealthMetricsSchema,
+  UpdateUserHealthRecordSchema,
   UpdateUserLocaleSchema,
   UpdateUserProfileSchema,
   UserSchema,
@@ -10,6 +11,10 @@ export class UpdateUserProfileDto extends createZodDto(UpdateUserProfileSchema) 
 
 export class UpdateUserHealthMetricsDto extends createZodDto(
   UpdateUserHealthMetricsSchema,
+) {}
+
+export class UpdateUserHealthRecordDto extends createZodDto(
+  UpdateUserHealthRecordSchema,
 ) {}
 
 export class UpdateUserLocaleDto extends createZodDto(UpdateUserLocaleSchema) {}
