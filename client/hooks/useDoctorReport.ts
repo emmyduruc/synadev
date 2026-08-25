@@ -1,0 +1,163 @@
+import { useMemo } from 'react';
+
+import { useBioData } from '@/hooks/useBioData';
+import { useHealthRecord } from '@/hooks/useHealthRecord';
+import { useLatestMrsIiAssessment } from '@/hooks/useLatestMrsIiAssessment';
+import { useLatestPhq2Assessment } from '@/hooks/useLatestPhq2Assessment';
+import { useMoodLog } from '@/hooks/useMoodLog';
+import { usePatternsDashboard } from '@/hooks/usePatternsDashboard';
+import { useSymptomLog } from '@/hooks/useSymptomLog';
+import { addDaysToKey } from '@/lib/date/dateKeys';
+import { buildPatternChartSeries } from '@/lib/patterns/buildPatternChartSeries';
+import { buildDoctorReport } from '@/lib/report/buildDoctorReport';
+import type { DoctorReportViewModel } from '@/lib/report/doctorReportTypes';
+import { DOCTOR_REPORT_WINDOW_DAYS } from '@/lib/report/reportConstants';
+
+export const useDoctorReport = (): {
+  isLoading: boolean;
+  report: DoctorReportViewModel | null;
+  refresh: () => void;
+} => {
+  const { bioData, isLoading: isBioLoading } = useBioData();
+  const { record: healthRecord, isLoading: isHealthRecordLoading } = useHealthRecord();
+  const { submission: phq2Latest, isLoading: isPhq2Loading } = useLatestPhq2Assessment();
+  const { submission: mrsLatest, isLoading: isMrsLoading } = useLatestMrsIiAssessment();
+  const {
+    isLoading: isPatternsLoading,
+    computation,
+    healthByDate,
+    chartWindow,
+    pamLatest,
+    refresh: refreshPatterns,
+  } = usePatternsDashboard();
+  const { logs: symptomLogs, isLoading: isSymptomLoading } = useSymptomLog();
+  const { logs: moodLogs, isLoading: isMoodLoading } = useMoodLog();
+
+  const isLoading =
+    isBioLoading ||
+    isPatternsLoading ||
+    isSymptomLoading ||
+    isMoodLoading ||
+    isHealthRecordLoading ||
+    isPhq2Loading ||
+    isMrsLoading;
+
+  const report = useMemo(() => {
+    if (isLoading) {
+      return null;
+    }
+
+    const todayKey = chartWindow.todayKey;
+    const windowDays = DOCTOR_REPORT_WINDOW_DAYS;
+    const fromKey = addDaysToKey(todayKey, -(windowDays - 1));
+    const dateKeys: string[] = [];
+    let cursor = fromKey;
+
+    while (cursor <= todayKey) {
+      dateKeys.push(cursor);
+      cursor = addDaysToKey(cursor, 1);
+    }
+
+    const symptomsByDate = new Map<string, readonly string[]>();
+
+    for (const [dateKey, ids] of Object.entries(symptomLogs)) {
+      if (dateKey >= fromKey && dateKey <= todayKey) {
+        symptomsByDate.set(dateKey, ids);
+      }
+    }
+
+    const moodsByDate = new Map<
+      string,
+      { energy: number | null; stress: number | null }
+    >();
+
+    for (const [dateKey, entry] of Object.entries(moodLogs)) {
+      if (dateKey >= fromKey && dateKey <= todayKey) {
+        moodsByDate.set(dateKey, {
+          energy: entry.energy,
+          stress: entry.stress,
+        });
+      }
+    }
+
+    const healthWindow = new Map<
+      string,
+      {
+        sleepHours: number | null;
+        steps: number | null;
+        hrvMs: number | null;
+        nightHr: number | null;
+        deepSleepHours: number | null;
+        exerciseMinutes: number | null;
+      }
+    >();
+
+    for (const dateKey of dateKeys) {
+      const row = healthByDate.get(dateKey);
+
+      healthWindow.set(dateKey, {
+        sleepHours: row?.sleepHours ?? null,
+        steps: row?.steps ?? null,
+        hrvMs: row?.hrvMs ?? null,
+        nightHr: row?.nightHr ?? null,
+        deepSleepHours: row?.deepSleepHours ?? null,
+        exerciseMinutes: row?.exerciseMinutes ?? null,
+      });
+    }
+
+    const chartSeries = buildPatternChartSeries({
+      dateKeys,
+      healthByDate,
+      moodsByDate: new Map(
+        [...moodsByDate.entries()].map(([dateKey, mood]) => [
+          dateKey,
+          {
+            dateKey,
+            energy: mood.energy,
+            stress: mood.stress,
+            isChallenging: false,
+          },
+        ]),
+      ),
+      symptomsByDate,
+    });
+
+    return buildDoctorReport({
+      firstName: bioData.firstName || null,
+      lastName: bioData.lastName || null,
+      dateOfBirth: bioData.dateOfBirth || null,
+      windowDays,
+      dateKeys,
+      symptomsByDate,
+      moodsByDate,
+      healthByDate: healthWindow,
+      computation,
+      chartSeries,
+      heatmap: computation?.heatmap ?? null,
+      mrsLatest,
+      pamLatest,
+      phq2Latest,
+      healthRecord,
+    });
+  }, [
+    bioData.dateOfBirth,
+    bioData.firstName,
+    bioData.lastName,
+    chartWindow.todayKey,
+    computation,
+    healthByDate,
+    healthRecord,
+    isLoading,
+    moodLogs,
+    mrsLatest,
+    pamLatest,
+    phq2Latest,
+    symptomLogs,
+  ]);
+
+  return {
+    isLoading,
+    report,
+    refresh: refreshPatterns,
+  };
+};

@@ -1,6 +1,7 @@
 import { DeepeningDaySlider } from '@/components/deepening/DeepeningDaySlider';
 import { ProfileEditField } from '@/components/profile/ProfileEditField';
 import { ProfileOptionChips } from '@/components/profile/ProfileOptionChips';
+import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
 import { TextInput } from '@/components/ui/TextInput';
 import { useTranslate } from '@/hooks/useTranslate';
@@ -26,7 +27,7 @@ export const DeepeningMigraineForm = ({
   const { t } = useTranslate();
 
   return (
-    <>
+    <Box gap="xl">
       <ProfileEditField label={t('deepening_migraine_diagnosis_label')}>
         <ProfileOptionChips
           options={MIGRAINE_DIAGNOSIS_OPTIONS}
@@ -62,22 +63,24 @@ export const DeepeningMigraineForm = ({
           onChangeText={(medication) => onChange({ ...value, medication })}
           placeholder={t('deepening_migraine_medication_placeholder')}
           multiline
-          inputClassName="rounded-2xl bg-muted"
+          inputClassName="rounded-2xl bg-muted min-h-24"
         />
       </ProfileEditField>
 
-      <ProfileEditField label={t('deepening_migraine_hrt_label')}>
-        <ProfileOptionChips
-          options={MIGRAINE_HRT_OPTIONS}
-          labelKeys={MIGRAINE_HRT_LABEL_KEYS}
-          value={value.hrtStatus}
-          onChange={(hrtStatus) => onChange({ ...value, hrtStatus })}
-        />
-      </ProfileEditField>
+      <Box gap="sm">
+        <ProfileEditField label={t('deepening_migraine_hrt_label')}>
+          <ProfileOptionChips
+            options={MIGRAINE_HRT_OPTIONS}
+            labelKeys={MIGRAINE_HRT_LABEL_KEYS}
+            value={value.hrtStatus}
+            onChange={(hrtStatus) => onChange({ ...value, hrtStatus })}
+          />
+        </ProfileEditField>
 
-      <Text size="xs" color="foreground-muted" className="italic leading-relaxed">
-        {t('deepening_migraine_hrt_footnote')}
-      </Text>
-    </>
+        <Text size="xs" color="foreground-muted" className="italic leading-relaxed">
+          {t('deepening_migraine_hrt_footnote')}
+        </Text>
+      </Box>
+    </Box>
   );
 };

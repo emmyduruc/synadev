@@ -1,50 +1,33 @@
 import type { MrsIiAssessmentSubmission } from '@syna/shared-types';
-import { useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { getLatestMrsIiAssessment } from '@/lib/api';
+import { useLatestMrsIiAssessment } from '@/hooks/useLatestMrsIiAssessment';
 import {
   getMrsIiAssessmentCompleted,
   setMrsIiAssessmentCompleted,
 } from '@/lib/mrs/mrsIiBannerStorage';
 
 export const useMrsIiAssessmentStatus = () => {
+  const { submission: latestSubmission, isLoading, refresh } = useLatestMrsIiAssessment();
   const [isCompleted, setIsCompleted] = useState(false);
-  const [latestSubmission, setLatestSubmission] = useState<MrsIiAssessmentSubmission | null>(
-    null,
-  );
-  const [isLoading, setIsLoading] = useState(true);
 
-  const refresh = useCallback(async () => {
-    setIsLoading(true);
-
-    try {
-      const latest = await getLatestMrsIiAssessment();
-
-      if (latest.submission) {
+  useEffect(() => {
+    void (async () => {
+      if (latestSubmission) {
         await setMrsIiAssessmentCompleted();
-        setLatestSubmission(latest.submission);
         setIsCompleted(true);
         return;
       }
 
-      setLatestSubmission(null);
-    } catch {
-      setLatestSubmission(null);
-      // Fall back to local SecureStore when offline or API unavailable.
-    }
+      const completed = await getMrsIiAssessmentCompleted();
+      setIsCompleted(completed);
+    })();
+  }, [latestSubmission]);
 
-    const completed = await getMrsIiAssessmentCompleted();
-    setIsCompleted(completed);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      void refresh().finally(() => {
-        setIsLoading(false);
-      });
-    }, [refresh]),
-  );
-
-  return { isCompleted, latestSubmission, isLoading, refresh };
+  return {
+    isCompleted,
+    latestSubmission: latestSubmission as MrsIiAssessmentSubmission | null,
+    isLoading,
+    refresh,
+  };
 };

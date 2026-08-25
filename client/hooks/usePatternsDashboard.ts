@@ -13,8 +13,8 @@ import {
 } from '@syna/shared-utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { useLatestMrsIiAssessment } from '@/hooks/useLatestMrsIiAssessment';
 import { useMoodLog } from '@/hooks/useMoodLog';
-import { useMrsIiAssessmentStatus } from '@/hooks/useMrsIiAssessmentStatus';
 import { usePeriodDates } from '@/hooks/usePeriodDates';
 import { useSymptomLog } from '@/hooks/useSymptomLog';
 import { getHealthDailyMetrics, getLatestPam13Assessment } from '@/lib/api';
@@ -75,8 +75,7 @@ export const usePatternsDashboard = () => {
   const { dateKeys: periodDateKeys, isLoading: isPeriodLoading } = usePeriodDates();
   const { logs: symptomLogs, isLoading: isSymptomLoading } = useSymptomLog();
   const { logs: moodLogs, isLoading: isMoodLoading } = useMoodLog();
-  const { latestSubmission: mrsLatest, isLoading: isMrsLoading } =
-    useMrsIiAssessmentStatus();
+  const { submission: mrsLatest, isLoading: isMrsLoading } = useLatestMrsIiAssessment();
 
   const [pamLatest, setPamLatest] = useState<Pam13AssessmentSubmission | null>(null);
   const [isPamLoading, setIsPamLoading] = useState(true);
@@ -188,10 +187,13 @@ export const usePatternsDashboard = () => {
     });
   }, [chartFromKey, chartToKey, healthRows, isLoading, moodLogs, symptomLogs]);
 
+  const healthByDate = useMemo(() => toHealthDailyMap(healthRows), [healthRows]);
+
   return {
     isLoading,
     computation,
     chartSeries,
+    healthByDate,
     chartWindow: {
       from: chartFromKey,
       to: chartToKey,
