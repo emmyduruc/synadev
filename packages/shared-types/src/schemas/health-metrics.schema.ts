@@ -8,6 +8,8 @@ export const HEALTH_METRIC_KEY = {
   steps: 'steps',
   heartRate: 'heart_rate',
   restingHeartRate: 'resting_heart_rate',
+  /** Average heart rate during detected sleep windows (bpm). */
+  nightHeartRate: 'night_heart_rate',
   hrvSdnn: 'hrv_sdnn',
   hrvRmssd: 'hrv_rmssd',
   respiratoryRate: 'respiratory_rate',
@@ -17,14 +19,23 @@ export const HEALTH_METRIC_KEY = {
   activeEnergy: 'active_energy',
   activeCalories: 'active_calories',
   exerciseMinutes: 'exercise_minutes',
+  /** Total asleep hours from Apple Health Sleep Analysis. */
   sleepAnalysis: 'sleep_analysis',
+  /** Total asleep hours from Health Connect SleepSession. */
   sleepSessions: 'sleep_sessions',
+  /** Deep-sleep hours derived from sleep stages. */
+  deepSleep: 'deep_sleep',
+  /** REM-sleep hours derived from sleep stages (when available). */
+  remSleep: 'rem_sleep',
+  /** Light/core sleep hours derived from sleep stages (when available). */
+  lightSleep: 'light_sleep',
 } as const;
 
 export const HEALTH_METRIC_KEYS = [
   HEALTH_METRIC_KEY.steps,
   HEALTH_METRIC_KEY.heartRate,
   HEALTH_METRIC_KEY.restingHeartRate,
+  HEALTH_METRIC_KEY.nightHeartRate,
   HEALTH_METRIC_KEY.hrvSdnn,
   HEALTH_METRIC_KEY.hrvRmssd,
   HEALTH_METRIC_KEY.respiratoryRate,
@@ -36,6 +47,9 @@ export const HEALTH_METRIC_KEYS = [
   HEALTH_METRIC_KEY.exerciseMinutes,
   HEALTH_METRIC_KEY.sleepAnalysis,
   HEALTH_METRIC_KEY.sleepSessions,
+  HEALTH_METRIC_KEY.deepSleep,
+  HEALTH_METRIC_KEY.remSleep,
+  HEALTH_METRIC_KEY.lightSleep,
 ] as const;
 
 export const HealthMetricKeySchema = z
@@ -86,6 +100,7 @@ export const UserHealthMetricsMapSchema = z
     [HEALTH_METRIC_KEY.steps]: UserHealthMetricValueSchema.optional(),
     [HEALTH_METRIC_KEY.heartRate]: UserHealthMetricValueSchema.optional(),
     [HEALTH_METRIC_KEY.restingHeartRate]: UserHealthMetricValueSchema.optional(),
+    [HEALTH_METRIC_KEY.nightHeartRate]: UserHealthMetricValueSchema.optional(),
     [HEALTH_METRIC_KEY.hrvSdnn]: UserHealthMetricValueSchema.optional(),
     [HEALTH_METRIC_KEY.hrvRmssd]: UserHealthMetricValueSchema.optional(),
     [HEALTH_METRIC_KEY.respiratoryRate]: UserHealthMetricValueSchema.optional(),
@@ -97,6 +112,9 @@ export const UserHealthMetricsMapSchema = z
     [HEALTH_METRIC_KEY.exerciseMinutes]: UserHealthMetricValueSchema.optional(),
     [HEALTH_METRIC_KEY.sleepAnalysis]: UserHealthMetricValueSchema.optional(),
     [HEALTH_METRIC_KEY.sleepSessions]: UserHealthMetricValueSchema.optional(),
+    [HEALTH_METRIC_KEY.deepSleep]: UserHealthMetricValueSchema.optional(),
+    [HEALTH_METRIC_KEY.remSleep]: UserHealthMetricValueSchema.optional(),
+    [HEALTH_METRIC_KEY.lightSleep]: UserHealthMetricValueSchema.optional(),
   })
   .describe('Map of metric key → latest value (partial)');
 

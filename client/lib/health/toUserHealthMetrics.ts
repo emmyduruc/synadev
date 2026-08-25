@@ -7,12 +7,19 @@ import {
   type UserHealthMetricsMap,
 } from '@syna/shared-types';
 
+import {
+  aggregateHealthConnectSleep,
+  aggregateHealthKitSleep,
+  averageNightHeartRateByDay,
+  type SleepDayTotals,
+} from '@/lib/health/sleepAggregation';
 import type { HealthRawMetric, HealthRawSnapshot } from '@/lib/health/types';
 
 const METRIC_UNIT: Partial<Record<HealthMetricKey, string>> = {
   [HEALTH_METRIC_KEY.steps]: 'count',
   [HEALTH_METRIC_KEY.heartRate]: 'count/min',
   [HEALTH_METRIC_KEY.restingHeartRate]: 'count/min',
+  [HEALTH_METRIC_KEY.nightHeartRate]: 'count/min',
   [HEALTH_METRIC_KEY.hrvSdnn]: 'ms',
   [HEALTH_METRIC_KEY.hrvRmssd]: 'ms',
   [HEALTH_METRIC_KEY.respiratoryRate]: 'count/min',
@@ -24,6 +31,9 @@ const METRIC_UNIT: Partial<Record<HealthMetricKey, string>> = {
   [HEALTH_METRIC_KEY.exerciseMinutes]: 'min',
   [HEALTH_METRIC_KEY.sleepAnalysis]: 'h',
   [HEALTH_METRIC_KEY.sleepSessions]: 'h',
+  [HEALTH_METRIC_KEY.deepSleep]: 'h',
+  [HEALTH_METRIC_KEY.remSleep]: 'h',
+  [HEALTH_METRIC_KEY.lightSleep]: 'h',
 };
 
 const CUMULATIVE_KEYS = new Set<HealthMetricKey>([
@@ -120,65 +130,13 @@ const averageRecordValues = (metric: HealthRawMetric): number | null => {
   return count > 0 ? sum / count : null;
 };
 
-const toDate = (value: unknown): Date | null => {
-  if (value instanceof Date) {
-    return Number.isNaN(value.getTime()) ? null : value;
-  }
-
-  if (typeof value === 'string' || typeof value === 'number') {
-    const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? null : parsed;
-  }
-
-  return null;
-};
-
-const getSleepHours = (metric: HealthRawMetric): number | null => {
-  if (!metric.records || !Array.isArray(metric.records)) {
-    return null;
-  }
-
-  let latestEnd: Date | null = null;
-  let latestDurationMinutes = 0;
-
-  for (const record of metric.records) {
-    if (typeof record !== 'object' || record === null) {
-      continue;
-    }
-
-    const typedRecord = record as Record<string, unknown>;
-    const start = toDate(typedRecord.startDate ?? typedRecord.startTime);
-    const end = toDate(typedRecord.endDate ?? typedRecord.endTime);
-
-    if (!start || !end) {
-      continue;
-    }
-
-    const durationMinutes = (end.getTime() - start.getTime()) / 60_000;
-
-    if (durationMinutes <= 0) {
-      continue;
-    }
-
-    if (!latestEnd || end.getTime() > latestEnd.getTime()) {
-      latestEnd = end;
-      latestDurationMinutes = durationMinutes;
-    }
-  }
-
-  if (!latestEnd) {
-    return null;
-  }
-
-  return latestDurationMinutes / 60;
-};
-
 const resolveMetricValue = (
   key: HealthMetricKey,
   metric: HealthRawMetric,
 ): number | null => {
   if (SLEEP_KEYS.has(key)) {
-    return getSleepHours(metric);
+    // Sleep totals come from stage-aware aggregation in applySleepDerivedSummary.
+    return null;
   }
 
   if (CUMULATIVE_KEYS.has(key)) {
@@ -196,6 +154,110 @@ const resolveMetricValue = (
     getStatisticNumber(metric.statistics, 'mostRecent') ??
     averageRecordValues(metric)
   );
+};
+
+const findMetric = (
+  metrics: readonly HealthRawMetric[],
+  key: HealthMetricKey,
+): HealthRawMetric | null => {
+  for (const metric of metrics) {
+    if (!metric.error && metric.key === key) {
+      return metric;
+    }
+  }
+
+  return null;
+};
+
+const pickLatestSleepDay = (
+  byDay: Map<string, SleepDayTotals>,
+): { dateKey: string; totals: SleepDayTotals } | null => {
+  let latest: { dateKey: string; totals: SleepDayTotals } | null = null;
+
+  for (const [dateKey, totals] of byDay.entries()) {
+    if (!latest || dateKey > latest.dateKey) {
+      latest = { dateKey, totals };
+    }
+  }
+
+  return latest;
+};
+
+const roundMetric = (value: number): number => Math.round(value * 100) / 100;
+
+const applySleepDerivedSummary = (
+  metrics: UserHealthMetricsMap,
+  snapshot: HealthRawSnapshot,
+) => {
+  const sleepAnalysis = findMetric(snapshot.metrics, HEALTH_METRIC_KEY.sleepAnalysis);
+  const sleepSessions = findMetric(snapshot.metrics, HEALTH_METRIC_KEY.sleepSessions);
+
+  let sleepByDay = new Map<string, SleepDayTotals>();
+  let intervals: ReturnType<typeof aggregateHealthKitSleep>['intervals'] = [];
+  let sleepTotalKey: HealthMetricKey | null = null;
+
+  if (sleepAnalysis?.records && Array.isArray(sleepAnalysis.records)) {
+    const aggregated = aggregateHealthKitSleep(sleepAnalysis.records);
+    sleepByDay = aggregated.byDay;
+    intervals = aggregated.intervals;
+    sleepTotalKey = HEALTH_METRIC_KEY.sleepAnalysis;
+  } else if (sleepSessions?.records && Array.isArray(sleepSessions.records)) {
+    const aggregated = aggregateHealthConnectSleep(sleepSessions.records);
+    sleepByDay = aggregated.byDay;
+    intervals = aggregated.intervals;
+    sleepTotalKey = HEALTH_METRIC_KEY.sleepSessions;
+  }
+
+  const latest = pickLatestSleepDay(sleepByDay);
+
+  if (latest && sleepTotalKey) {
+    metrics[sleepTotalKey] = {
+      value: roundMetric(latest.totals.totalHours),
+      unit: METRIC_UNIT[sleepTotalKey] ?? 'h',
+    };
+
+    if (latest.totals.deepHours > 0) {
+      metrics[HEALTH_METRIC_KEY.deepSleep] = {
+        value: roundMetric(latest.totals.deepHours),
+        unit: 'h',
+      };
+    }
+
+    if (latest.totals.remHours > 0) {
+      metrics[HEALTH_METRIC_KEY.remSleep] = {
+        value: roundMetric(latest.totals.remHours),
+        unit: 'h',
+      };
+    }
+
+    if (latest.totals.lightHours > 0) {
+      metrics[HEALTH_METRIC_KEY.lightSleep] = {
+        value: roundMetric(latest.totals.lightHours),
+        unit: 'h',
+      };
+    }
+  }
+
+  const heartRate = findMetric(snapshot.metrics, HEALTH_METRIC_KEY.heartRate);
+
+  if (
+    !heartRate?.records ||
+    !Array.isArray(heartRate.records) ||
+    intervals.length === 0 ||
+    !latest
+  ) {
+    return;
+  }
+
+  const nightHrByDay = averageNightHeartRateByDay(heartRate.records, intervals);
+  const nightHr = nightHrByDay.get(latest.dateKey);
+
+  if (nightHr !== undefined && Number.isFinite(nightHr) && nightHr > 0) {
+    metrics[HEALTH_METRIC_KEY.nightHeartRate] = {
+      value: roundMetric(nightHr),
+      unit: 'count/min',
+    };
+  }
 };
 
 const toPlatform = (platform: HealthRawSnapshot['platform']) => {
@@ -222,11 +284,19 @@ export const toUserHealthMetrics = (snapshot: HealthRawSnapshot): UserHealthMetr
       continue;
     }
 
+    if (SLEEP_KEYS.has(metric.key)) {
+      continue;
+    }
+
+    const value = resolveMetricValue(metric.key, metric);
+
     metrics[metric.key] = {
-      value: resolveMetricValue(metric.key, metric),
+      value,
       unit: METRIC_UNIT[metric.key] ?? null,
     };
   }
+
+  applySleepDerivedSummary(metrics, snapshot);
 
   return {
     platform: toPlatform(snapshot.platform),

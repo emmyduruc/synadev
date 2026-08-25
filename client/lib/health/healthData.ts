@@ -5,8 +5,15 @@ import type * as HealthConnect from 'react-native-health-connect';
 import type { HealthRawMetric, HealthRawSnapshot } from '@/lib/health/types';
 
 const LOOKBACK_DAYS = 90;
-const IOS_SAMPLE_LIMIT = 20;
-const ANDROID_RECORD_LIMIT = 20;
+/** Default cap for low-volume metrics (steps stats, HRV, etc.). */
+const IOS_SAMPLE_LIMIT = 200;
+/** Sleep Analysis emits many stage segments per night across the lookback. */
+const IOS_SLEEP_SAMPLE_LIMIT = 4000;
+/** Heart-rate samples are dense; needed to average within sleep windows. */
+const IOS_HEART_RATE_SAMPLE_LIMIT = 12000;
+const ANDROID_RECORD_LIMIT = 200;
+const ANDROID_SLEEP_RECORD_LIMIT = 200;
+const ANDROID_HEART_RATE_RECORD_LIMIT = 500;
 
 type HealthKitQuantityMetric = {
   key: string;
@@ -147,6 +154,8 @@ const readHealthKitQuantityMetric = async (
 ): Promise<HealthRawMetric> => {
   try {
     const filter = { date: { startDate: start, endDate: end } };
+    const sampleLimit =
+      metric.key === 'heart_rate' ? IOS_HEART_RATE_SAMPLE_LIMIT : IOS_SAMPLE_LIMIT;
     const statistics = await healthKit.queryStatisticsForQuantity(
       metric.identifier,
       metric.statistics,
@@ -155,7 +164,7 @@ const readHealthKitQuantityMetric = async (
     const records = await healthKit.queryQuantitySamples(metric.identifier, {
       ascending: false,
       filter,
-      limit: IOS_SAMPLE_LIMIT,
+      limit: sampleLimit,
       unit: metric.unit,
     });
 
@@ -181,10 +190,12 @@ const readHealthKitCategoryMetric = async (
   end: Date,
 ): Promise<HealthRawMetric> => {
   try {
+    const sampleLimit =
+      metric.key === 'sleep_analysis' ? IOS_SLEEP_SAMPLE_LIMIT : IOS_SAMPLE_LIMIT;
     const records = await healthKit.queryCategorySamples(metric.identifier, {
       ascending: false,
       filter: { date: { startDate: start, endDate: end } },
-      limit: IOS_SAMPLE_LIMIT,
+      limit: sampleLimit,
     });
 
     return {
@@ -282,9 +293,17 @@ const readHealthConnectMetric = async (
   end: Date,
 ): Promise<HealthRawMetric> => {
   try {
+    let pageSize = ANDROID_RECORD_LIMIT;
+
+    if (metric.key === 'sleep_sessions') {
+      pageSize = ANDROID_SLEEP_RECORD_LIMIT;
+    } else if (metric.key === 'heart_rate') {
+      pageSize = ANDROID_HEART_RATE_RECORD_LIMIT;
+    }
+
     const records = await healthConnect.readRecords(metric.recordType, {
       ascendingOrder: false,
-      pageSize: ANDROID_RECORD_LIMIT,
+      pageSize,
       timeRangeFilter: {
         operator: 'between',
         startTime: start.toISOString(),

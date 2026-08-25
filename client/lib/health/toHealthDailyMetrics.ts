@@ -8,12 +8,19 @@ import {
 } from '@syna/shared-types';
 
 import { toDateKey } from '@/lib/date/dateKeys';
-import type { HealthRawSnapshot } from '@/lib/health/types';
+import {
+  aggregateHealthConnectSleep,
+  aggregateHealthKitSleep,
+  averageNightHeartRateByDay,
+  type SleepDayTotals,
+} from '@/lib/health/sleepAggregation';
+import type { HealthRawMetric, HealthRawSnapshot } from '@/lib/health/types';
 
 const METRIC_UNIT: Partial<Record<HealthMetricKey, string>> = {
   [HEALTH_METRIC_KEY.steps]: 'count',
   [HEALTH_METRIC_KEY.heartRate]: 'count/min',
   [HEALTH_METRIC_KEY.restingHeartRate]: 'count/min',
+  [HEALTH_METRIC_KEY.nightHeartRate]: 'count/min',
   [HEALTH_METRIC_KEY.hrvSdnn]: 'ms',
   [HEALTH_METRIC_KEY.hrvRmssd]: 'ms',
   [HEALTH_METRIC_KEY.respiratoryRate]: 'count/min',
@@ -25,6 +32,9 @@ const METRIC_UNIT: Partial<Record<HealthMetricKey, string>> = {
   [HEALTH_METRIC_KEY.exerciseMinutes]: 'min',
   [HEALTH_METRIC_KEY.sleepAnalysis]: 'h',
   [HEALTH_METRIC_KEY.sleepSessions]: 'h',
+  [HEALTH_METRIC_KEY.deepSleep]: 'h',
+  [HEALTH_METRIC_KEY.remSleep]: 'h',
+  [HEALTH_METRIC_KEY.lightSleep]: 'h',
 };
 
 const CUMULATIVE_KEYS = new Set<HealthMetricKey>([
@@ -102,35 +112,15 @@ const resolveRecordDateKey = (record: unknown): string | null => {
   return date ? toDateKey(date) : null;
 };
 
-const sleepHoursForRecord = (record: unknown): number | null => {
-  if (typeof record !== 'object' || record === null) {
-    return null;
-  }
-
-  const typedRecord = record as Record<string, unknown>;
-  const start = toDate(typedRecord.startDate ?? typedRecord.startTime);
-  const end = toDate(typedRecord.endDate ?? typedRecord.endTime);
-
-  if (!start || !end) {
-    return null;
-  }
-
-  const durationMinutes = (end.getTime() - start.getTime()) / 60_000;
-
-  if (durationMinutes <= 0) {
-    return null;
-  }
-
-  return durationMinutes / 60;
-};
-
 type DayAccumulator = {
   sum: number;
   count: number;
 };
 
+type DayMetricMap = Partial<Record<HealthMetricKey, DayAccumulator>>;
+
 const ensureDay = (
-  byDay: Map<string, Partial<Record<HealthMetricKey, DayAccumulator>>>,
+  byDay: Map<string, DayMetricMap>,
   dateKey: string,
   key: HealthMetricKey,
 ): DayAccumulator => {
@@ -139,6 +129,91 @@ const ensureDay = (
   day[key] = existing;
   byDay.set(dateKey, day);
   return existing;
+};
+
+const setDayMetricValue = (
+  byDay: Map<string, DayMetricMap>,
+  dateKey: string,
+  key: HealthMetricKey,
+  value: number,
+) => {
+  if (!Number.isFinite(value) || value <= 0) {
+    return;
+  }
+
+  const acc = ensureDay(byDay, dateKey, key);
+  acc.sum = value;
+  acc.count = 1;
+};
+
+const findMetricRecords = (
+  metrics: readonly HealthRawMetric[],
+  key: HealthMetricKey,
+): unknown[] => {
+  for (const metric of metrics) {
+    if (metric.error || metric.key !== key || !Array.isArray(metric.records)) {
+      continue;
+    }
+
+    return metric.records;
+  }
+
+  return [];
+};
+
+const applySleepDerivedMetrics = (
+  byDay: Map<string, DayMetricMap>,
+  snapshot: HealthRawSnapshot,
+) => {
+  const sleepAnalysisRecords = findMetricRecords(
+    snapshot.metrics,
+    HEALTH_METRIC_KEY.sleepAnalysis,
+  );
+  const sleepSessionRecords = findMetricRecords(
+    snapshot.metrics,
+    HEALTH_METRIC_KEY.sleepSessions,
+  );
+
+  let sleepByDay = new Map<string, SleepDayTotals>();
+  let intervals: ReturnType<typeof aggregateHealthKitSleep>['intervals'] = [];
+  let sleepTotalKey: HealthMetricKey | null = null;
+
+  if (sleepAnalysisRecords.length > 0) {
+    const aggregated = aggregateHealthKitSleep(sleepAnalysisRecords);
+    sleepByDay = aggregated.byDay;
+    intervals = aggregated.intervals;
+    sleepTotalKey = HEALTH_METRIC_KEY.sleepAnalysis;
+  } else if (sleepSessionRecords.length > 0) {
+    const aggregated = aggregateHealthConnectSleep(sleepSessionRecords);
+    sleepByDay = aggregated.byDay;
+    intervals = aggregated.intervals;
+    sleepTotalKey = HEALTH_METRIC_KEY.sleepSessions;
+  }
+
+  for (const [dateKey, totals] of sleepByDay.entries()) {
+    if (sleepTotalKey) {
+      setDayMetricValue(byDay, dateKey, sleepTotalKey, totals.totalHours);
+    }
+
+    setDayMetricValue(byDay, dateKey, HEALTH_METRIC_KEY.deepSleep, totals.deepHours);
+    setDayMetricValue(byDay, dateKey, HEALTH_METRIC_KEY.remSleep, totals.remHours);
+    setDayMetricValue(byDay, dateKey, HEALTH_METRIC_KEY.lightSleep, totals.lightHours);
+  }
+
+  const heartRateRecords = findMetricRecords(
+    snapshot.metrics,
+    HEALTH_METRIC_KEY.heartRate,
+  );
+
+  if (heartRateRecords.length === 0 || intervals.length === 0) {
+    return;
+  }
+
+  const nightHrByDay = averageNightHeartRateByDay(heartRateRecords, intervals);
+
+  for (const [dateKey, bpm] of nightHrByDay.entries()) {
+    setDayMetricValue(byDay, dateKey, HEALTH_METRIC_KEY.nightHeartRate, bpm);
+  }
 };
 
 const toPlatform = (platform: HealthRawSnapshot['platform']) => {
@@ -155,11 +230,12 @@ const toPlatform = (platform: HealthRawSnapshot['platform']) => {
 
 /**
  * Buckets raw device samples into per-day aggregates for PUT /health/daily.
+ * Sleep stages and night heart rate are derived from sleep windows + HR samples.
  */
 export const toUpsertHealthDailyMetrics = (
   snapshot: HealthRawSnapshot,
 ): UpsertHealthDailyMetrics => {
-  const byDay = new Map<string, Partial<Record<HealthMetricKey, DayAccumulator>>>();
+  const byDay = new Map<string, DayMetricMap>();
 
   for (const metric of snapshot.metrics) {
     if (metric.error || !isHealthMetricKey(metric.key) || !metric.records) {
@@ -172,23 +248,15 @@ export const toUpsertHealthDailyMetrics = (
 
     const key = metric.key;
 
+    // Sleep duration/stages are derived from stage-aware aggregation below.
+    if (SLEEP_KEYS.has(key)) {
+      continue;
+    }
+
     for (const record of metric.records) {
       const dateKey = resolveRecordDateKey(record);
 
       if (!dateKey) {
-        continue;
-      }
-
-      if (SLEEP_KEYS.has(key)) {
-        const hours = sleepHoursForRecord(record);
-
-        if (hours === null) {
-          continue;
-        }
-
-        const acc = ensureDay(byDay, dateKey, key);
-        acc.sum += hours;
-        acc.count += 1;
         continue;
       }
 
@@ -204,6 +272,8 @@ export const toUpsertHealthDailyMetrics = (
     }
   }
 
+  applySleepDerivedMetrics(byDay, snapshot);
+
   const rows = [...byDay.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([dateKey, dayMetrics]) => {
@@ -217,12 +287,17 @@ export const toUpsertHealthDailyMetrics = (
           continue;
         }
 
-        const value = CUMULATIVE_KEYS.has(key) || SLEEP_KEYS.has(key)
-          ? acc.sum
-          : acc.sum / acc.count;
+        const value =
+          CUMULATIVE_KEYS.has(key) ||
+          SLEEP_KEYS.has(key) ||
+          key === HEALTH_METRIC_KEY.deepSleep ||
+          key === HEALTH_METRIC_KEY.remSleep ||
+          key === HEALTH_METRIC_KEY.lightSleep
+            ? acc.sum
+            : acc.sum / acc.count;
 
         metrics[key] = {
-          value,
+          value: Math.round(value * 100) / 100,
           unit: METRIC_UNIT[key] ?? null,
         };
       }

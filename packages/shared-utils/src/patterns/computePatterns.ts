@@ -49,6 +49,10 @@ export type PatternDailyHealth = {
   sleepHours: number | null;
   hrvMs: number | null;
   restingHr: number | null;
+  /** Average HR during sleep windows (bpm), when wearable stages allow it. */
+  nightHr: number | null;
+  /** Deep-sleep hours for the wake day, when stages are available. */
+  deepSleepHours: number | null;
 };
 
 export type PatternDailyMood = {

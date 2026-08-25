@@ -58,6 +58,8 @@ const toHealthDailyMap = (
         null,
       hrvMs: hrv,
       restingHr: row.metrics[HEALTH_METRIC_KEY.restingHeartRate]?.value ?? null,
+      nightHr: row.metrics[HEALTH_METRIC_KEY.nightHeartRate]?.value ?? null,
+      deepSleepHours: row.metrics[HEALTH_METRIC_KEY.deepSleep]?.value ?? null,
     });
   }
 
