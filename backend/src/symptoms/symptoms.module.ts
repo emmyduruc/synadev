@@ -22,5 +22,6 @@ import { SymptomsService } from './symptoms.service';
   ],
   controllers: [SymptomsController],
   providers: [SymptomsService],
+  exports: [SymptomsService],
 })
 export class SymptomsModule {}

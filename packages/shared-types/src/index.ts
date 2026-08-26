@@ -259,3 +259,17 @@ export type {
   Phq2AssessmentSubmission,
   Phq2Latest,
 } from './schemas/assessments.schema';
+
+export {
+  ChatMessageRoleSchema,
+  ChatMessageSchema,
+  ChatRequestSchema,
+  ChatResponseSchema,
+} from './schemas/chat.schema';
+
+export type {
+  ChatMessageRole,
+  ChatMessage,
+  ChatRequest,
+  ChatResponse,
+} from './schemas/chat.schema';

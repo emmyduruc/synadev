@@ -8,6 +8,7 @@ export const SWAGGER_TAGS = {
   mood: 'Mood',
   symptoms: 'Symptoms',
   assessments: 'Assessments',
+  chat: 'Chat',
   notifications: 'Notifications',
   uploads: 'Uploads',
   emails: 'Emails',

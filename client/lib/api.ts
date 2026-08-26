@@ -1,5 +1,7 @@
 import {
   CyclePhaseSnapshotSchema,
+  ChatRequestSchema,
+  ChatResponseSchema,
   HealthDailyMetricsSchema,
   HealthResponseSchema,
   MoodLogsSchema,
@@ -27,6 +29,8 @@ import {
   UserSchema,
 } from '@syna/shared-types';
 import type {
+  ChatRequest,
+  ChatResponse,
   CyclePhaseSnapshotDto,
   GetHealthDailyMetricsQuery,
   HealthDailyMetrics,
@@ -64,6 +68,7 @@ import {
   ASSESSMENTS_PAM_13_LATEST,
   ASSESSMENTS_PHQ_2,
   ASSESSMENTS_PHQ_2_LATEST,
+  CHAT,
   CYCLE_PHASE,
   HEALTH,
   HEALTH_DAILY,
@@ -280,6 +285,17 @@ export const getLatestPhq2Assessment = (): Promise<Phq2Latest> =>
     url: ASSESSMENTS_PHQ_2_LATEST,
     method: 'GET',
     responseSchema: Phq2LatestSchema,
+  });
+
+/** GPT-backed SYNA chat grounded in the authenticated user's health tools. */
+export const postChat = (input: ChatRequest): Promise<ChatResponse> =>
+  apiRequest({
+    url: CHAT,
+    method: 'POST',
+    body: input,
+    bodySchema: ChatRequestSchema,
+    responseSchema: ChatResponseSchema,
+    timeoutMs: 60_000,
   });
 
 export { createApiClientError, isApiClientError, toApiClientError } from './http';

@@ -17,5 +17,6 @@ import { MoodService } from './mood.service';
   ],
   controllers: [MoodController],
   providers: [MoodService],
+  exports: [MoodService],
 })
 export class MoodModule {}

@@ -27,6 +27,7 @@
     "db:migration:create": "node ./scripts/db-migration-create.mjs"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^4.0.47",
     "@clerk/backend": "^3.13.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
@@ -38,6 +39,7 @@
     "@scalar/nestjs-api-reference": "^1.2.8",
     "@syna/shared-types": "workspace:*",
     "@syna/shared-utils": "workspace:*",
+    "ai": "^7.0.79",
     "expo-server-sdk": "^6.1.0",
     "nestjs-zod": "^4.3.1",
     "pg": "^8.16.0",

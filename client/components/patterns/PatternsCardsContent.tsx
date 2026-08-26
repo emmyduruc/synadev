@@ -34,10 +34,10 @@ export const PatternsCardsContent = ({
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32, gap: 16 }}>
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40, gap: 24 }}>
         <PatternsClinicalStrip mrsLatest={mrsLatest} pamLatest={pamLatest} />
 
-        <Box gap="sm">
+        <Box gap="md">
           <Text size="sm" weight="bold">
             {t('patterns_axes_section_title')}
           </Text>
@@ -46,7 +46,7 @@ export const PatternsCardsContent = ({
           ))}
         </Box>
 
-        <Box gap="sm">
+        <Box gap="md">
           <Text size="sm" weight="bold">
             {t('patterns_contexts_section_title')}
           </Text>

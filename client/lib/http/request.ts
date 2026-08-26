@@ -12,6 +12,8 @@ export type ApiRequestConfig<TResponse> = {
   bodySchema?: z.ZodType;
   responseSchema: z.ZodType<TResponse>;
   params?: Record<string, string | number | boolean | undefined>;
+  /** Optional per-request Axios timeout in milliseconds. */
+  timeoutMs?: number;
 };
 
 const parseRequestBody = (body: unknown, bodySchema?: z.ZodType): unknown => {
@@ -61,6 +63,7 @@ export const apiRequest = async <TResponse>(
     method: config.method ?? 'GET',
     data: body,
     params: config.params,
+    timeout: config.timeoutMs,
   });
 
   return parseResponseBody(response.data, config.responseSchema);

@@ -18,5 +18,6 @@ import { PeriodService } from './period.service';
   ],
   controllers: [PeriodController],
   providers: [PeriodService],
+  exports: [PeriodService],
 })
 export class PeriodModule {}

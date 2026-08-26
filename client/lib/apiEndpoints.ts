@@ -88,6 +88,13 @@ export const ASSESSMENTS_PHQ_2_LATEST = '/assessments/phq-2/latest';
 export const ASSESSMENTS_PHQ_2_LATEST_ABSOLUTE = absolute(ASSESSMENTS_PHQ_2_LATEST);
 
 // =============================================================================
+// CHAT
+// =============================================================================
+
+export const CHAT = '/chat';
+export const CHAT_ABSOLUTE = absolute(CHAT);
+
+// =============================================================================
 // NOTIFICATIONS
 // =============================================================================
 
