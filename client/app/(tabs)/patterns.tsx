@@ -150,7 +150,7 @@ const PatternsTabScreen = () => {
 
           <MascotLoadingGate
             isReady={!isLoading}
-            variant={LOADING_VARIANT.generic}
+            variant={LOADING_VARIANT.patterns}
             className="flex-1">
             <PatternsBody
               computation={computation}

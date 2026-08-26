@@ -3,6 +3,7 @@ import { ScrollView } from 'react-native';
 
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
+import { MascotLoadingGate } from '@/components/loading/MascotLoadingGate';
 import { DoctorReportContent } from '@/components/report/DoctorReportContent';
 import { ReportDateRangeSheet } from '@/components/report/ReportDateRangeSheet';
 import { ReportTabBar, type ReportTabOption } from '@/components/report/ReportTabBar';
@@ -15,6 +16,7 @@ import { useReportDateRange } from '@/hooks/useReportDateRange';
 import { useTranslate } from '@/hooks/useTranslate';
 import { useUserReport } from '@/hooks/useUserReport';
 import { DASHBOARD_ICON_WELL } from '@/lib/dashboard/surfaces';
+import { LOADING_VARIANT } from '@/lib/loading/loadingVariants';
 import { REPORT_TAB, type ReportTabId } from '@/lib/report/reportConstants';
 import { formatReportDateKey } from '@/lib/report/reportDateRange';
 import { cn, semanticColors } from '@/lib/ui';
@@ -45,6 +47,8 @@ const ReportTabScreen = () => {
   ];
 
   const isContentLoading = isRangeLoading || (isForYou ? isUserLoading : isDoctorLoading);
+  const isReportReady =
+    !isContentLoading && (isForYou ? Boolean(userReport) : Boolean(doctorReport));
 
   return (
     <SynaGradientBackground>
@@ -86,38 +90,24 @@ const ReportTabScreen = () => {
             </Box>
           ) : null}
 
-          <ScrollView
-            className="flex-1"
-            contentContainerStyle={{ paddingBottom: 32, flexGrow: 1 }}
-            showsVerticalScrollIndicator={false}>
-            <Box paddingX="md" className="pt-2">
-              {isForYou ? (
-                <Box>
-                  {isContentLoading || !userReport ? (
-                    <Box align="center" justify="center" className="min-h-80" padding="lg">
-                      <Text size="sm" align="center" className="text-black">
-                        {t('user_report_loading')}
-                      </Text>
-                    </Box>
-                  ) : (
-                    <UserReportContent report={userReport} />
-                  )}
-                </Box>
-              ) : (
-                <Box>
-                  {isContentLoading || !doctorReport ? (
-                    <Box align="center" justify="center" className="min-h-80" padding="lg">
-                      <Text size="sm" align="center" className="text-black">
-                        {t('doctor_report_loading')}
-                      </Text>
-                    </Box>
-                  ) : (
-                    <DoctorReportContent report={doctorReport} />
-                  )}
-                </Box>
-              )}
-            </Box>
-          </ScrollView>
+          <MascotLoadingGate
+            isReady={isReportReady}
+            variant={LOADING_VARIANT.report}
+            className="flex-1">
+            <ScrollView
+              className="flex-1"
+              contentContainerStyle={{ paddingBottom: 32, flexGrow: 1 }}
+              showsVerticalScrollIndicator={false}>
+              <Box paddingX="md" className="pt-2">
+                {isForYou && userReport ? (
+                  <UserReportContent report={userReport} />
+                ) : null}
+                {!isForYou && doctorReport ? (
+                  <DoctorReportContent report={doctorReport} />
+                ) : null}
+              </Box>
+            </ScrollView>
+          </MascotLoadingGate>
         </Box>
       </SafeAreaScreen>
 

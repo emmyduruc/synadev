@@ -3,6 +3,8 @@ export const LOADING_VARIANT = {
   symptoms: 'symptoms',
   mood: 'mood',
   generic: 'generic',
+  report: 'report',
+  patterns: 'patterns',
 } as const;
 
 export type LoadingVariant = (typeof LOADING_VARIANT)[keyof typeof LOADING_VARIANT];
@@ -12,6 +14,8 @@ export const LOADING_VARIANT_TITLE_KEY: Record<LoadingVariant, string> = {
   [LOADING_VARIANT.symptoms]: 'loading_mascot_symptoms_title',
   [LOADING_VARIANT.mood]: 'loading_mascot_mood_title',
   [LOADING_VARIANT.generic]: 'loading_mascot_generic_title',
+  [LOADING_VARIANT.report]: 'loading_mascot_report_title',
+  [LOADING_VARIANT.patterns]: 'loading_mascot_patterns_title',
 };
 
 export const LOADING_VARIANT_MESSAGE_KEY: Record<LoadingVariant, string> = {
@@ -19,6 +23,8 @@ export const LOADING_VARIANT_MESSAGE_KEY: Record<LoadingVariant, string> = {
   [LOADING_VARIANT.symptoms]: 'loading_mascot_symptoms_message',
   [LOADING_VARIANT.mood]: 'loading_mascot_mood_message',
   [LOADING_VARIANT.generic]: 'loading_mascot_generic_message',
+  [LOADING_VARIANT.report]: 'loading_mascot_report_message',
+  [LOADING_VARIANT.patterns]: 'loading_mascot_patterns_message',
 };
 
 /** Minimum time the mascot stays visible so the moment feels intentional, not flickery. */
