@@ -5,11 +5,14 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import {
+  CHAT_REPLY_STATUS,
   HEALTH_DAILY_MAX_RANGE_DAYS,
+  resolveAppLocale,
+  type AppLocale,
   type ChatRequest,
   type ChatResponse,
 } from '@syna/shared-types';
-import { generateText, stepCountIs, tool } from 'ai';
+import { generateText, Output, stepCountIs, tool } from 'ai';
 import { z } from 'zod';
 
 import { AssessmentsService } from '../assessments/assessments.service';
@@ -22,22 +25,32 @@ import { SymptomsService } from '../symptoms/symptoms.service';
 import { UsersService } from '../users/users.service';
 
 import { parseChatEnv } from './chat.config';
+import {
+  buildSynaChatSystemPrompt,
+  SYNA_CHAT_EMPTY_DATA_NOTE,
+  synaChatFallbackReply,
+} from './chat.prompt';
 
 const IsoDateInputSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD')
   .describe('ISO calendar date YYYY-MM-DD');
 
-const EMPTY_DATA_NOTE =
-  'No matching data found in this user account for this query.';
-
-const SYSTEM_PROMPT = `You are SYNA, a warm wellness companion inside the SYNA health app.
-Answer only with facts returned by the tools about this authenticated user's own data.
-Never invent dates, scores, labs, medications, symptoms, sleep, heart rate, or period days.
-If tools return empty results or explicitly say no data was found, apologize clearly that no matching data was found in their SYNA account for that question. Suggest they log it in the app when that would help.
-Do not diagnose medical conditions. For medical concerns, gently suggest speaking with a clinician.
-Keep answers concise, concrete, and friendly. Prefer real dates and numbers from tool results.
-Respond in the same language the user used in their latest message.`;
+const ChatStructuredOutputSchema = z.object({
+  status: z
+    .enum([
+      CHAT_REPLY_STATUS.ok,
+      CHAT_REPLY_STATUS.invalidQuestion,
+      CHAT_REPLY_STATUS.noData,
+    ])
+    .describe(
+      'ok = grounded answer; invalid_question = off-topic; no_data = on-topic but empty tools',
+    ),
+  reply: z
+    .string()
+    .min(1)
+    .describe('User-facing reply in the appropriate language'),
+});
 
 const todayUtcDateKey = (): string => new Date().toISOString().slice(0, 10);
 
@@ -99,48 +112,66 @@ export class ChatService {
       );
     }
 
+    // Resolve the authenticated Syna user once. All tools close over clerkUser
+    // (never a client-supplied user id), so rows stay scoped to this account.
+    const user = await this.usersService.ensureCurrentUser(clerkUser);
+    const locale: AppLocale = resolveAppLocale(input.locale ?? user.locale);
+
     const openai = createOpenAI({ apiKey: env.OPENAI_API_KEY });
     const tools = this.buildTools(clerkUser);
 
     try {
       const result = await generateText({
         model: openai(env.OPENAI_MODEL),
-        system: SYSTEM_PROMPT,
+        system: buildSynaChatSystemPrompt({ locale }),
         messages: input.messages.map((message) => ({
           role: message.role,
           content: message.content,
         })),
         tools,
         stopWhen: stepCountIs(6),
-        temperature: 0.3,
+        temperature: 0.2,
+        output: Output.object({
+          name: 'SynaChatReply',
+          description:
+            'Structured SYNA chat reply with status (ok | invalid_question | no_data) and reply text',
+          schema: ChatStructuredOutputSchema,
+        }),
       });
 
-      const reply = result.text.trim();
+      const structured = result.output;
 
-      if (!reply) {
+      if (!structured?.reply?.trim()) {
         return {
-          reply:
-            "I'm sorry. No matching data was found in your SYNA account for that question.",
+          status: CHAT_REPLY_STATUS.noData,
+          reply: synaChatFallbackReply('no_data', locale),
         };
       }
 
-      return { reply };
+      return {
+        status: structured.status,
+        reply: structured.reply.trim(),
+      };
     } catch (error) {
       this.logger.error(
         'OpenAI chat generation failed',
         error instanceof Error ? error.stack : String(error),
       );
       throw new ServiceUnavailableException(
-        'SYNA chat is temporarily unavailable. Please try again shortly.',
+        synaChatFallbackReply('unavailable', locale),
       );
     }
   }
 
+  /**
+   * Tools always execute with the authenticated Clerk user from the request.
+   * The model cannot pass another user id.
+   */
   private buildTools(clerkUser: AuthenticatedClerkUser) {
     return {
       get_period_days: tool({
         description:
-          'List menstrual period days the user has logged (YYYY-MM-DD). Use for last period, period history, or bleeding days.',
+          'List menstrual period days this user logged (YYYY-MM-DD). Own account only.',
         inputSchema: z.object({
           recentLimit: z
             .number()
@@ -154,7 +185,7 @@ export class ChatService {
           const { dateKeys } = await this.periodService.listDays(clerkUser);
 
           if (dateKeys.length === 0) {
-            return { dateKeys: [], note: EMPTY_DATA_NOTE };
+            return { dateKeys: [], note: SYNA_CHAT_EMPTY_DATA_NOTE };
           }
 
           const limited = recentLimit
@@ -171,7 +202,7 @@ export class ChatService {
 
       get_cycle_phase: tool({
         description:
-          'Get the current estimated cycle phase snapshot (phase, cycle day, next period estimate).',
+          'Current cycle phase snapshot for this user (phase, cycle day, next period estimate).',
         inputSchema: z.object({
           asOfDateKey: IsoDateInputSchema.optional().describe(
             'Optional as-of day; defaults to today UTC',
@@ -184,7 +215,7 @@ export class ChatService {
           );
 
           if (!snapshot.hasPeriodData) {
-            return { ...snapshot, note: EMPTY_DATA_NOTE };
+            return { ...snapshot, note: SYNA_CHAT_EMPTY_DATA_NOTE };
           }
 
           return snapshot;
@@ -193,7 +224,7 @@ export class ChatService {
 
       get_mood_logs: tool({
         description:
-          'Get recent mood check-ins keyed by date (primary mood, feelings, energy, stress, note).',
+          'Recent mood check-ins for this user keyed by date (mood, feelings, energy, stress, note).',
         inputSchema: z.object({
           recentDays: z
             .number()
@@ -212,7 +243,7 @@ export class ChatService {
           const recentLogs = filterRecordByDateKeys(logs, dateKeys);
 
           if (dateKeys.length === 0) {
-            return { logs: {}, note: EMPTY_DATA_NOTE };
+            return { logs: {}, note: SYNA_CHAT_EMPTY_DATA_NOTE };
           }
 
           return { logs: recentLogs, dayCount: dateKeys.length };
@@ -221,7 +252,7 @@ export class ChatService {
 
       get_symptom_logs: tool({
         description:
-          'Get recent symptom logs keyed by date (symptom id lists).',
+          'Recent symptom logs for this user keyed by date (symptom id lists).',
         inputSchema: z.object({
           recentDays: z
             .number()
@@ -240,7 +271,7 @@ export class ChatService {
           const recentLogs = filterRecordByDateKeys(logs, dateKeys);
 
           if (dateKeys.length === 0) {
-            return { logs: {}, note: EMPTY_DATA_NOTE };
+            return { logs: {}, note: SYNA_CHAT_EMPTY_DATA_NOTE };
           }
 
           return { logs: recentLogs, dayCount: dateKeys.length };
@@ -249,7 +280,7 @@ export class ChatService {
 
       get_health_daily_metrics: tool({
         description:
-          'Get wearable daily metrics (sleep stages, resting HR, etc.) for an inclusive date range. Max 90 days.',
+          'Wearable daily metrics for this user (sleep, resting HR, etc.) for an inclusive date range. Max 90 days.',
         inputSchema: z.object({
           from: IsoDateInputSchema.optional().describe(
             'Inclusive start YYYY-MM-DD; defaults to 30 days before to',
@@ -273,7 +304,7 @@ export class ChatService {
               to: toDate,
               platform: metrics.platform,
               rows: [],
-              note: EMPTY_DATA_NOTE,
+              note: SYNA_CHAT_EMPTY_DATA_NOTE,
               maxRangeDays: HEALTH_DAILY_MAX_RANGE_DAYS,
             };
           }
@@ -289,7 +320,7 @@ export class ChatService {
 
       get_latest_assessments: tool({
         description:
-          'Get the latest MRS-II, PHQ-2, and PAM-13 assessment summaries if the user has completed them.',
+          'Latest MRS-II, PHQ-2, and PAM-13 summaries for this user, if completed.',
         inputSchema: z.object({}),
         execute: async () => {
           const [mrsIi, phq2, pam13] = await Promise.all([
@@ -298,14 +329,16 @@ export class ChatService {
             this.assessmentsService.getLatestPam13(clerkUser),
           ]);
 
-          const hasAny = Boolean(mrsIi.submission || phq2.submission || pam13.submission);
+          const hasAny = Boolean(
+            mrsIi.submission || phq2.submission || pam13.submission,
+          );
 
           if (!hasAny) {
             return {
               mrsIi,
               phq2,
               pam13,
-              note: EMPTY_DATA_NOTE,
+              note: SYNA_CHAT_EMPTY_DATA_NOTE,
             };
           }
 
@@ -315,11 +348,11 @@ export class ChatService {
 
       get_user_profile_snapshot: tool({
         description:
-          'Get a privacy-safe profile snapshot: name, DOB, locale, health metrics summary, and health record (labs, meds, concerns). Omits email and ids.',
+          'Privacy-safe profile snapshot for this user (name, DOB, locale, health metrics, health record). Omits email and ids.',
         inputSchema: z.object({}),
         execute: async () => {
-          const user = await this.usersService.ensureCurrentUser(clerkUser);
-          const healthRecord = user.healthRecord;
+          const profile = await this.usersService.ensureCurrentUser(clerkUser);
+          const healthRecord = profile.healthRecord;
           const hasHealthRecord = Boolean(
             healthRecord &&
               (healthRecord.labs !== null ||
@@ -328,17 +361,17 @@ export class ChatService {
           );
 
           return {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            dateOfBirth: user.dateOfBirth,
-            locale: user.locale,
-            isBioComplete: user.isBioComplete,
-            healthMetrics: user.healthMetrics,
-            healthRecord: user.healthRecord,
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            dateOfBirth: profile.dateOfBirth,
+            locale: profile.locale,
+            isBioComplete: profile.isBioComplete,
+            healthMetrics: profile.healthMetrics,
+            healthRecord: profile.healthRecord,
             hasHealthRecord,
             note:
-              !hasHealthRecord && !user.healthMetrics
-                ? EMPTY_DATA_NOTE
+              !hasHealthRecord && !profile.healthMetrics
+                ? SYNA_CHAT_EMPTY_DATA_NOTE
                 : undefined,
           };
         },

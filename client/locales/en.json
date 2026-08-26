@@ -142,6 +142,8 @@
   "syna_chat_suggestion_symptoms": "What symptoms did I log recently?",
   "syna_chat_suggestion_sleep": "How has my sleep looked lately?",
   "syna_chat_error_reply": "I'm sorry. I could not answer right now. Please try again in a moment.",
+  "syna_chat_invalid_question_label": "Invalid question",
+  "syna_chat_invalid_question": "Invalid question. I can only answer what is related to your own account in SYNA.",
   "tab_report_label": "Report",
   "tab_report_title": "Report",
   "tab_report_placeholder": "Your doctor report will live here.",

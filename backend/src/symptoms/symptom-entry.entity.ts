@@ -2,6 +2,7 @@
 import {
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
@@ -12,6 +13,7 @@ import { UserEntity } from '../users/user.entity';
 import { SymptomEntity } from './symptom.entity';
 
 @Entity({ name: 'symptom_entries' })
+@Index('IDX_symptom_entries_user_log_date', ['userId', 'logDate'])
 export class SymptomEntryEntity {
   @PrimaryColumn({ name: 'user_id', type: 'uuid' })
   userId!: string;

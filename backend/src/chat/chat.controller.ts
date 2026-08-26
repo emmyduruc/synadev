@@ -26,8 +26,9 @@ export class ChatController {
   @ApiOperation({
     summary: 'Ask SYNA about your health data',
     description:
-      'Runs a GPT-backed chat turn with tool access to the authenticated user period, mood, symptom, wearable, assessment, and profile data. '
-      + 'Answers are grounded in tool results only. Empty tool results yield an apology that no matching data was found.',
+      'Runs a GPT-backed chat turn with tool access to the authenticated user’s own period, mood, symptom, wearable, assessment, and profile rows only. '
+      + 'Off-topic questions return status invalid_question. Empty tool results return status no_data. '
+      + 'Replies follow the question language (or the request/profile locale).',
   })
   @ApiOkResponse({
     description: 'Assistant reply',

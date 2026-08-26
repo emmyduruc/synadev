@@ -142,6 +142,8 @@
   "syna_chat_suggestion_symptoms": "Welche Symptome habe ich zuletzt erfasst?",
   "syna_chat_suggestion_sleep": "Wie war mein Schlaf zuletzt?",
   "syna_chat_error_reply": "Es tut mir leid. Ich konnte gerade nicht antworten. Bitte versuche es gleich noch einmal.",
+  "syna_chat_invalid_question_label": "Ungültige Frage",
+  "syna_chat_invalid_question": "Ungültige Frage. Ich kann nur Themen beantworten, die mit deinem eigenen SYNA-Konto zusammenhängen.",
   "tab_report_label": "Bericht",
   "tab_report_title": "Bericht",
   "tab_report_placeholder": "Ihr Arzt-Bericht erscheint hier.",

@@ -261,15 +261,21 @@ export type {
 } from './schemas/assessments.schema';
 
 export {
+  CHAT_MESSAGE_ROLE,
   ChatMessageRoleSchema,
   ChatMessageSchema,
   ChatRequestSchema,
+  CHAT_REPLY_STATUS,
+  CHAT_REPLY_STATUSES,
+  ChatReplyStatusSchema,
   ChatResponseSchema,
+  ChatModelOutputSchema,
 } from './schemas/chat.schema';
 
 export type {
   ChatMessageRole,
   ChatMessage,
   ChatRequest,
+  ChatReplyStatus,
   ChatResponse,
 } from './schemas/chat.schema';
