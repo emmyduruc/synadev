@@ -4,7 +4,6 @@ import {
   HealthResponseSchema,
   MoodLogsSchema,
   MrsIiAssessmentSubmissionSchema,
-  MrsIiLatestSchema,
   Pam13AssessmentSubmissionSchema,
   Pam13LatestSchema,
   PeriodDaysSchema,
@@ -78,7 +77,8 @@ import {
   USERS_ME_HEALTH_RECORD,
   USERS_ME_LOCALE,
 } from './apiEndpoints';
-import { apiRequest } from './http';
+import { apiRequest, httpClient } from './http';
+import { parseMrsIiLatest } from './mrs/parseMrsIiLatest';
 
 export const getHealth = (): Promise<HealthResponse> =>
   apiRequest({
@@ -240,12 +240,11 @@ export const submitMrsIiAssessment = (
     responseSchema: MrsIiAssessmentSubmissionSchema,
   });
 
-export const getLatestMrsIiAssessment = (): Promise<MrsIiLatest> =>
-  apiRequest({
-    url: ASSESSMENTS_MRS_II_LATEST,
-    method: 'GET',
-    responseSchema: MrsIiLatestSchema,
-  });
+export const getLatestMrsIiAssessment = async (): Promise<MrsIiLatest> => {
+  const response = await httpClient.get<MrsIiLatest>(ASSESSMENTS_MRS_II_LATEST);
+
+  return parseMrsIiLatest(response.data);
+};
 
 export const submitPam13Assessment = (
   input: SubmitPam13Assessment,

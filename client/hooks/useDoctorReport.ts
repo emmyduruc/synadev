@@ -7,13 +7,22 @@ import { useLatestPhq2Assessment } from '@/hooks/useLatestPhq2Assessment';
 import { useMoodLog } from '@/hooks/useMoodLog';
 import { usePatternsDashboard } from '@/hooks/usePatternsDashboard';
 import { useSymptomLog } from '@/hooks/useSymptomLog';
-import { addDaysToKey } from '@/lib/date/dateKeys';
 import { buildPatternChartSeries } from '@/lib/patterns/buildPatternChartSeries';
 import { buildDoctorReport } from '@/lib/report/buildDoctorReport';
 import type { DoctorReportViewModel } from '@/lib/report/doctorReportTypes';
-import { DOCTOR_REPORT_WINDOW_DAYS } from '@/lib/report/reportConstants';
+import {
+  buildDateKeysInclusive,
+  countInclusiveDays,
+  type ReportDateRange,
+} from '@/lib/report/reportDateRange';
 
-export const useDoctorReport = (): {
+export type UseDoctorReportOptions = {
+  range: ReportDateRange;
+};
+
+export const useDoctorReport = ({
+  range,
+}: UseDoctorReportOptions): {
   isLoading: boolean;
   report: DoctorReportViewModel | null;
   refresh: () => void;
@@ -21,12 +30,12 @@ export const useDoctorReport = (): {
   const { bioData, isLoading: isBioLoading } = useBioData();
   const { record: healthRecord, isLoading: isHealthRecordLoading } = useHealthRecord();
   const { submission: phq2Latest, isLoading: isPhq2Loading } = useLatestPhq2Assessment();
-  const { submission: mrsLatest, isLoading: isMrsLoading } = useLatestMrsIiAssessment();
+  const { submission: mrsLatest, isLoading: isMrsLoading, refresh: refreshMrs } =
+    useLatestMrsIiAssessment();
   const {
     isLoading: isPatternsLoading,
     computation,
     healthByDate,
-    chartWindow,
     pamLatest,
     refresh: refreshPatterns,
   } = usePatternsDashboard();
@@ -47,21 +56,15 @@ export const useDoctorReport = (): {
       return null;
     }
 
-    const todayKey = chartWindow.todayKey;
-    const windowDays = DOCTOR_REPORT_WINDOW_DAYS;
-    const fromKey = addDaysToKey(todayKey, -(windowDays - 1));
-    const dateKeys: string[] = [];
-    let cursor = fromKey;
-
-    while (cursor <= todayKey) {
-      dateKeys.push(cursor);
-      cursor = addDaysToKey(cursor, 1);
-    }
+    const fromKey = range.fromDateKey;
+    const toKey = range.toDateKey;
+    const dateKeys = buildDateKeysInclusive(fromKey, toKey);
+    const windowDays = countInclusiveDays(fromKey, toKey);
 
     const symptomsByDate = new Map<string, readonly string[]>();
 
     for (const [dateKey, ids] of Object.entries(symptomLogs)) {
-      if (dateKey >= fromKey && dateKey <= todayKey) {
+      if (dateKey >= fromKey && dateKey <= toKey) {
         symptomsByDate.set(dateKey, ids);
       }
     }
@@ -72,7 +75,7 @@ export const useDoctorReport = (): {
     >();
 
     for (const [dateKey, entry] of Object.entries(moodLogs)) {
-      if (dateKey >= fromKey && dateKey <= todayKey) {
+      if (dateKey >= fromKey && dateKey <= toKey) {
         moodsByDate.set(dateKey, {
           energy: entry.energy,
           stress: entry.stress,
@@ -143,7 +146,6 @@ export const useDoctorReport = (): {
     bioData.dateOfBirth,
     bioData.firstName,
     bioData.lastName,
-    chartWindow.todayKey,
     computation,
     healthByDate,
     healthRecord,
@@ -152,12 +154,17 @@ export const useDoctorReport = (): {
     mrsLatest,
     pamLatest,
     phq2Latest,
+    range.fromDateKey,
+    range.toDateKey,
     symptomLogs,
   ]);
 
   return {
     isLoading,
     report,
-    refresh: refreshPatterns,
+    refresh: () => {
+      refreshPatterns();
+      void refreshMrs();
+    },
   };
 };

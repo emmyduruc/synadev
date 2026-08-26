@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ASSESSMENT_INSTRUMENT,
+  ASSESSMENT_TIMEPOINT,
+  ASSESSMENT_TIMEPOINTS,
+  MRS_II_ASSESSMENT_ID,
+  MRS_II_ASSESSMENT_IDS,
   MRS_II_ITEM_KEYS,
   PAM13_ITEM_KEYS,
   PHQ2_ITEM_KEYS,
@@ -170,24 +174,48 @@ export class AssessmentsService {
     return this.submissionsRepository.findOne({
       where: { userId, instrument },
       order: { completedAt: 'DESC' },
+      relations: { answers: true },
     });
   }
 
   private toMrsIiSubmission(
     entity: AssessmentSubmissionEntity,
   ): MrsIiAssessmentSubmission {
-    const ordered = sortAnswersByIndex(entity.answers ?? []);
+    const answersByKey = new Map(
+      (entity.answers ?? []).map((answer) => [answer.itemKey, answer.value]),
+    );
+    const answers = MRS_II_ITEM_KEYS.map((itemKey) => {
+      const value = answersByKey.get(itemKey);
+
+      if (typeof value !== 'number' || !Number.isFinite(value)) {
+        return 0;
+      }
+
+      return Math.min(4, Math.max(0, Math.round(value))) as MrsIiSeverityValue;
+    });
+
+    const assessmentId = (MRS_II_ASSESSMENT_IDS as readonly string[]).includes(
+      entity.assessmentId,
+    )
+      ? (entity.assessmentId as MrsIiAssessmentSubmission['assessmentId'])
+      : MRS_II_ASSESSMENT_ID.baseline;
+
+    const timepoint = (ASSESSMENT_TIMEPOINTS as readonly string[]).includes(entity.timepoint)
+      ? (entity.timepoint as MrsIiAssessmentSubmission['timepoint'])
+      : ASSESSMENT_TIMEPOINT.t0;
+
+    const computedSubscores = computeMrsIiSubscores(answers);
 
     return {
       id: entity.id,
-      assessmentId: entity.assessmentId as MrsIiAssessmentSubmission['assessmentId'],
-      timepoint: entity.timepoint as MrsIiAssessmentSubmission['timepoint'],
-      answers: ordered.map((answer) => answer.value as MrsIiSeverityValue),
-      total: entity.totalScore ?? 0,
+      assessmentId,
+      timepoint,
+      answers,
+      total: entity.totalScore ?? computeMrsIiTotal(answers),
       subscores: {
-        somatic: entity.somatic ?? 0,
-        psychological: entity.psychological ?? 0,
-        urogenital: entity.urogenital ?? 0,
+        somatic: entity.somatic ?? computedSubscores.somatic,
+        psychological: entity.psychological ?? computedSubscores.psychological,
+        urogenital: entity.urogenital ?? computedSubscores.urogenital,
       },
       completedAt: toIsoDateTime(entity.completedAt),
     };
