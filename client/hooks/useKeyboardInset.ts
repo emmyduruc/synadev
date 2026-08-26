@@ -4,12 +4,22 @@ import { Keyboard, Platform, type KeyboardEvent } from 'react-native';
 const readKeyboardHeight = (event: KeyboardEvent): number =>
   Math.max(0, event.endCoordinates.height);
 
+export type UseKeyboardInsetOptions = {
+  /**
+   * Height already reserved below the screen content (e.g. tab bar).
+   * Keyboard events report height from the window bottom, so subtract this
+   * when lifting views that already sit above that chrome.
+   */
+  subtractBottom?: number;
+};
+
 /**
- * Returns the keyboard overlap height from the bottom of the screen.
+ * Returns the keyboard overlap height to apply as bottom padding/margin.
  * Used to lift sticky footers above the software keyboard on iOS and Android.
  */
-export const useKeyboardInset = (): number => {
+export const useKeyboardInset = (options?: UseKeyboardInsetOptions): number => {
   const [inset, setInset] = useState(0);
+  const subtractBottom = options?.subtractBottom ?? 0;
 
   useEffect(() => {
     const onShow = (event: KeyboardEvent) => {
@@ -34,5 +44,9 @@ export const useKeyboardInset = (): number => {
     };
   }, []);
 
-  return inset;
+  if (inset <= 0) {
+    return 0;
+  }
+
+  return Math.max(0, inset - subtractBottom);
 };

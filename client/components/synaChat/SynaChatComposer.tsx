@@ -1,4 +1,5 @@
 import { ActivityIndicator, Platform, TextInput as RNTextInput } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Box } from '@/components/ui/Box';
 import { SendIcon } from '@/components/ui/icons/SendIcon';
@@ -6,7 +7,11 @@ import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import { useKeyboardInset } from '@/hooks/useKeyboardInset';
 import { useTranslate } from '@/hooks/useTranslate';
 import { FONT_FAMILY } from '@/lib/fonts/constants';
+import { getSynaTabBarOccupiedHeight } from '@/lib/navigation/constants';
 import { cn, semanticColors } from '@/lib/ui';
+
+const COMPOSER_RESTING_PADDING = 10;
+const COMPOSER_KEYBOARD_GAP = 8;
 
 export type SynaChatComposerProps = {
   value: string;
@@ -22,10 +27,15 @@ export const SynaChatComposer = ({
   isSending,
 }: SynaChatComposerProps) => {
   const { t } = useTranslate();
-  const keyboardInset = useKeyboardInset();
+  const { bottom: safeAreaBottom } = useSafeAreaInsets();
+  const tabBarOccupiedHeight = getSynaTabBarOccupiedHeight(safeAreaBottom);
+  const keyboardInset = useKeyboardInset({ subtractBottom: tabBarOccupiedHeight });
   const trimmed = value.trim();
   const canSend = trimmed.length > 0 && !isSending;
-  const bottomPadding = keyboardInset > 0 ? keyboardInset + 10 : 10;
+  const bottomPadding =
+    keyboardInset > 0
+      ? keyboardInset + COMPOSER_KEYBOARD_GAP
+      : COMPOSER_RESTING_PADDING;
 
   return (
     <Box

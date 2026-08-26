@@ -13,4 +13,11 @@ export const TAB_BAR = {
   badgeRoute: TAB_ROUTE.patterns,
   centerButtonSize: 56,
   centerButtonLift: 18,
+  /** Top padding + tab row height inside SynaTabBar (excludes safe-area inset). */
+  contentHeight: 62,
+  minBottomPadding: 8,
 } as const;
+
+/** Vertical space the custom tab bar occupies from the window bottom. */
+export const getSynaTabBarOccupiedHeight = (safeAreaBottom: number): number =>
+  TAB_BAR.contentHeight + Math.max(safeAreaBottom, TAB_BAR.minBottomPadding);

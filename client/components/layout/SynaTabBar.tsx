@@ -88,7 +88,7 @@ export const SynaTabBar = ({ state, descriptors, navigation }: SynaTabBarProps) 
   }
 
   return (
-    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, TAB_BAR.minBottomPadding) }]}>
       {state.routes.map((route, index) => {
         if (!isTabRouteName(route.name)) {
           return null;
@@ -183,6 +183,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: 4,
+    // Keep in sync with TAB_BAR.contentHeight (paddingTop 10 + row 52).
     minHeight: 52,
   },
   iconWrap: {
