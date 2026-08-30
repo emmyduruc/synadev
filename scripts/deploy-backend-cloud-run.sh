@@ -15,8 +15,13 @@
 #   USE_LOCAL_DOCKER=1  — build with local Docker instead of Cloud Build
 #   GCP_PROJECT_ID=... GCP_REGION=europe-west1 ./scripts/deploy-backend-cloud-run.sh
 #
-# Secrets (CLERK_SECRET_KEY, DATABASE_URL, DIRECT_URL):
-#   - Loaded automatically from repo-root `.env` (then `backend/.env` for any still unset)
+# Backend runtime config (loaded from repo-root `.env`, then `backend/.env`):
+#   Secrets → Secret Manager, mounted on Cloud Run:
+#     CLERK_SECRET_KEY, DATABASE_URL, DIRECT_URL, OPENAI_API_KEY, RESEND_API_KEY
+#   Plain env vars → Cloud Run:
+#     NODE_ENV, DATABASE_SYNCHRONIZE, OPENAI_MODEL, RESEND_FROM_EMAIL, RESEND_FROM_NAME
+#
+# Client-only keys (EXPO_PUBLIC_*) are ignored.
 
 set -euo pipefail
 
@@ -67,11 +72,20 @@ echo "==> Region:   ${REGION}"
 echo "==> Service:  ${SERVICE}"
 echo "==> Image:    ${IMAGE_TAGGED}"
 
-if [[ -n "${CLERK_SECRET_KEY:-}" && -n "${DATABASE_URL:-}" && -n "${DIRECT_URL:-}" ]]; then
-  echo "==> Secrets:  CLERK_SECRET_KEY, DATABASE_URL, DIRECT_URL (found)"
+REQUIRED_KEYS=(CLERK_SECRET_KEY DATABASE_URL DIRECT_URL OPENAI_API_KEY)
+MISSING_REQUIRED=()
+for key in "${REQUIRED_KEYS[@]}"; do
+  if [[ -z "${!key:-}" ]]; then
+    MISSING_REQUIRED+=("${key}")
+  fi
+done
+
+if [[ ${#MISSING_REQUIRED[@]} -eq 0 ]]; then
+  echo "==> Required backend env: CLERK_SECRET_KEY, DATABASE_URL, DIRECT_URL, OPENAI_API_KEY (found)"
 else
-  echo "==> Secrets:  missing one or more of CLERK_SECRET_KEY / DATABASE_URL / DIRECT_URL"
+  echo "==> Required backend env: missing ${MISSING_REQUIRED[*]}"
   echo "    Put them in .env at the repo root, then re-run."
+  exit 1
 fi
 
 if ! command -v gcloud >/dev/null 2>&1; then
@@ -144,6 +158,71 @@ else
     .
 fi
 
+# --- Cloud Run env + secrets -------------------------------------------------
+
+# Escape commas in env values for gcloud --set-env-vars (comma-separated list).
+escape_env_value() {
+  local value="$1"
+  value="${value//\\/\\\\}"
+  value="${value//,/\\,}"
+  printf '%s' "${value}"
+}
+
+ENV_VAR_FLAGS=(
+  "NODE_ENV=production"
+  "DATABASE_SYNCHRONIZE=false"
+)
+
+if [[ -n "${OPENAI_MODEL:-}" ]]; then
+  ENV_VAR_FLAGS+=("OPENAI_MODEL=$(escape_env_value "${OPENAI_MODEL}")")
+else
+  ENV_VAR_FLAGS+=("OPENAI_MODEL=gpt-4o-mini")
+fi
+
+if [[ -n "${RESEND_FROM_EMAIL:-}" ]]; then
+  ENV_VAR_FLAGS+=("RESEND_FROM_EMAIL=$(escape_env_value "${RESEND_FROM_EMAIL}")")
+fi
+
+if [[ -n "${RESEND_FROM_NAME:-}" ]]; then
+  ENV_VAR_FLAGS+=("RESEND_FROM_NAME=$(escape_env_value "${RESEND_FROM_NAME}")")
+fi
+
+SECRET_FLAGS=()
+SECRET_NAMES=()
+
+# Upsert a Secret Manager secret and map it to a Cloud Run env var.
+# Args: ENV_VAR_NAME secret-manager-id
+upsert_secret() {
+  local env_key="$1"
+  local secret_name="$2"
+  local value="${!env_key:-}"
+
+  if [[ -z "${value}" ]]; then
+    return 1
+  fi
+
+  echo "==> Upserting Secret Manager: ${secret_name} → ${env_key}"
+  if gcloud secrets describe "${secret_name}" --project="${PROJECT_ID}" >/dev/null 2>&1; then
+    printf '%s' "${value}" | gcloud secrets versions add "${secret_name}" \
+      --project="${PROJECT_ID}" --data-file=-
+  else
+    printf '%s' "${value}" | gcloud secrets create "${secret_name}" \
+      --project="${PROJECT_ID}" --data-file=-
+  fi
+
+  SECRET_FLAGS+=("${env_key}=${secret_name}:latest")
+  SECRET_NAMES+=("${secret_name}")
+  return 0
+}
+
+upsert_secret CLERK_SECRET_KEY clerk-secret-key
+upsert_secret DATABASE_URL database-url
+upsert_secret DIRECT_URL direct-url
+upsert_secret OPENAI_API_KEY openai-api-key
+
+# Email is optional at boot; inject when present in .env.
+upsert_secret RESEND_API_KEY resend-api-key || true
+
 DEPLOY_ARGS=(
   run deploy "${SERVICE}"
   --project="${PROJECT_ID}"
@@ -158,53 +237,15 @@ DEPLOY_ARGS=(
   --timeout=300
   --cpu-boost
   --allow-unauthenticated
-  --set-env-vars="NODE_ENV=production,DATABASE_SYNCHRONIZE=false"
+  --set-env-vars="$(IFS=,; echo "${ENV_VAR_FLAGS[*]}")"
 )
 
-SECRET_FLAGS=()
-if [[ -n "${CLERK_SECRET_KEY:-}" ]]; then
-  echo "==> Upserting Secret Manager: clerk-secret-key"
-  if gcloud secrets describe clerk-secret-key --project="${PROJECT_ID}" >/dev/null 2>&1; then
-    printf '%s' "${CLERK_SECRET_KEY}" | gcloud secrets versions add clerk-secret-key \
-      --project="${PROJECT_ID}" --data-file=-
-  else
-    printf '%s' "${CLERK_SECRET_KEY}" | gcloud secrets create clerk-secret-key \
-      --project="${PROJECT_ID}" --data-file=-
-  fi
-  SECRET_FLAGS+=("CLERK_SECRET_KEY=clerk-secret-key:latest")
-fi
-
-if [[ -n "${DATABASE_URL:-}" ]]; then
-  echo "==> Upserting Secret Manager: database-url"
-  if gcloud secrets describe database-url --project="${PROJECT_ID}" >/dev/null 2>&1; then
-    printf '%s' "${DATABASE_URL}" | gcloud secrets versions add database-url \
-      --project="${PROJECT_ID}" --data-file=-
-  else
-    printf '%s' "${DATABASE_URL}" | gcloud secrets create database-url \
-      --project="${PROJECT_ID}" --data-file=-
-  fi
-  SECRET_FLAGS+=("DATABASE_URL=database-url:latest")
-fi
-
-if [[ -n "${DIRECT_URL:-}" ]]; then
-  echo "==> Upserting Secret Manager: direct-url"
-  if gcloud secrets describe direct-url --project="${PROJECT_ID}" >/dev/null 2>&1; then
-    printf '%s' "${DIRECT_URL}" | gcloud secrets versions add direct-url \
-      --project="${PROJECT_ID}" --data-file=-
-  else
-    printf '%s' "${DIRECT_URL}" | gcloud secrets create direct-url \
-      --project="${PROJECT_ID}" --data-file=-
-  fi
-  SECRET_FLAGS+=("DIRECT_URL=direct-url:latest")
-fi
-
 if [[ ${#SECRET_FLAGS[@]} -gt 0 ]]; then
-  JOINED="$(IFS=,; echo "${SECRET_FLAGS[*]}")"
-  DEPLOY_ARGS+=(--set-secrets="${JOINED}")
+  DEPLOY_ARGS+=(--set-secrets="$(IFS=,; echo "${SECRET_FLAGS[*]}")")
 fi
 
 # Runtime SA needs Secret Manager access when --set-secrets is used.
-if [[ ${#SECRET_FLAGS[@]} -gt 0 ]]; then
+if [[ ${#SECRET_NAMES[@]} -gt 0 ]]; then
   echo "==> Ensuring Cloud Run runtime can read secrets..."
   RUNTIME_SA="$(gcloud run services describe "${SERVICE}" \
     --project="${PROJECT_ID}" \
@@ -213,14 +254,12 @@ if [[ ${#SECRET_FLAGS[@]} -gt 0 ]]; then
   if [[ -z "${RUNTIME_SA}" ]]; then
     RUNTIME_SA="${COMPUTE_SA}"
   fi
-  for SECRET_NAME in clerk-secret-key database-url direct-url; do
-    if gcloud secrets describe "${SECRET_NAME}" --project="${PROJECT_ID}" >/dev/null 2>&1; then
-      gcloud secrets add-iam-policy-binding "${SECRET_NAME}" \
-        --project="${PROJECT_ID}" \
-        --member="serviceAccount:${RUNTIME_SA}" \
-        --role="roles/secretmanager.secretAccessor" \
-        --quiet >/dev/null || true
-    fi
+  for SECRET_NAME in "${SECRET_NAMES[@]}"; do
+    gcloud secrets add-iam-policy-binding "${SECRET_NAME}" \
+      --project="${PROJECT_ID}" \
+      --member="serviceAccount:${RUNTIME_SA}" \
+      --role="roles/secretmanager.secretAccessor" \
+      --quiet >/dev/null || true
   done
 fi
 
@@ -235,3 +274,5 @@ URL="$(gcloud run services describe "${SERVICE}" \
 echo
 echo "Deployed: ${URL}"
 echo "Health:   ${URL}/health"
+echo "Mounted secrets: ${SECRET_FLAGS[*]}"
+echo "Plain env:       ${ENV_VAR_FLAGS[*]}"

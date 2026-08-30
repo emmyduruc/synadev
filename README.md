@@ -144,7 +144,9 @@ gcloud auth login
 gcloud auth application-default login   # optional but useful locally
 
 # Deploy (defaults: project macro-outpost-463419-j8, region europe-west1)
-# Reads CLERK_SECRET_KEY, DATABASE_URL, DIRECT_URL from repo-root `.env`
+# Reads backend runtime keys from repo-root `.env` and injects them into Cloud Run:
+#   secrets: CLERK_SECRET_KEY, DATABASE_URL, DIRECT_URL, OPENAI_API_KEY, RESEND_API_KEY
+#   env:     OPENAI_MODEL, RESEND_FROM_EMAIL, RESEND_FROM_NAME (+ NODE_ENV, DATABASE_SYNCHRONIZE)
 # Builds the image with Cloud Build in GCP (avoids Docker Desktop npm TLS issues)
 yarn deploy:backend
 ```
@@ -163,6 +165,8 @@ docker run --rm -p 8080:8080 \
   -e CLERK_SECRET_KEY=... \
   -e DATABASE_URL=... \
   -e DIRECT_URL=... \
+  -e OPENAI_API_KEY=... \
+  -e OPENAI_MODEL=gpt-4o-mini \
   -e NODE_ENV=production \
   syna-backend
 # Health: curl http://localhost:8080/health
