@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { useProfileHealthConnection } from '@/hooks/useProfileHealthConnection';
 import { updateCurrentUserHealthMetrics, upsertHealthDailyMetrics } from '@/lib/api';
+import { HEALTH_CONNECTION_ISSUE } from '@/lib/health/healthConnectionIssue';
 import { readHealthSnapshot } from '@/lib/health/healthData';
 import { logHealthSnapshotDebug } from '@/lib/health/healthDebug';
 import {
@@ -35,9 +36,11 @@ export const useDashboardHealth = () => {
   const {
     summary,
     isConnecting,
-    errorMessage,
+    healthIssue,
+    canInstallHealthConnect,
     isConnected,
     connectHealth,
+    openHealthConnectHelp,
     refreshSummary,
   } = useProfileHealthConnection();
   const [healthSnapshot, setHealthSnapshot] = useState<HealthRawSnapshot | null>(null);
@@ -86,7 +89,10 @@ export const useDashboardHealth = () => {
       const snapshot = await readHealthSnapshot();
       applyHealthSnapshot(snapshot);
 
-      return snapshot.metrics.some((metric) => !metric.error);
+      return (
+        snapshot.status === 'connected' &&
+        snapshot.metrics.some((metric) => !metric.error)
+      );
     } finally {
       setIsLoadingMetrics(false);
     }
@@ -98,9 +104,12 @@ export const useDashboardHealth = () => {
     metrics,
     isConnecting,
     isLoadingMetrics,
-    errorMessage,
+    healthIssue,
+    canInstallHealthConnect,
+    hasHealthIssue: healthIssue !== HEALTH_CONNECTION_ISSUE.none,
     isConnected,
     connectHealth: connectAndRefresh,
+    openHealthConnectHelp,
     refreshMetrics: loadMetrics,
   };
 };

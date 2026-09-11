@@ -14,6 +14,7 @@ import { SynaGradientBackground } from '@/components/layout/SynaGradientBackgrou
 import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
 import { AppHeader, Box } from '@/components/ui';
 import { useBioData } from '@/hooks/useBioData';
+import { useCorrectOptimisticHomeDestination } from '@/hooks/useCorrectOptimisticHomeDestination';
 import { useCycleCalendarMarkers } from '@/hooks/useCycleCalendarMarkers';
 import { useDashboardSetupProgress } from '@/hooks/useDashboardSetupProgress';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
@@ -28,14 +29,33 @@ import { cn } from '@/lib/ui';
 const StartTabScreen = () => {
   const router = useRouter();
   const { t } = useTranslate();
-  const { bioData } = useBioData();
+  const {
+    bioData,
+    percent: bioPercent,
+    isComplete: isBioComplete,
+    isLoading: isBioLoading,
+    hasSyncedFromServer,
+    wasCompleteOnHydrate,
+    refresh: refreshBio,
+  } = useBioData();
+  useCorrectOptimisticHomeDestination({
+    isComplete: isBioComplete,
+    isLoading: isBioLoading,
+    hasSyncedFromServer,
+    wasCompleteOnHydrate,
+  });
   const openBioDataWizard = useOpenBioDataWizard();
   const {
     percent,
     isVisible: isProfileBannerVisible,
     isLoading: isProfileBannerLoading,
     dismiss: dismissProfileBanner,
-  } = useProfileCompletionBanner();
+  } = useProfileCompletionBanner({
+    percent: bioPercent,
+    isComplete: isBioComplete,
+    isLoading: isBioLoading,
+    refresh: refreshBio,
+  });
   const { celebrate } = useConfettiCelebration();
   const {
     snapshot: cycleSnapshot,
@@ -46,8 +66,10 @@ const StartTabScreen = () => {
     metrics,
     isConnected,
     isConnecting,
-    errorMessage,
+    healthIssue,
+    canInstallHealthConnect,
     connectHealth,
+    openHealthConnectHelp,
     steps,
     completedCount,
     totalCount,
@@ -84,9 +106,13 @@ const StartTabScreen = () => {
                   totalCount={totalCount}
                   currentStepId={currentStepId}
                   isConnectingHealth={isConnecting}
-                  healthErrorMessage={errorMessage}
+                  healthIssue={healthIssue}
+                  canInstallHealthConnect={canInstallHealthConnect}
                   onConnectHealth={() => {
                     void handleConnectHealth();
+                  }}
+                  onInstallHealthConnect={() => {
+                    void openHealthConnectHelp();
                   }}
                   onStartMrsIi={() => {
                     router.push(ROUTES.assessment.mrsIi);

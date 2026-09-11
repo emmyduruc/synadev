@@ -1,5 +1,7 @@
 import type { HealthPlatform } from '@syna/shared-types';
 
+import type { HealthConnectAvailability } from '@/lib/health/healthConnectAvailability';
+
 export type { HealthPlatform };
 
 export type HealthReadStatus = 'idle' | 'connected' | 'unavailable' | 'error';
@@ -22,4 +24,6 @@ export type HealthRawSnapshot = {
   };
   permissions?: unknown;
   metrics: HealthRawMetric[];
+  /** Set when Android Health Connect cannot run on this device. */
+  unavailabilityReason?: HealthConnectAvailability;
 };

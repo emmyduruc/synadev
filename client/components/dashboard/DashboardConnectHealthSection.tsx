@@ -1,20 +1,26 @@
+import { HealthConnectionIssueBanner } from '@/components/health/HealthConnectionIssueBanner';
 import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
 import { useTranslate } from '@/hooks/useTranslate';
 import { DASHBOARD_SURFACE } from '@/lib/dashboard/surfaces';
+import type { HealthConnectionIssue } from '@/lib/health/healthConnectionIssue';
 import { cn } from '@/lib/ui';
 
 export type DashboardConnectHealthSectionProps = {
-  errorMessage: string | null;
+  healthIssue: HealthConnectionIssue;
+  canInstallHealthConnect: boolean;
   isConnecting: boolean;
   onConnect: () => void;
+  onInstallHealthConnect: () => void;
 };
 
 export const DashboardConnectHealthSection = ({
-  errorMessage,
+  healthIssue,
+  canInstallHealthConnect,
   isConnecting,
   onConnect,
+  onInstallHealthConnect,
 }: DashboardConnectHealthSectionProps) => {
   const { t } = useTranslate();
 
@@ -32,16 +38,11 @@ export const DashboardConnectHealthSection = ({
         </Button>
       </Box>
 
-      {errorMessage ? (
-        <Box className={cn(DASHBOARD_SURFACE.nestedLift, 'border-error-500/30 p-4')}>
-          <Text size="sm" weight="semibold" color="error">
-            {t('health_connect_error_title')}
-          </Text>
-          <Text size="xs" color="error" className="mt-2">
-            {errorMessage}
-          </Text>
-        </Box>
-      ) : null}
+      <HealthConnectionIssueBanner
+        issue={healthIssue}
+        canInstallHealthConnect={canInstallHealthConnect}
+        onInstallPress={onInstallHealthConnect}
+      />
     </Box>
   );
 };

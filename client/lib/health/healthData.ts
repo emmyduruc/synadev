@@ -2,6 +2,11 @@ import type * as HealthKit from '@kingstinct/react-native-healthkit';
 import { Platform } from 'react-native';
 import type * as HealthConnect from 'react-native-health-connect';
 
+import {
+  HEALTH_CONNECT_AVAILABILITY,
+  isServiceUnavailableError,
+  probeHealthConnectAvailability,
+} from '@/lib/health/healthConnectAvailability';
 import type { HealthRawMetric, HealthRawSnapshot } from '@/lib/health/types';
 
 const LOOKBACK_DAYS = 90;
@@ -331,19 +336,22 @@ const readHealthConnectSnapshot = async (): Promise<HealthRawSnapshot> => {
   const range = { start: start.toISOString(), end: end.toISOString() };
 
   try {
-    const healthConnect = await import('react-native-health-connect');
-    const sdkStatus = await healthConnect.getSdkStatus();
+    const availabilityResult = await probeHealthConnectAvailability();
 
-    if (sdkStatus !== healthConnect.SdkAvailabilityStatus.SDK_AVAILABLE) {
+    if (
+      availabilityResult.availability !== HEALTH_CONNECT_AVAILABILITY.available
+    ) {
       return {
         platform: 'android-health-connect',
         status: 'unavailable',
         requestedAt,
         range,
         metrics: [],
+        unavailabilityReason: availabilityResult.availability,
       };
     }
 
+    const healthConnect = await import('react-native-health-connect');
     const initialized = await healthConnect.initialize();
 
     if (!initialized) {
@@ -353,6 +361,7 @@ const readHealthConnectSnapshot = async (): Promise<HealthRawSnapshot> => {
         requestedAt,
         range,
         metrics: [],
+        unavailabilityReason: HEALTH_CONNECT_AVAILABILITY.probeFailed,
       };
     }
 
@@ -376,6 +385,19 @@ const readHealthConnectSnapshot = async (): Promise<HealthRawSnapshot> => {
       metrics,
     };
   } catch (error_) {
+    const message = toErrorMessage(error_);
+
+    if (isServiceUnavailableError(message)) {
+      return {
+        platform: 'android-health-connect',
+        status: 'unavailable',
+        requestedAt,
+        range,
+        metrics: [],
+        unavailabilityReason: HEALTH_CONNECT_AVAILABILITY.sdkUnavailable,
+      };
+    }
+
     return {
       platform: 'android-health-connect',
       status: 'error',
@@ -385,7 +407,7 @@ const readHealthConnectSnapshot = async (): Promise<HealthRawSnapshot> => {
         {
           key: 'health_connect',
           source: 'health-connect',
-          error: toErrorMessage(error_),
+          error: message,
         },
       ],
     };

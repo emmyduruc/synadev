@@ -9,6 +9,7 @@ import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionB
 import { ProfileMyProfileContent } from '@/components/profile/ProfileMyProfileContent';
 import { ProfileTabBar, type ProfileTabOption } from '@/components/profile/ProfileTabBar';
 import { AppHeader, Box } from '@/components/ui';
+import { useBioData } from '@/hooks/useBioData';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
 import { useTranslate } from '@/hooks/useTranslate';
@@ -17,7 +18,18 @@ import { PROFILE_TAB, type ProfileTabId } from '@/lib/profile/constants';
 const ProfileTabScreen = () => {
   const { t } = useTranslate();
   const [activeTabId, setActiveTabId] = useState<ProfileTabId>(PROFILE_TAB.myProfile);
-  const { percent, isVisible, isLoading, dismiss } = useProfileCompletionBanner();
+  const {
+    percent: bioPercent,
+    isComplete: isBioComplete,
+    isLoading: isBioLoading,
+    refresh: refreshBio,
+  } = useBioData();
+  const { percent, isVisible, isLoading, dismiss } = useProfileCompletionBanner({
+    percent: bioPercent,
+    isComplete: isBioComplete,
+    isLoading: isBioLoading,
+    refresh: refreshBio,
+  });
   const openBioDataWizard = useOpenBioDataWizard();
 
   const tabs: readonly ProfileTabOption[] = [

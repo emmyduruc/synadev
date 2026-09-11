@@ -17,9 +17,11 @@ const ProfileDataSourcesScreen = () => {
   const {
     summary,
     isConnecting,
-    errorMessage,
+    healthIssue,
+    canInstallHealthConnect,
     isConnected,
     connectHealth,
+    openHealthConnectHelp,
   } = useProfileHealthConnection();
 
   return (
@@ -36,8 +38,12 @@ const ProfileDataSourcesScreen = () => {
               isConnected={isConnected}
               connectedMetricKeys={summary?.connectedMetricKeys ?? []}
               isConnecting={isConnecting}
-              errorMessage={errorMessage}
+              healthIssue={healthIssue}
+              canInstallHealthConnect={canInstallHealthConnect}
               onConnect={connectHealth}
+              onInstallHealthConnect={() => {
+                void openHealthConnectHelp();
+              }}
             />
           </Box>
         </ScrollView>

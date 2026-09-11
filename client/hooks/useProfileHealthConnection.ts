@@ -1,6 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 
 import { HEALTH_READ_STATUS } from '@/lib/health/constants';
+import {
+  openHealthConnectInstallOrSettings,
+  probeHealthConnectAvailability,
+} from '@/lib/health/healthConnectAvailability';
+import {
+  HEALTH_CONNECTION_ISSUE,
+  issueFromHealthConnectAvailability,
+  issueFromHealthSnapshot,
+  shouldOfferHealthConnectInstall,
+  type HealthConnectionIssue,
+} from '@/lib/health/healthConnectionIssue';
 import {
   isHealthConnected,
   loadHealthConnectionSummary,
@@ -9,11 +21,14 @@ import {
   type HealthConnectionSummary,
 } from '@/lib/health/healthConnectionSummary';
 import { readHealthSnapshot } from '@/lib/health/healthData';
+import { PLATFORM_OS } from '@/lib/ui';
 
 export const useProfileHealthConnection = () => {
   const [summary, setSummary] = useState<HealthConnectionSummary | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [healthIssue, setHealthIssue] = useState<HealthConnectionIssue>(
+    HEALTH_CONNECTION_ISSUE.none,
+  );
 
   const refreshSummary = useCallback(async () => {
     const cached = await loadHealthConnectionSummary();
@@ -24,36 +39,68 @@ export const useProfileHealthConnection = () => {
     void refreshSummary();
   }, [refreshSummary]);
 
+  useEffect(() => {
+    if (Platform.OS !== PLATFORM_OS.android) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const probe = async () => {
+      const result = await probeHealthConnectAvailability();
+
+      if (cancelled) {
+        return;
+      }
+
+      const cached = await loadHealthConnectionSummary();
+
+      if (cached?.status === HEALTH_READ_STATUS.connected) {
+        return;
+      }
+
+      setHealthIssue(issueFromHealthConnectAvailability(result.availability));
+    };
+
+    void probe();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const syncHealthConnection = useCallback(async () => {
     setIsConnecting(true);
-    setErrorMessage(null);
+    setHealthIssue(HEALTH_CONNECTION_ISSUE.none);
 
     try {
       const snapshot = await readHealthSnapshot();
       const nextSummary = toHealthConnectionSummary(snapshot);
       setSummary(nextSummary);
       await saveHealthConnectionSummary(nextSummary);
-
-      if (snapshot.status === HEALTH_READ_STATUS.error) {
-        const firstError = snapshot.metrics.find((metric) => metric.error)?.error;
-        setErrorMessage(firstError ?? null);
-      }
-    } catch (error_) {
-      const message = error_ instanceof Error ? error_.message : String(error_);
-      setErrorMessage(message);
+      setHealthIssue(issueFromHealthSnapshot(snapshot));
+    } catch {
+      setHealthIssue(HEALTH_CONNECTION_ISSUE.error);
     } finally {
       setIsConnecting(false);
     }
   }, []);
 
+  const openHealthConnectHelp = useCallback(async () => {
+    await openHealthConnectInstallOrSettings();
+  }, []);
+
   const isConnected = isHealthConnected(summary);
+  const canInstallHealthConnect = shouldOfferHealthConnectInstall(healthIssue);
 
   return {
     summary,
     isConnecting,
-    errorMessage,
+    healthIssue,
+    canInstallHealthConnect,
     isConnected,
     connectHealth: syncHealthConnection,
+    openHealthConnectHelp,
     refreshSummary,
   };
 };

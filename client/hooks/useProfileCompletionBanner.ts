@@ -1,14 +1,24 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { useBioData } from '@/hooks/useBioData';
 import {
   getProfileCompletionBannerDismissed,
   setProfileCompletionBannerDismissed,
 } from '@/lib/profile/profileCompletionBannerStorage';
 
-export const useProfileCompletionBanner = () => {
-  const { percent, isComplete, isLoading: isBioLoading, refresh } = useBioData();
+type ProfileCompletionBio = {
+  percent: number;
+  isComplete: boolean;
+  isLoading: boolean;
+  refresh: () => Promise<void>;
+};
+
+export const useProfileCompletionBanner = ({
+  percent,
+  isComplete,
+  isLoading: isBioLoading,
+  refresh,
+}: ProfileCompletionBio) => {
   const [isDismissed, setIsDismissed] = useState<boolean | null>(null);
 
   useEffect(() => {

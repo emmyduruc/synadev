@@ -1,46 +1,28 @@
-import { useAuth } from '@clerk/expo';
-import { Redirect, type Href } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { Redirect } from 'expo-router';
 
-import { resolvePostAuthDestination } from '@/lib/auth/postAuthDestination';
+import { MascotLoadingGate } from '@/components/loading/MascotLoadingGate';
+import { Box } from '@/components/ui/Box';
+import { useColdStartDestination } from '@/hooks/useColdStartDestination';
+import { LOADING_VARIANT } from '@/lib/loading/loadingVariants';
 import { ROUTES } from '@/lib/routes';
 
 const IndexScreen = () => {
-  const { isLoaded, isSignedIn } = useAuth({ treatPendingAsSignedOut: false });
-  const [destination, setDestination] = useState<Href | null>(null);
+  const destination = useColdStartDestination();
 
-  useEffect(() => {
-    if (!isLoaded) {
-      return;
-    }
-
-    if (!isSignedIn) {
-      setDestination(ROUTES.welcome);
-      return;
-    }
-
-    let isActive = true;
-
-    const resolve = async () => {
-      const next = await resolvePostAuthDestination();
-
-      if (isActive) {
-        setDestination(next);
-      }
-    };
-
-    void resolve();
-
-    return () => {
-      isActive = false;
-    };
-  }, [isLoaded, isSignedIn]);
-
-  if (!isLoaded || destination === null) {
-    return null;
+  // Signed-out: go straight to welcome. No "getting your data ready" mascot.
+  if (destination === ROUTES.welcome) {
+    return <Redirect href={destination} />;
   }
 
-  return <Redirect href={destination} />;
+  return (
+    <MascotLoadingGate
+      variant={LOADING_VARIANT.coldStart}
+      isReady={destination !== null}
+      className="relative flex-1 bg-background"
+    >
+      {destination ? <Redirect href={destination} /> : <Box flex={1} className="bg-background" />}
+    </MascotLoadingGate>
+  );
 };
 
 export default IndexScreen;

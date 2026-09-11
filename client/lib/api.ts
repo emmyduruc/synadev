@@ -92,13 +92,23 @@ export const getHealth = (): Promise<HealthResponse> =>
     responseSchema: HealthResponseSchema,
   });
 
+/** Shared in-flight GET /users/me so concurrent callers (e.g. home + banner) hit the network once. */
+let getCurrentUserInFlight: Promise<User> | null = null;
+
 /** Provisions the Syna user row on first call, then returns the profile. */
-export const getCurrentUser = (): Promise<User> =>
-  apiRequest({
-    url: USERS_ME,
-    method: 'GET',
-    responseSchema: UserSchema,
-  });
+export const getCurrentUser = (): Promise<User> => {
+  if (!getCurrentUserInFlight) {
+    getCurrentUserInFlight = apiRequest({
+      url: USERS_ME,
+      method: 'GET',
+      responseSchema: UserSchema,
+    }).finally(() => {
+      getCurrentUserInFlight = null;
+    });
+  }
+
+  return getCurrentUserInFlight;
+};
 
 export const updateCurrentUserProfile = (input: UpdateUserProfile): Promise<User> =>
   apiRequest({

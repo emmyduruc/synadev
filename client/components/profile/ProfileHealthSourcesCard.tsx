@@ -1,9 +1,11 @@
 import { SymbolView } from 'expo-symbols';
 import { ActivityIndicator, Platform, StyleSheet } from 'react-native';
 
+import { HealthConnectionIssueBanner } from '@/components/health/HealthConnectionIssueBanner';
 import { ProfilePlatformHealthIcon } from '@/components/profile/ProfilePlatformHealthIcon';
 import { Box, Button, Tag, Text, TouchableOpacity } from '@/components/ui';
 import { useTranslate } from '@/hooks/useTranslate';
+import type { HealthConnectionIssue } from '@/lib/health/healthConnectionIssue';
 import { HEALTH_METRIC_LABEL_KEY, isHealthMetricKey } from '@/lib/health/metricCatalog';
 import { PLATFORM_OS, semanticColors } from '@/lib/ui';
 
@@ -46,16 +48,20 @@ export type ProfileHealthSourcesCardProps = {
   isConnected: boolean;
   connectedMetricKeys: readonly string[];
   isConnecting: boolean;
-  errorMessage: string | null;
+  healthIssue: HealthConnectionIssue;
+  canInstallHealthConnect: boolean;
   onConnect: () => void;
+  onInstallHealthConnect: () => void;
 };
 
 export const ProfileHealthSourcesCard = ({
   isConnected,
   connectedMetricKeys,
   isConnecting,
-  errorMessage,
+  healthIssue,
+  canInstallHealthConnect,
   onConnect,
+  onInstallHealthConnect,
 }: ProfileHealthSourcesCardProps) => {
   const { t } = useTranslate();
   const platformCopy = getPlatformHealthCopy(t);
@@ -137,10 +143,12 @@ export const ProfileHealthSourcesCard = ({
         </Box>
       ) : null}
 
-      {errorMessage ? (
-        <Text size="xs" color="error">
-          {errorMessage}
-        </Text>
+      {!isConnected ? (
+        <HealthConnectionIssueBanner
+          issue={healthIssue}
+          canInstallHealthConnect={canInstallHealthConnect}
+          onInstallPress={onInstallHealthConnect}
+        />
       ) : null}
 
       {isSupportedPlatform && !isConnected ? (

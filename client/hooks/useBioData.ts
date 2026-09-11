@@ -24,16 +24,23 @@ const syncLocalCacheFromDb = async (bioData: BioData): Promise<void> => {
   await saveBioData(bioData);
 };
 
+const isEmptyBioData = (bioData: BioData): boolean =>
+  !bioData.firstName.trim()
+  && !bioData.lastName.trim()
+  && !bioData.dateOfBirth
+  && !bioData.address.trim();
+
 /**
- * Profile bio — Postgres is source of truth; SecureStore is a write-through cache only.
+ * Profile bio — Postgres is source of truth; SecureStore is a write-through cache.
+ * Hydrates from cache first so home can paint without waiting on `/users/me`.
  */
 export const useBioData = () => {
   const [bioData, setBioData] = useState<BioData>(EMPTY_BIO_DATA);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasSyncedFromServer, setHasSyncedFromServer] = useState(false);
+  const [wasCompleteOnHydrate, setWasCompleteOnHydrate] = useState(false);
 
   const refresh = useCallback(async () => {
-    setIsLoading(true);
-
     try {
       const user = await getCurrentUser();
       const next = mapUserToBioData(user);
@@ -44,12 +51,35 @@ export const useBioData = () => {
       const cached = await loadBioData();
       setBioData(cached);
     } finally {
+      setHasSyncedFromServer(true);
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    void refresh();
+    let isActive = true;
+
+    const hydrate = async () => {
+      const cached = await loadBioData();
+
+      if (!isActive) {
+        return;
+      }
+
+      if (!isEmptyBioData(cached)) {
+        setWasCompleteOnHydrate(isBioDataComplete(cached));
+        setBioData(cached);
+        setIsLoading(false);
+      }
+
+      await refresh();
+    };
+
+    void hydrate();
+
+    return () => {
+      isActive = false;
+    };
   }, [refresh]);
 
   const persist = useCallback(async (nextBioData: BioData) => {
@@ -57,6 +87,7 @@ export const useBioData = () => {
     const synced = mapUserToBioData(updatedUser);
     await syncLocalCacheFromDb(synced);
     setBioData(synced);
+    setHasSyncedFromServer(true);
   }, []);
 
   const percent = getBioDataCompletionPercent(bioData);
@@ -67,6 +98,8 @@ export const useBioData = () => {
     percent,
     isComplete,
     isLoading,
+    hasSyncedFromServer,
+    wasCompleteOnHydrate,
     refresh,
     persist,
   };

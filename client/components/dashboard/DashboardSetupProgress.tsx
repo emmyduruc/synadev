@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { DashboardSetupProgressNode } from '@/components/dashboard/DashboardSetupProgressNode';
+import { HealthConnectionIssueBanner } from '@/components/health/HealthConnectionIssueBanner';
 import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
@@ -11,6 +12,7 @@ import {
   type DashboardSetupStepState,
 } from '@/lib/dashboard/setupProgress';
 import { DASHBOARD_SURFACE } from '@/lib/dashboard/surfaces';
+import type { HealthConnectionIssue } from '@/lib/health/healthConnectionIssue';
 import { cn } from '@/lib/ui';
 
 export type DashboardSetupProgressProps = {
@@ -19,8 +21,10 @@ export type DashboardSetupProgressProps = {
   totalCount: number;
   currentStepId: DashboardSetupStepId | null;
   isConnectingHealth: boolean;
-  healthErrorMessage: string | null;
+  healthIssue: HealthConnectionIssue;
+  canInstallHealthConnect: boolean;
   onConnectHealth: () => void;
+  onInstallHealthConnect: () => void;
   onStartMrsIi: () => void;
   onStartPam13: () => void;
 };
@@ -70,8 +74,10 @@ export const DashboardSetupProgress = ({
   totalCount,
   currentStepId,
   isConnectingHealth,
-  healthErrorMessage,
+  healthIssue,
+  canInstallHealthConnect,
   onConnectHealth,
+  onInstallHealthConnect,
   onStartMrsIi,
   onStartPam13,
 }: DashboardSetupProgressProps) => {
@@ -183,10 +189,12 @@ export const DashboardSetupProgress = ({
         </Box>
       ) : null}
 
-      {healthErrorMessage && currentStepId === DASHBOARD_SETUP_STEP.health ? (
-        <Text size="2xs" color="error" className="leading-snug">
-          {healthErrorMessage}
-        </Text>
+      {currentStepId === DASHBOARD_SETUP_STEP.health ? (
+        <HealthConnectionIssueBanner
+          issue={healthIssue}
+          canInstallHealthConnect={canInstallHealthConnect}
+          onInstallPress={onInstallHealthConnect}
+        />
       ) : null}
 
       <Button fullWidth size="sm" loading={ctaLoading} onPress={onPressCta}>

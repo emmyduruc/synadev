@@ -37,6 +37,20 @@ const fetchCurrentUserWithRetry = async () => {
 };
 
 /**
+ * Fast local-only routing for returning users. No network.
+ * Complete bio cache → home; otherwise null (caller should network-resolve).
+ */
+export const resolveCachedPostAuthDestination = async (): Promise<Href | null> => {
+  const cached = await loadBioData();
+
+  if (isBioDataComplete(cached)) {
+    return ROUTES.home;
+  }
+
+  return null;
+};
+
+/**
  * DB is the source of truth for post-auth routing.
  * Incomplete bio → onboarding (prefilling any fields already in DB).
  * Transient API/auth failures must not force onboarding for returning users.
