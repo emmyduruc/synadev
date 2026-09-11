@@ -94,6 +94,11 @@ export const SynaTabBar = ({ state, descriptors, navigation }: SynaTabBarProps) 
           return null;
         }
 
+        // Temporarily hidden from the bottom tab bar. Will be reinstated later.
+        if (route.name === TAB_ROUTE.patterns || route.name === TAB_ROUTE.syna) {
+          return null;
+        }
+
         const tabRoute = route.name;
         const isFocused = state.index === index;
         const isCenter = tabRoute === TAB_BAR.centerRoute;

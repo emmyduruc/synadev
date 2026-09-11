@@ -332,6 +332,18 @@ const readHealthConnectSnapshot = async (): Promise<HealthRawSnapshot> => {
 
   try {
     const healthConnect = await import('react-native-health-connect');
+    const sdkStatus = await healthConnect.getSdkStatus();
+
+    if (sdkStatus !== healthConnect.SdkAvailabilityStatus.SDK_AVAILABLE) {
+      return {
+        platform: 'android-health-connect',
+        status: 'unavailable',
+        requestedAt,
+        range,
+        metrics: [],
+      };
+    }
+
     const initialized = await healthConnect.initialize();
 
     if (!initialized) {

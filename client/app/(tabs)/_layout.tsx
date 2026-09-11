@@ -29,6 +29,8 @@ const TabsLayout = () => {
         name={TAB_ROUTE.start}
         options={{ title: t('tab_start_label') }}
       />
+      {/* Temporarily hidden from the bottom tab bar. Will be reinstated later. */}
+      {/*
       <Tabs.Screen
         name={TAB_ROUTE.patterns}
         options={{ title: t('tab_patterns_label') }}
@@ -37,6 +39,7 @@ const TabsLayout = () => {
         name={TAB_ROUTE.syna}
         options={{ title: t('tab_syna_label') }}
       />
+      */}
       <Tabs.Screen
         name={TAB_ROUTE.report}
         options={{ title: t('tab_report_label') }}
