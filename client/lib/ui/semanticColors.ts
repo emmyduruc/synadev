@@ -39,6 +39,7 @@ export const semanticColors = {
     apricotLight: colors.apricot.light,
     slate: colors.slate.DEFAULT,
     slateLight: colors.slate.light,
+    pastelLavender: colors['pastel-lavender'].DEFAULT,
   },
   /** Report / clinical surfaces from the report design sheet */
   report: {

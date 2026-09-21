@@ -1,25 +1,18 @@
 import { Circle, Path, Svg } from 'react-native-svg';
 
+import { IntroIllustrationPanel } from '@/components/intro/IntroIllustrationPanel';
 import { Box } from '@/components/ui/Box';
 import { semanticColors } from '@/lib/ui';
 
 const ink = semanticColors.ovum.slate;
-const softInk = semanticColors.ovum.slateLight;
-const lineColor = semanticColors.report.measureLine;
+const accent = semanticColors.report.bleeding;
 
 /**
  * Marketing illustration for intro step 1: profile card + checklist card.
  * Document icon on the left, heart on the right.
- * Outer panel uses report measure-line.
  */
 export const IntroFeelingIllustration = () => (
-  <Box
-    flex={1}
-    align="center"
-    justify="center"
-    className="overflow-hidden rounded-3xl px-5 py-10"
-    style={{ backgroundColor: semanticColors.report.measureLine }}
-  >
+  <IntroIllustrationPanel>
     <Box direction="row" align="stretch" justify="center" className="w-full max-w-sm gap-3">
       <Box className="w-[36%] justify-center rounded-2xl bg-card px-3 py-8 shadow-sm">
         <Box align="center" className="mb-5">
@@ -29,8 +22,8 @@ export const IntroFeelingIllustration = () => (
             <Path d="M10 31c0-5.5 4.5-10 10-10s10 4.5 10 10" fill={ink} />
           </Svg>
         </Box>
-        <Box className="mb-3 h-1.5 w-full rounded-full" style={{ backgroundColor: softInk }} />
-        <Box className="h-1.5 w-3/4 rounded-full" style={{ backgroundColor: softInk }} />
+        <Box className="mb-3 h-1.5 w-full rounded-full" style={{ backgroundColor: accent }} />
+        <Box className="h-1.5 w-3/4 rounded-full" style={{ backgroundColor: accent }} />
       </Box>
 
       <Box className="w-[54%] justify-center rounded-2xl bg-card px-4 py-8 shadow-sm">
@@ -47,7 +40,7 @@ export const IntroFeelingIllustration = () => (
           <Svg width={24} height={22} viewBox="0 0 22 20">
             <Path
               d="M11 18s-8-5.2-8-10a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 19 8c0 4.8-8 10-8 10z"
-              fill={semanticColors.report.bleeding}
+              fill={accent}
             />
           </Svg>
         </Box>
@@ -56,7 +49,7 @@ export const IntroFeelingIllustration = () => (
           {[0, 1, 2].map((index) => (
             <Box key={index} direction="row" align="center" className="h-5 gap-3">
               <Svg width={16} height={16} viewBox="0 0 16 16">
-                <Circle cx="8" cy="8" r="8" fill={ink} />
+                <Circle cx="8" cy="8" r="8" fill={accent} />
                 <Path
                   d="M4.5 8.2l2.2 2.2 4.8-4.8"
                   stroke={semanticColors.card}
@@ -66,11 +59,11 @@ export const IntroFeelingIllustration = () => (
                   fill="none"
                 />
               </Svg>
-              <Box className="h-1.5 flex-1 rounded-full" style={{ backgroundColor: lineColor }} />
+              <Box className="h-1.5 flex-1 rounded-full" style={{ backgroundColor: accent }} />
             </Box>
           ))}
         </Box>
       </Box>
     </Box>
-  </Box>
+  </IntroIllustrationPanel>
 );

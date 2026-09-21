@@ -112,6 +112,10 @@ export const colors = {
     DEFAULT: '#4C4C56',
     light: '#868691',
   },
+  /** Soft pastel lavender wash (oklch 94.1% 0.0097 252.8) — intro illustration panels */
+  'pastel-lavender': {
+    DEFAULT: '#E7ECF2',
+  },
   /**
    * Report / clinical surfaces (CSS vars from the report design sheet).
    * Prefer these for report screens and matching marketing washes.
