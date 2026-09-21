@@ -27,7 +27,7 @@ export const SynaChatEmptyState = ({
         <SparkleIcon size={28} color={semanticColors.iconOnPrimary} />
       </Box>
 
-      <Text size="2xl" weight="bold" align="center" className="text-black">
+      <Text size="xl" weight="bold" align="center" className="text-black">
         {t('syna_chat_empty_title')}
       </Text>
       <Text size="sm" align="center" className="mt-2 leading-relaxed text-black/65">

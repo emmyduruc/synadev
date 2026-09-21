@@ -5,3 +5,11 @@ export const formatTodayDisplayDate = (date: Date = new Date()): string =>
     month: 'short',
     day: 'numeric',
   });
+
+/** Home header date, e.g. "Wednesday, September 23". */
+export const formatTodayLongDisplayDate = (date: Date = new Date()): string =>
+  date.toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });

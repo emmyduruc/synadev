@@ -34,7 +34,7 @@ export const HealthPermissionsOnboarding = () => {
         >
           <HeartIcon size={28} color={semanticColors.foreground} />
         </Box>
-        <Text size="2xl" weight="semibold" color="primary" className="tracking-[0.18em]">
+        <Text size="xl" weight="semibold" color="primary" className="tracking-[0.18em]">
           {t('health_permission_brand')}
         </Text>
         <Text size="base" color="foreground" align="center" className="mt-3 px-2 leading-relaxed">
@@ -46,7 +46,7 @@ export const HealthPermissionsOnboarding = () => {
         {t('health_permission_list_heading')}
       </Text>
 
-      <Box paddingX="lg" rounded="2xl" className="border border-border bg-white/90">
+      <Box paddingX="lg" rounded="xl" className="border border-border bg-white/90">
         {HEALTH_PERMISSION_IDS.map((id, index) => (
           <HealthPermissionToggleRow
             key={id}

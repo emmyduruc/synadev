@@ -8,7 +8,7 @@ export const PatientActivationMeasureIntro = () => {
   return (
     <Box gap="lg" paddingX="lg" paddingY="md">
       <Box gap="sm">
-        <Text size="2xl" weight="bold" className="leading-tight">
+        <Text size="xl" weight="bold" className="leading-tight">
           {t('patient_activation_measure_intro_title')}
         </Text>
         <Text size="sm" color="foreground" className="leading-relaxed">

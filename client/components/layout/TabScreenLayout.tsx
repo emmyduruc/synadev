@@ -13,7 +13,7 @@ export const TabScreenLayout = ({ title, body }: TabScreenLayoutProps) => (
       <Box flex={1}>
         <AppHeader title={title} showBack={false} />
         <Box flex={1} align="center" justify="center" padding="lg">
-          <Text size="2xl" weight="semibold" align="center">
+          <Text size="xl" weight="semibold" align="center">
             {body}
           </Text>
         </Box>

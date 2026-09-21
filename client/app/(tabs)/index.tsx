@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
 
-import { DashboardCheckInCard } from '@/components/dashboard/DashboardCheckInCard';
+// import { DashboardCheckInCard } from '@/components/dashboard/DashboardCheckInCard';
 import { DashboardCyclePhaseCard } from '@/components/dashboard/DashboardCyclePhaseCard';
+import { DashboardDailyLogCard } from '@/components/dashboard/DashboardDailyLogCard';
 import { DashboardGreetingSection } from '@/components/dashboard/DashboardGreetingSection';
 import { DashboardHealthMetricsRow } from '@/components/dashboard/DashboardHealthMetricsRow';
 import { DashboardInsightsSection } from '@/components/dashboard/DashboardInsightsSection';
@@ -12,23 +13,21 @@ import { useConfettiCelebration } from '@/components/gamification/ConfettiProvid
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import { ProfileCompletionBanner } from '@/components/profile/ProfileCompletionBanner';
-import { AppHeader, Box } from '@/components/ui';
+import { Box } from '@/components/ui';
 import { useBioData } from '@/hooks/useBioData';
 import { useCorrectOptimisticHomeDestination } from '@/hooks/useCorrectOptimisticHomeDestination';
 import { useCycleCalendarMarkers } from '@/hooks/useCycleCalendarMarkers';
 import { useDashboardSetupProgress } from '@/hooks/useDashboardSetupProgress';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
-import { useTranslate } from '@/hooks/useTranslate';
 import { DASHBOARD_SURFACE } from '@/lib/dashboard/surfaces';
 import { CONFETTI_ACTION } from '@/lib/gamification/confettiActions';
-import { CALENDAR_MODE } from '@/lib/period/constants';
+// import { CALENDAR_MODE } from '@/lib/period/constants';
 import { ROUTES } from '@/lib/routes';
 import { cn } from '@/lib/ui';
 
 const StartTabScreen = () => {
   const router = useRouter();
-  const { t } = useTranslate();
   const {
     bioData,
     percent: bioPercent,
@@ -93,12 +92,23 @@ const StartTabScreen = () => {
     <SynaGradientBackground>
       <SafeAreaScreen edges={SAFE_AREA_EDGES.top} style={{ backgroundColor: 'transparent' }}>
         <Box flex={1}>
-          <AppHeader title={t('tab_start_title')} showBack={false} />
           <ScrollView
             contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
             showsVerticalScrollIndicator={false}>
             <Box padding="lg" gap="lg">
-              <DashboardGreetingSection firstName={bioData.firstName} />
+              <DashboardGreetingSection
+                firstName={bioData.firstName}
+                lastName={bioData.lastName}
+              />
+
+              <Box className={cn(DASHBOARD_SURFACE.lavenderShell, 'p-4')}>
+                <DashboardWeekCalendarSection
+                  embedded
+                  getPrimaryMarker={getPrimaryMarker}
+                  onOpenCalendar={() => router.push(ROUTES.calendar)}
+                />
+              </Box>
+
               {showSetupProgress ? (
                 <DashboardSetupProgress
                   steps={steps}
@@ -122,27 +132,28 @@ const StartTabScreen = () => {
                   }}
                 />
               ) : null}
+
               <DashboardHealthMetricsRow metrics={metrics} isConnected={isConnected} />
-              <Box className={cn(DASHBOARD_SURFACE.lavenderShell, 'gap-4 p-4')}>
-                <DashboardWeekCalendarSection
-                  embedded
-                  getPrimaryMarker={getPrimaryMarker}
-                  onOpenCalendar={() => router.push(ROUTES.calendar)}
-                />
-                <DashboardCheckInCard
-                  embedded
-                  onCelebrate={celebrate}
-                  onRecordPeriod={() => router.push(ROUTES.recordPeriod)}
-                  onEditPeriod={() =>
-                    router.push({
-                      pathname: ROUTES.calendar,
-                      params: { mode: CALENDAR_MODE.editPeriod },
-                    })
-                  }
-                  onOpenSymptoms={() => router.push(ROUTES.symptoms)}
-                  onOpenMood={() => router.push(ROUTES.mood)}
-                />
-              </Box>
+
+              <DashboardDailyLogCard onPress={() => router.push(ROUTES.symptoms)} />
+
+              {/*
+              Temporary: check-in quick actions (record/edit period, mood, symptoms) hidden.
+              <DashboardCheckInCard
+                embedded
+                onCelebrate={celebrate}
+                onRecordPeriod={() => router.push(ROUTES.recordPeriod)}
+                onEditPeriod={() =>
+                  router.push({
+                    pathname: ROUTES.calendar,
+                    params: { mode: CALENDAR_MODE.editPeriod },
+                  })
+                }
+                onOpenSymptoms={() => router.push(ROUTES.symptoms)}
+                onOpenMood={() => router.push(ROUTES.mood)}
+              />
+              */}
+
               <DashboardCyclePhaseCard
                 snapshot={cycleSnapshot}
                 isLoading={isCycleLoading}

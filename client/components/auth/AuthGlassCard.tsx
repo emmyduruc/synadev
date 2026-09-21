@@ -12,7 +12,7 @@ export const AuthGlassCard = ({ children, className }: AuthGlassCardProps) => (
   <Box
     gap="md"
     padding="lg"
-    rounded="2xl"
+    rounded="xl"
     className={cn(
       'border border-white/60 bg-white/90 shadow-sm shadow-primary-200/20',
       className,

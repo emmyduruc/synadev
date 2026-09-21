@@ -27,7 +27,7 @@ export const DashboardConnectHealthSection = ({
   return (
     <Box gap="md" className={cn(DASHBOARD_SURFACE.sageCard, 'p-5')}>
       <Box gap="sm">
-        <Text size="2xl" weight="bold" align="center">
+        <Text size="xl" weight="bold" align="center">
           {t('health_connect_title')}
         </Text>
         <Text size="sm" color="foreground" align="center" className="leading-relaxed">

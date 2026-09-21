@@ -51,29 +51,38 @@ export const DashboardWeekCalendarSection = ({
 
           return (
             <Box key={dateKey} align="center" className="min-w-[36px]">
-              <Text size="2xs" color="foreground" responsive={false}>
+              <Text
+                size="xs"
+                color="foreground"
+                responsive={false}
+                className={day.isToday ? undefined : 'opacity-70'}
+              >
                 {t(weekdayKey)}
               </Text>
-              <Text
-                size="sm"
-                weight={day.isToday ? 'bold' : 'medium'}
-                responsive={false}
-                className="mt-1">
-                {day.date.getDate()}
-              </Text>
+              <Box
+                align="center"
+                justify="center"
+                className={cn(
+                  'mt-1 h-9 w-9 rounded-full',
+                  day.isToday ? 'bg-primary-500' : undefined,
+                )}
+              >
+                <Text
+                  size="sm"
+                  weight={day.isToday ? 'semibold' : 'medium'}
+                  responsive={false}
+                  className={day.isToday ? 'text-white' : undefined}
+                >
+                  {day.date.getDate()}
+                </Text>
+              </Box>
               <Box className="mt-1.5 h-3.5 items-center justify-center">
                 {marker ? (
                   <CycleDayMarkerBadge marker={marker} size="sm" />
-                ) : (
-                  <Box
-                    className={cn(
-                      'h-2 w-2 rounded-full',
-                      day.isToday
-                        ? 'bg-primary-500'
-                        : 'border border-foreground-muted bg-card',
-                    )}
-                  />
-                )}
+                ) : null}
+                {!marker && !day.isToday ? (
+                  <Box className="h-2 w-2 rounded-full border border-foreground-muted bg-card" />
+                ) : null}
               </Box>
             </Box>
           );

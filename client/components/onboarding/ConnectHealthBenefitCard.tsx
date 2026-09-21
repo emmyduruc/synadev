@@ -19,7 +19,7 @@ export const ConnectHealthBenefitCard = ({
     direction="row"
     gap="md"
     padding="lg"
-    rounded="2xl"
+    rounded="xl"
     className="border border-white/60 bg-white/90 shadow-sm shadow-primary-200/20"
   >
     <Box className="pt-0.5">{icon}</Box>

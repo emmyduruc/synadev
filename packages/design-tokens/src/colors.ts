@@ -140,7 +140,7 @@ export const colors = {
     dark: '#0A0A0A',
   },
   foreground: {
-    DEFAULT: '#3B3B43',
+    DEFAULT: '#3F3037',
     muted: '#7E7E8A',
     dark: '#FAFAFA',
   },

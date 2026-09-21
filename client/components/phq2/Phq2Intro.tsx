@@ -7,7 +7,7 @@ export const Phq2Intro = () => {
 
   return (
     <Box gap="md" paddingX="lg" className="pt-4">
-      <Text size="2xl" weight="bold" align="center">
+      <Text size="xl" weight="bold" align="center">
         {t('phq2_intro_title')}
       </Text>
       <Text size="sm" color="foreground-muted" align="center" className="leading-6">

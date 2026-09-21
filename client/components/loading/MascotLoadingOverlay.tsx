@@ -88,7 +88,7 @@ export const MascotLoadingOverlay = ({
           <MascotBearIcon size={128} />
         </Animated.View>
         <Box align="center" gap="sm">
-          <Text size="2xl" weight="bold" align="center">
+          <Text size="xl" weight="bold" align="center">
             {t(LOADING_VARIANT_TITLE_KEY[variant])}
           </Text>
           <Text size="base" color="foreground-muted" align="center" className="leading-relaxed">

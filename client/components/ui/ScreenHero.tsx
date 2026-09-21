@@ -28,7 +28,7 @@ export const ScreenHero = ({
 }: ScreenHeroProps) => (
   <Box gap="sm" className={className}>
     <Text
-      size="2xl"
+      size="xl"
       weight={headlineWeight}
       align={align}
       responsive={false}
