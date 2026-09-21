@@ -17,6 +17,7 @@ export const RootLayoutNav = () => {
     <ThemeProvider value={colorScheme === COLOR_SCHEME.dark ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={stackScreenOptions}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="intro" />
         <Stack.Screen name="welcome" />
         <Stack.Screen name="register" />
         <Stack.Screen name="login" />

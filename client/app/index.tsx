@@ -1,4 +1,4 @@
-import { Redirect } from 'expo-router';
+import { Redirect, type Href } from 'expo-router';
 
 import { MascotLoadingGate } from '@/components/loading/MascotLoadingGate';
 import { Box } from '@/components/ui/Box';
@@ -6,11 +6,14 @@ import { useColdStartDestination } from '@/hooks/useColdStartDestination';
 import { LOADING_VARIANT } from '@/lib/loading/loadingVariants';
 import { ROUTES } from '@/lib/routes';
 
+const isSignedOutDestination = (destination: Href): boolean =>
+  destination === ROUTES.welcome || destination === ROUTES.intro;
+
 const IndexScreen = () => {
   const destination = useColdStartDestination();
 
-  // Signed-out: go straight to welcome. No "getting your data ready" mascot.
-  if (destination === ROUTES.welcome) {
+  // Signed-out: go straight to intro/welcome. No "getting your data ready" mascot.
+  if (destination && isSignedOutDestination(destination)) {
     return <Redirect href={destination} />;
   }
 

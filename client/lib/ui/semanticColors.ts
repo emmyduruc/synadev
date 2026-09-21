@@ -40,6 +40,22 @@ export const semanticColors = {
     slate: colors.slate.DEFAULT,
     slateLight: colors.slate.light,
   },
+  /** Report / clinical surfaces from the report design sheet */
+  report: {
+    pageBackground: colors.report.pageBackground,
+    canvasBackground: colors.report.canvasBackground,
+    headerBackground: colors.report.headerBackground,
+    dataBackground: colors.report.dataBackground,
+    instrumentBackground: colors.report.instrumentBackground,
+    documentBackground: colors.report.documentBackground,
+    voiceBackground: colors.report.voiceBackground,
+    deviceBackground: colors.report.deviceBackground,
+    rule: colors.report.rule,
+    hairline: colors.report.hairline,
+    measureLine: colors.report.measureLine,
+    measurePoint: colors.report.measurePoint,
+    bleeding: colors.report.bleeding,
+  },
   authGradient: {
     lavenderLight: colors.lavender.light,
     lavender: colors.lavender.DEFAULT,

@@ -112,6 +112,25 @@ export const colors = {
     DEFAULT: '#4C4C56',
     light: '#868691',
   },
+  /**
+   * Report / clinical surfaces (CSS vars from the report design sheet).
+   * Prefer these for report screens and matching marketing washes.
+   */
+  report: {
+    pageBackground: '#FFFFFF',
+    canvasBackground: '#E9E5E0',
+    headerBackground: '#E8DCE5',
+    dataBackground: '#EBF0F6',
+    instrumentBackground: '#F1E9F4',
+    documentBackground: '#F7F2EC',
+    voiceBackground: '#F5ECF0',
+    deviceBackground: 'rgba(255, 255, 255, 0.62)',
+    rule: 'rgba(92, 66, 87, 0.12)',
+    hairline: 'rgba(92, 66, 87, 0.08)',
+    measureLine: '#A9B8D0',
+    measurePoint: '#6F87AE',
+    bleeding: '#B07A8C',
+  },
   background: {
     DEFAULT: '#F8F5F1',
     dark: '#0A0A0A',

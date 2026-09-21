@@ -6,6 +6,7 @@ import {
   resolveCachedPostAuthDestination,
   resolvePostAuthDestination,
 } from '@/lib/auth/postAuthDestination';
+import { getIntroCompleted } from '@/lib/intro/introStorage';
 import { ROUTES } from '@/lib/routes';
 
 /**
@@ -23,8 +24,23 @@ export const useColdStartDestination = (): Href | null => {
     }
 
     if (!isSignedIn) {
-      setDestination(ROUTES.welcome);
-      return;
+      let isActive = true;
+
+      const resolveSignedOut = async () => {
+        const introDone = await getIntroCompleted();
+
+        if (!isActive) {
+          return;
+        }
+
+        setDestination(introDone ? ROUTES.welcome : ROUTES.intro);
+      };
+
+      void resolveSignedOut();
+
+      return () => {
+        isActive = false;
+      };
     }
 
     let isActive = true;

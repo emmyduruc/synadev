@@ -1,4 +1,5 @@
 export const ROUTES = {
+  intro: '/intro',
   welcome: '/welcome',
   register: '/register',
   login: '/login',
