@@ -21,7 +21,7 @@ export const useIntroFlow = () => {
     }
 
     await setIntroCompleted();
-    router.replace(ROUTES.welcome);
+    router.replace(ROUTES.register);
   }, [isLastStep, router]);
 
   return {

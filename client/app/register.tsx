@@ -1,4 +1,3 @@
-import { Link } from 'expo-router';
 import { useState } from 'react';
 
 import { AuthGlassCard } from '@/components/auth/AuthGlassCard';
@@ -6,7 +5,6 @@ import { AuthGradientLayout } from '@/components/auth/AuthGradientLayout';
 import { AuthHero } from '@/components/auth/AuthHero';
 import { RegisterCredentialsStep } from '@/components/auth/RegisterCredentialsStep';
 import { RegisterVerificationStep } from '@/components/auth/RegisterVerificationStep';
-import { Box, Text, TouchableOpacity } from '@/components/ui';
 import { useTranslate } from '@/hooks/useTranslate';
 import { ROUTES } from '@/lib/routes';
 
@@ -20,8 +18,12 @@ const RegisterScreen = () => {
   }
 
   return (
-    <AuthGradientLayout header={{ title: t('register_title'), fallbackHref: ROUTES.welcome }}>
-      <AuthHero headline={t('register_headline')} subtitle={t('register_subtitle')} />
+    <AuthGradientLayout header={{ title: '', fallbackHref: ROUTES.welcome }}>
+      <AuthHero
+        align="left"
+        headline={t('register_headline')}
+        bodyLines={[t('register_body_primary'), t('register_body_secondary')]}
+      />
 
       <AuthGlassCard>
         <RegisterCredentialsStep
@@ -31,19 +33,6 @@ const RegisterScreen = () => {
           }}
         />
       </AuthGlassCard>
-
-      <Box direction="row" justify="center" align="center" className="mt-6">
-        <Text size="sm" color="foreground-muted">
-          {t('register_has_account')}{' '}
-        </Text>
-        <Link href={ROUTES.login} asChild>
-          <TouchableOpacity>
-            <Text size="sm" weight="semibold" color="primary" className="underline">
-              {t('register_login_link')}
-            </Text>
-          </TouchableOpacity>
-        </Link>
-      </Box>
     </AuthGradientLayout>
   );
 };
