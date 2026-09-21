@@ -7,6 +7,8 @@ export const ROUTES = {
   home: '/(tabs)',
   onboarding: {
     bioData: '/onboarding/bio-data',
+    connectHealth: '/onboarding/connect-health',
+    healthPermissions: '/onboarding/health-permissions',
   },
   assessment: {
     mrsIi: '/assessment/mrs-ii',

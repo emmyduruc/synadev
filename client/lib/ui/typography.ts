@@ -5,6 +5,9 @@
  */
 export const DEFAULT_MAX_FONT_SIZE_MULTIPLIER = 1.2;
 
+/** Shared onboarding / auth headline size (design: 25px semibold). */
+export const SCREEN_HEADLINE_FONT_SIZE_PX = 25;
+
 /**
  * Max logical width used when scaling font tokens with moderateScale.
  * Keeps type from growing with tablet / large-phone widths; layout may still scale.

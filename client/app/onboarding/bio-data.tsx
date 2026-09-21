@@ -23,7 +23,7 @@ const BioDataOnboardingScreen = () => {
   const handleComplete = useCallback(
     async (nextBioData: BioData) => {
       await persist(nextBioData);
-      router.replace(ROUTES.home);
+      router.replace(ROUTES.onboarding.connectHealth);
     },
     [persist, router],
   );

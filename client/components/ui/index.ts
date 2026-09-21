@@ -18,6 +18,9 @@ export type { BannerProps } from './Banner';
 export { AppHeader } from './AppHeader';
 export type { AppHeaderProps } from './AppHeader';
 
+export { ScreenHero } from './ScreenHero';
+export type { ScreenHeroProps } from './ScreenHero';
+
 export { BackButton } from './BackButton';
 export type { BackButtonProps } from './BackButton';
 

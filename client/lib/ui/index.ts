@@ -42,6 +42,7 @@ export {
 export {
   DEFAULT_MAX_FONT_SIZE_MULTIPLIER,
   FONT_SCALE_MAX_WIDTH,
+  SCREEN_HEADLINE_FONT_SIZE_PX,
 } from './typography';
 export { useResponsiveFontSize, useResponsiveScale } from './useResponsiveScale';
 export { hiddenOtpInputStyle } from './nativeOnlyStyles';

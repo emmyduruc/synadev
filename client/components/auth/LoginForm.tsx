@@ -1,10 +1,8 @@
 import { AuthGradientLayout } from '@/components/auth/AuthGradientLayout';
-import { AuthHero } from '@/components/auth/AuthHero';
 import { LoginCredentialsFields } from '@/components/auth/LoginCredentialsFields';
-import { Box, Button } from '@/components/ui';
+import { Box, Button, ScreenHero } from '@/components/ui';
 import { useLoginCredentials } from '@/hooks/useLoginCredentials';
 import { useTranslate } from '@/hooks/useTranslate';
-import { AUTH_HEADLINE_FONT_SIZE_PX } from '@/lib/auth/constants';
 import { ROUTES } from '@/lib/routes';
 
 export type LoginFormProps = {
@@ -32,11 +30,8 @@ export const LoginForm = ({ onVerificationRequired }: LoginFormProps) => {
         </Box>
       )}
     >
-      <AuthHero
-        align="left"
+      <ScreenHero
         headline={t('login_welcome_back')}
-        headlineWeight="semibold"
-        headlineFontSizePx={AUTH_HEADLINE_FONT_SIZE_PX}
         bodyLines={[t('login_subtitle')]}
       />
 

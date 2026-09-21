@@ -1,9 +1,7 @@
 import { AuthGradientLayout } from '@/components/auth/AuthGradientLayout';
-import { AuthHero } from '@/components/auth/AuthHero';
-import { Box, Button, FormField, Text } from '@/components/ui';
+import { Box, Button, FormField, ScreenHero, Text } from '@/components/ui';
 import { useBioDetailsForm } from '@/hooks/useBioDetailsForm';
 import { useTranslate } from '@/hooks/useTranslate';
-import { AUTH_HEADLINE_FONT_SIZE_PX } from '@/lib/auth/constants';
 import type { BioData } from '@/lib/profile/bioDataStorage';
 import { ROUTES } from '@/lib/routes';
 
@@ -30,11 +28,8 @@ export const BioDetailsForm = ({ initialBioData, onComplete }: BioDetailsFormPro
         </Box>
       )}
     >
-      <AuthHero
-        align="left"
+      <ScreenHero
         headline={t('bio_details_headline')}
-        headlineWeight="semibold"
-        headlineFontSizePx={AUTH_HEADLINE_FONT_SIZE_PX}
         bodyLines={[t('bio_details_body')]}
       />
 

@@ -1,10 +1,8 @@
 import { AuthGradientLayout } from '@/components/auth/AuthGradientLayout';
-import { AuthHero } from '@/components/auth/AuthHero';
 import { RegisterCredentialsFields } from '@/components/auth/RegisterCredentialsFields';
-import { Box, Button } from '@/components/ui';
+import { Box, Button, ScreenHero } from '@/components/ui';
 import { useRegisterCredentials } from '@/hooks/useRegisterCredentials';
 import { useTranslate } from '@/hooks/useTranslate';
-import { AUTH_HEADLINE_FONT_SIZE_PX } from '@/lib/auth/constants';
 import { ROUTES } from '@/lib/routes';
 
 export type RegisterFormProps = {
@@ -34,11 +32,8 @@ export const RegisterForm = ({ onVerificationRequired }: RegisterFormProps) => {
         </Box>
       )}
     >
-      <AuthHero
-        align="left"
+      <ScreenHero
         headline={t('register_headline')}
-        headlineWeight="semibold"
-        headlineFontSizePx={AUTH_HEADLINE_FONT_SIZE_PX}
         bodyLines={[t('register_body_primary')]}
       />
 

@@ -31,6 +31,20 @@ export const RootLayoutNav = () => {
           }}
         />
         <Stack.Screen
+          name="onboarding/connect-health"
+          options={{
+            presentation: 'fullScreenModal',
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="onboarding/health-permissions"
+          options={{
+            presentation: 'fullScreenModal',
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
           name="calendar/index"
           options={{
             presentation: 'fullScreenModal',
