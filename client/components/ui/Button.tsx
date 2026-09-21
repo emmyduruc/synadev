@@ -75,7 +75,7 @@ export const Button = ({
           {leftIcon ? <Box className="mr-2">{leftIcon}</Box> : null}
           <Text
             size={buttonLabelSize[size]}
-            weight="semibold"
+            weight="medium"
             align="center"
             responsive={false}
             numberOfLines={1}

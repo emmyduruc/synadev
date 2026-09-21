@@ -14,6 +14,7 @@ import { FONT_FAMILY } from '@/lib/fonts/constants';
 import {
   borderColorClasses,
   cn,
+  DEFAULT_MAX_FONT_SIZE_MULTIPLIER,
   inputPaddingClasses,
   inputSizeClasses,
   radiusClasses,
@@ -111,6 +112,7 @@ export const TextInput = ({
   multiline = false,
   onFocus,
   onBlur,
+  maxFontSizeMultiplier = DEFAULT_MAX_FONT_SIZE_MULTIPLIER,
   ...props
 }: TextInputProps) => {
   const inputRef = useRef<RNTextInput>(null);
@@ -173,6 +175,7 @@ export const TextInput = ({
           autoFocus={autoFocus}
           multiline
           textAlignVertical="top"
+          maxFontSizeMultiplier={maxFontSizeMultiplier}
           onFocus={handleFocus}
           onBlur={handleBlur}
           {...props}
@@ -204,6 +207,7 @@ export const TextInput = ({
             editable={!disabled}
             placeholderTextColor={semanticColors.placeholder}
             autoFocus={autoFocus}
+            maxFontSizeMultiplier={maxFontSizeMultiplier}
             onFocus={handleFocus}
             onBlur={handleBlur}
             {...props}

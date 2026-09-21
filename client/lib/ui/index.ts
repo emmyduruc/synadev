@@ -39,5 +39,9 @@ export {
   semanticColors,
   TOUCHABLE_ACTIVE_OPACITY,
 } from './semanticColors';
+export {
+  DEFAULT_MAX_FONT_SIZE_MULTIPLIER,
+  FONT_SCALE_MAX_WIDTH,
+} from './typography';
 export { useResponsiveFontSize, useResponsiveScale } from './useResponsiveScale';
 export { hiddenOtpInputStyle } from './nativeOnlyStyles';

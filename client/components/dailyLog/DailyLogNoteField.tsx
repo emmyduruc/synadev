@@ -1,7 +1,7 @@
 import { TextInput as RNTextInput } from 'react-native';
 
 import { FONT_FAMILY } from '@/lib/fonts/constants';
-import { semanticColors } from '@/lib/ui';
+import { DEFAULT_MAX_FONT_SIZE_MULTIPLIER, semanticColors } from '@/lib/ui';
 
 export type DailyLogNoteFieldProps = {
   value: string;
@@ -21,6 +21,7 @@ export const DailyLogNoteField = ({
     placeholderTextColor={semanticColors.placeholder}
     multiline
     textAlignVertical="top"
+    maxFontSizeMultiplier={DEFAULT_MAX_FONT_SIZE_MULTIPLIER}
     className="min-h-24 rounded-2xl border border-white bg-card px-4 py-3 font-sans text-base text-foreground"
     style={{ fontFamily: FONT_FAMILY.regular }}
   />

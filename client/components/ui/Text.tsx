@@ -4,6 +4,7 @@ import { Text as RNText, type TextProps as RNTextProps } from 'react-native';
 import {
   cn,
   colorClasses,
+  DEFAULT_MAX_FONT_SIZE_MULTIPLIER,
   fontFamilyByWeight,
   fontSizeClasses,
   fontWeightClasses,
@@ -46,6 +47,7 @@ export const Text = ({
   responsive = true,
   className,
   style,
+  maxFontSizeMultiplier = DEFAULT_MAX_FONT_SIZE_MULTIPLIER,
   ...props
 }: TextProps) => {
   const scaledFontSize = useResponsiveFontSize(size, responsive);
@@ -69,7 +71,8 @@ export const Text = ({
         { fontFamily: fontFamilyByWeight[weight] },
         style,
       ]}
-      {...props}>
+      {...props}
+      maxFontSizeMultiplier={maxFontSizeMultiplier}>
       {children}
     </RNText>
   );

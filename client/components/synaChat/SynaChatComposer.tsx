@@ -8,7 +8,7 @@ import { useKeyboardInset } from '@/hooks/useKeyboardInset';
 import { useTranslate } from '@/hooks/useTranslate';
 import { FONT_FAMILY } from '@/lib/fonts/constants';
 import { getSynaTabBarOccupiedHeight } from '@/lib/navigation/constants';
-import { cn, semanticColors } from '@/lib/ui';
+import { cn, DEFAULT_MAX_FONT_SIZE_MULTIPLIER, semanticColors } from '@/lib/ui';
 
 const COMPOSER_RESTING_PADDING = 10;
 const COMPOSER_KEYBOARD_GAP = 8;
@@ -55,6 +55,7 @@ export const SynaChatComposer = ({
           maxLength={2000}
           blurOnSubmit={false}
           returnKeyType="default"
+          maxFontSizeMultiplier={DEFAULT_MAX_FONT_SIZE_MULTIPLIER}
           className={cn(
             'max-h-28 min-h-11 flex-1 px-3 py-2.5 font-sans text-base text-foreground',
           )}
