@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Keyboard, Platform, ScrollView, View } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 
 import { KeyboardStickyFooter } from '@/components/layout/KeyboardStickyFooter';
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
@@ -23,6 +23,7 @@ export const AuthGradientLayout = ({
   footer,
 }: AuthGradientLayoutProps) => {
   const keyboardInset = useKeyboardInset();
+  const hasStickyFooter = Boolean(footer);
 
   const content = (
     <Box flex={1} paddingX="lg" paddingY="md" className="mx-auto w-full max-w-md">
@@ -30,11 +31,23 @@ export const AuthGradientLayout = ({
     </Box>
   );
 
+  const scrollPaddingBottom = (() => {
+    if (hasStickyFooter) {
+      return 24;
+    }
+
+    if (keyboardInset > 0) {
+      return keyboardInset + 24;
+    }
+
+    return 24;
+  })();
+
   const body = scrollable ? (
     <ScrollView
       contentContainerStyle={{
         flexGrow: 1,
-        paddingBottom: keyboardInset > 0 ? keyboardInset + 24 : 24,
+        paddingBottom: scrollPaddingBottom,
       }}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
@@ -45,21 +58,37 @@ export const AuthGradientLayout = ({
     content
   );
 
+  const chrome = (
+    <>
+      {header ? (
+        <AppHeader
+          title={header.title}
+          showBack={header.showBack}
+          fallbackHref={header.fallbackHref}
+          right={header.right}
+        />
+      ) : null}
+
+      <View style={{ flex: 1 }}>{body}</View>
+
+      {footer ? <KeyboardStickyFooter>{footer}</KeyboardStickyFooter> : null}
+    </>
+  );
+
   return (
     <SynaGradientBackground>
       <SafeAreaScreen edges={SAFE_AREA_EDGES.top} style={{ backgroundColor: 'transparent' }}>
-        {header ? (
-          <AppHeader
-            title={header.title}
-            showBack={header.showBack}
-            fallbackHref={header.fallbackHref}
-            right={header.right}
-          />
-        ) : null}
-
-        <View style={{ flex: 1 }}>{body}</View>
-
-        {footer ? <KeyboardStickyFooter>{footer}</KeyboardStickyFooter> : null}
+        {hasStickyFooter ? (
+          <View style={{ flex: 1 }}>{chrome}</View>
+        ) : (
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
+          >
+            {chrome}
+          </KeyboardAvoidingView>
+        )}
       </SafeAreaScreen>
     </SynaGradientBackground>
   );

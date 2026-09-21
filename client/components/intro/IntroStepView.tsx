@@ -45,7 +45,7 @@ export const IntroStepView = ({
           <Box flex={1} className="px-1">
             <Text
               size="2xl"
-              weight="bold"
+              weight="semibold"
               align="center"
               color="foreground"
               className="mb-3 leading-snug"

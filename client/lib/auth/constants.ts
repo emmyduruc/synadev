@@ -1,3 +1,6 @@
+/** Auth screen headline size shared by register / login (design: 25px semibold). */
+export const AUTH_HEADLINE_FONT_SIZE_PX = 25;
+
 export const AUTH_PROVIDER = {
   google: 'google',
   apple: 'apple',
