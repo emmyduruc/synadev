@@ -6,9 +6,6 @@ export type IntroStepConfig = {
   bodyKey: string;
 };
 
-/**
- * Conversion intro steps. Step 3 will be appended when its design lands.
- */
 export const INTRO_STEPS: readonly IntroStepConfig[] = [
   {
     id: INTRO_STEP.feeling,
@@ -19,5 +16,10 @@ export const INTRO_STEPS: readonly IntroStepConfig[] = [
     id: INTRO_STEP.timeline,
     titleKey: 'intro_step_timeline_title',
     bodyKey: 'intro_step_timeline_body',
+  },
+  {
+    id: INTRO_STEP.appointment,
+    titleKey: 'intro_step_appointment_title',
+    bodyKey: 'intro_step_appointment_body',
   },
 ] as const;

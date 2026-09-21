@@ -10,6 +10,7 @@ export type IntroStepViewProps = {
   currentStep: number;
   titleKey: string;
   bodyKey: string;
+  ctaKey: string;
   illustration: ReactNode;
   onFurther: () => void;
 };
@@ -18,6 +19,7 @@ export const IntroStepView = ({
   currentStep,
   titleKey,
   bodyKey,
+  ctaKey,
   illustration,
   onFurther,
 }: IntroStepViewProps) => {
@@ -51,7 +53,7 @@ export const IntroStepView = ({
               {t(titleKey)}
             </Text>
             <Text
-              size="base"
+              size="sm"
               weight="normal"
               align="center"
               color="foreground"
@@ -64,7 +66,7 @@ export const IntroStepView = ({
           </Box>
 
           <Button fullWidth size="lg" onPress={onFurther}>
-            {t('intro_further_button')}
+            {t(ctaKey)}
           </Button>
         </Box>
       </SafeAreaScreen>

@@ -28,6 +28,7 @@ export const useIntroFlow = () => {
     currentStep: stepIndex + 1,
     titleKey: step.titleKey,
     bodyKey: step.bodyKey,
+    ctaKey: isLastStep ? 'intro_get_started_button' : 'intro_further_button',
     Illustration,
     goFurther,
   };
