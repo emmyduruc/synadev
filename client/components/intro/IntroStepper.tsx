@@ -19,7 +19,7 @@ export const IntroStepper = ({ currentStep }: IntroStepperProps) => (
 
       return <Box key={stepNumber} className="h-1.5 w-1.5 rounded-full bg-neutral-300" />;
     })}
-    <Text size="xs" color="foreground-muted" className="ml-1">
+    <Text size="xs" color="foreground" className="ml-1">
       {`${currentStep}/${INTRO_TOTAL_STEPS}`}
     </Text>
   </Box>

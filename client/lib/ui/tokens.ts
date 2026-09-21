@@ -22,7 +22,8 @@ export const fontFamilyByWeight: Record<FontWeight, string> = {
   normal: FONT_FAMILY.regular,
   medium: FONT_FAMILY.medium,
   semibold: FONT_FAMILY.semibold,
-  bold: FONT_FAMILY.bold,
+  /** Design system uses semibold for emphasis; bold maps to the same face. */
+  bold: FONT_FAMILY.semibold,
 };
 
 export const spacingClasses: Record<Spacing, string> = {
@@ -105,7 +106,8 @@ export const fontWeightClasses: Record<FontWeight, string> = {
   normal: 'font-sans',
   medium: 'font-sans-medium',
   semibold: 'font-sans-semibold',
-  bold: 'font-sans-bold',
+  /** Matches fontFamilyByWeight: bold renders as semibold. */
+  bold: 'font-sans-semibold',
 };
 
 export const textAlignClasses: Record<TextAlign, string> = {

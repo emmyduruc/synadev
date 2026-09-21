@@ -5,18 +5,13 @@ import { semanticColors } from '@/lib/ui';
 
 export type HealthPermissionToggleRowProps = {
   label: string;
-  value: boolean;
-  disabled?: boolean;
   showDivider?: boolean;
-  onValueChange: (next: boolean) => void;
 };
 
+/** Read-only preview row (always on). Hint for the OS health permission sheet. */
 export const HealthPermissionToggleRow = ({
   label,
-  value,
-  disabled = false,
   showDivider = true,
-  onValueChange,
 }: HealthPermissionToggleRowProps) => (
   <Box
     direction="row"
@@ -24,16 +19,15 @@ export const HealthPermissionToggleRow = ({
     justify="between"
     className={showDivider ? 'border-b border-border py-3.5' : 'py-3.5'}
   >
-    <Text size="base" className="flex-1 pr-3 text-foreground">
+    <Text size="base" color="foreground" className="flex-1 pr-3">
       {label}
     </Text>
     <Switch
-      value={value}
-      disabled={disabled}
-      onValueChange={onValueChange}
+      value
+      disabled
       trackColor={{
         false: semanticColors.muted,
-        true: semanticColors.foreground,
+        true: semanticColors.report.bleeding,
       }}
       thumbColor={semanticColors.card}
       ios_backgroundColor={semanticColors.muted}

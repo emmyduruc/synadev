@@ -49,7 +49,7 @@ export const ScreenHero = ({
       </Text>
     ))}
     {subtitle ? (
-      <Text size="base" color="foreground-muted" align={align} className="leading-relaxed">
+      <Text size="base" color="foreground" align={align} className="leading-relaxed">
         {subtitle}
       </Text>
     ) : null}

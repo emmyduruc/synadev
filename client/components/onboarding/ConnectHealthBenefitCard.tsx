@@ -27,7 +27,7 @@ export const ConnectHealthBenefitCard = ({
       <Text size="base" weight="semibold" className="text-foreground">
         {title}
       </Text>
-      <Text size="sm" color="foreground-muted" className="leading-relaxed">
+      <Text size="sm" color="foreground" className="leading-relaxed">
         {description}
       </Text>
       {highlight ? (

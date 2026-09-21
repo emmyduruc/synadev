@@ -61,7 +61,7 @@ export const VerificationCodeStep = ({
         />
 
         <Box gap="xs">
-          <Text size="sm" color="foreground-muted">
+          <Text size="sm" color="foreground">
             {t('verification_code_resend_prompt')}
           </Text>
           <TouchableOpacity
@@ -79,7 +79,7 @@ export const VerificationCodeStep = ({
           <TouchableOpacity
             disabled={isSubmitting}
             onPress={onStartOver}>
-            <Text size="xs" weight="semibold" color="foreground-muted" className="underline">
+            <Text size="xs" weight="semibold" color="foreground" className="underline">
               {t('login_start_over_button')}
             </Text>
           </TouchableOpacity>

@@ -37,7 +37,7 @@ export const ConnectHealthOnboarding = () => {
           >
             {t('connect_health_skip_button')}
           </Button>
-          <Text size="xs" color="foreground-muted" align="center" className="mt-1">
+          <Text size="xs" color="foreground" align="center" className="mt-1">
             {t('connect_health_footer_note')}
           </Text>
         </Box>
@@ -67,7 +67,7 @@ export const ConnectHealthOnboarding = () => {
           description={t('connect_health_activity_description')}
         />
 
-        <Text size="sm" color="foreground-muted" className="mt-2 leading-relaxed">
+        <Text size="sm" color="foreground" className="mt-2 leading-relaxed">
           {t('connect_health_decision_body')}
         </Text>
       </Box>

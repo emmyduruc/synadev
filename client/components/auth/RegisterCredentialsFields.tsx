@@ -92,7 +92,7 @@ export const RegisterCredentialsFields = ({
             hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
             onPress={onTogglePasswordVisibility}
           >
-            <EyeIcon crossed={isPasswordVisible} color={semanticColors.foregroundMuted} />
+            <EyeIcon crossed={isPasswordVisible} color={semanticColors.foreground} />
           </TouchableOpacity>
         )}
       />

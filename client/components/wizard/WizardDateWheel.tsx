@@ -72,7 +72,7 @@ export const WizardDateWheel = ({
 
   return (
     <Box fullWidth gap="md">
-      <Text size="sm" color="foreground-muted" align="center">
+      <Text size="sm" color="foreground" align="center">
         {t('wizard_date_of_birth_age_hint')}
       </Text>
 

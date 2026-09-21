@@ -16,7 +16,7 @@ export type BackButtonProps = {
 export const BackButton = ({
   fallbackHref = ROUTES.welcome,
   onPress,
-  iconColor = semanticColors.foregroundMuted,
+  iconColor = semanticColors.foreground,
 }: BackButtonProps) => {
   const router = useRouter();
   const { t } = useTranslate();

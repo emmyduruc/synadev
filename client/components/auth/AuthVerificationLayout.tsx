@@ -37,7 +37,7 @@ export const AuthVerificationLayout = ({
             {title}
           </Text>
           {subtitle ? (
-            <Text size="sm" color="foreground-muted">
+            <Text size="sm" color="foreground">
               {subtitle}
             </Text>
           ) : null}

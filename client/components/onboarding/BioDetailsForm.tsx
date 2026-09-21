@@ -1,4 +1,5 @@
 import { AuthGradientLayout } from '@/components/auth/AuthGradientLayout';
+import { BioBirthDateField } from '@/components/onboarding/BioBirthDateField';
 import { Box, Button, FormField, ScreenHero, Text } from '@/components/ui';
 import { useBioDetailsForm } from '@/hooks/useBioDetailsForm';
 import { useTranslate } from '@/hooks/useTranslate';
@@ -52,18 +53,10 @@ export const BioDetailsForm = ({ initialBioData, onComplete }: BioDetailsFormPro
           textContentType="familyName"
           returnKeyType="next"
         />
-        <FormField
-          control={control}
-          name="yearOfBirth"
-          label={t('bio_details_year_of_birth_label')}
-          placeholder={t('bio_details_year_of_birth_placeholder')}
-          keyboardType="number-pad"
-          maxLength={4}
-          returnKeyType="done"
-          onSubmitEditing={submit}
-        />
 
-        <Text size="sm" color="foreground-muted" className="mt-1">
+        <BioBirthDateField control={control} />
+
+        <Text size="sm" color="foreground" className="mt-1">
           {t('bio_details_profile_note')}
         </Text>
       </Box>

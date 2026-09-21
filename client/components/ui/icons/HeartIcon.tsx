@@ -7,15 +7,17 @@ export type HeartIconProps = {
   color?: string;
 };
 
+/** Outline heart for auth / health permission chrome. */
 export const HeartIcon = ({
   size = 24,
   color = semanticColors.foreground,
 }: HeartIconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path
-      d="M12 20.5C16.5 17.5 19.5 14.2 19.5 10.5C19.5 7.46 16.54 5 12 5C7.46 5 4.5 7.46 4.5 10.5C4.5 14.2 7.5 17.5 12 20.5Z"
+      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
       stroke={color}
       strokeWidth={1.8}
+      strokeLinecap="round"
       strokeLinejoin="round"
     />
   </Svg>

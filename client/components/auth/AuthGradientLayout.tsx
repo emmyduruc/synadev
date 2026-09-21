@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { KeyboardStickyFooter } from '@/components/layout/KeyboardStickyFooter';
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
@@ -23,6 +24,7 @@ export const AuthGradientLayout = ({
   footer,
 }: AuthGradientLayoutProps) => {
   const keyboardInset = useKeyboardInset();
+  const insets = useSafeAreaInsets();
   const hasStickyFooter = Boolean(footer);
 
   const content = (
@@ -61,12 +63,14 @@ export const AuthGradientLayout = ({
   const chrome = (
     <>
       {header ? (
-        <AppHeader
-          title={header.title}
-          showBack={header.showBack}
-          fallbackHref={header.fallbackHref}
-          right={header.right}
-        />
+        <View style={{ paddingTop: Math.max(insets.top, 8) }}>
+          <AppHeader
+            title={header.title}
+            showBack={header.showBack}
+            fallbackHref={header.fallbackHref}
+            right={header.right}
+          />
+        </View>
       ) : null}
 
       <View style={{ flex: 1 }}>{body}</View>
@@ -77,7 +81,7 @@ export const AuthGradientLayout = ({
 
   return (
     <SynaGradientBackground>
-      <SafeAreaScreen edges={SAFE_AREA_EDGES.top} style={{ backgroundColor: 'transparent' }}>
+      <SafeAreaScreen edges={SAFE_AREA_EDGES.none} style={{ backgroundColor: 'transparent' }}>
         {hasStickyFooter ? (
           <View style={{ flex: 1 }}>{chrome}</View>
         ) : (

@@ -7,7 +7,7 @@ export const AuthDivider = () => {
   return (
     <Box direction="row" align="center" className="w-full py-1">
       <Box flex={1} className="h-px bg-lavender" />
-      <Text size="xs" color="foreground-muted" className="px-4">
+      <Text size="xs" color="foreground" className="px-4">
         {t('auth_divider_or')}
       </Text>
       <Box flex={1} className="h-px bg-lavender" />

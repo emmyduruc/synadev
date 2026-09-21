@@ -75,7 +75,7 @@ export const IntroTimelineIllustration = () => {
           ))}
         </Box>
 
-        <Text size="xs" color="foreground-muted" align="center" className="mt-4">
+        <Text size="xs" color="foreground" align="center" className="mt-4">
           {t('intro_timeline_days_label')}
         </Text>
       </Box>

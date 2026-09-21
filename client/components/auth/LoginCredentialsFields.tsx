@@ -58,13 +58,13 @@ export const LoginCredentialsFields = ({
             hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
             onPress={onTogglePasswordVisibility}
           >
-            <EyeIcon crossed={isPasswordVisible} color={semanticColors.foregroundMuted} />
+            <EyeIcon crossed={isPasswordVisible} color={semanticColors.foreground} />
           </TouchableOpacity>
         )}
       />
 
       <Box direction="row" justify="center" align="center">
-        <Text size="xs" color="foreground-muted">
+        <Text size="xs" color="foreground">
           {t('login_forgot_prefix')}
         </Text>
         <Link href={ROUTES.forgotPassword} asChild>
@@ -74,13 +74,13 @@ export const LoginCredentialsFields = ({
             </Text>
           </TouchableOpacity>
         </Link>
-        <Text size="xs" color="foreground-muted">
+        <Text size="xs" color="foreground">
           {t('login_forgot_suffix')}
         </Text>
       </Box>
 
       <Box direction="row" justify="center" align="center" className="mt-2">
-        <Text size="sm" color="foreground-muted">
+        <Text size="sm" color="foreground">
           {t('login_new_to_syna')}{' '}
         </Text>
         <Link href={ROUTES.register} asChild>

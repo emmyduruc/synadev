@@ -62,7 +62,7 @@ const resolveFooter = (
 
   if (helperText) {
     return (
-      <Text size="xs" color="foreground-muted" className="mt-1.5">
+      <Text size="xs" color="foreground" className="mt-1.5">
         {helperText}
       </Text>
     );

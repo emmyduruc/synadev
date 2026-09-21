@@ -33,7 +33,7 @@ export const IntroStepView = ({
             <Text
               size="lg"
               weight="medium"
-              color="foreground-muted"
+              color="foreground"
               className="tracking-[0.35em]"
             >
               SYNA
