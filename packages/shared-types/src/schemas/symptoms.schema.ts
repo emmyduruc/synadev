@@ -59,6 +59,7 @@ export const SYMPTOM_IDS = [
   'nocturia',
   'low_libido',
   'unusual_discharge',
+  'pain_on_urination',
   'nausea',
   'bloating',
   'constipation',

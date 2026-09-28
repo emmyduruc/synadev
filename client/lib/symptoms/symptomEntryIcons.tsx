@@ -104,7 +104,19 @@ export const getSymptomEntryIcon = (symptomId: SymptomId): ReactElement => {
     return <HeartIcon size={ICON_SIZE} color={ICON_COLOR} />;
   }
 
-  if (symptomId === 'nocturia' || symptomId === 'bladder_urgency') {
+  if (symptomId === 'dryness') {
+    return <SparkOutlineIcon size={ICON_SIZE} color={ICON_COLOR} />;
+  }
+
+  if (symptomId === 'low_libido') {
+    return <HeartIcon size={ICON_SIZE} color={ICON_COLOR} />;
+  }
+
+  if (
+    symptomId === 'nocturia'
+    || symptomId === 'bladder_urgency'
+    || symptomId === 'pain_on_urination'
+  ) {
     return <DropletIcon size={ICON_SIZE} color={ICON_COLOR} />;
   }
 

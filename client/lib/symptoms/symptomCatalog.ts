@@ -104,12 +104,10 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
     sectionClassName: 'border-secondary-200 bg-secondary-50',
     wellClassName: 'bg-secondary-200',
     options: [
-      { id: 'vaginal_dryness', emoji: '🌵', labelKey: 'symptom_vaginal_dryness' },
-      { id: 'vaginal_itching', emoji: '🌿', labelKey: 'symptom_vaginal_itching' },
-      { id: 'bladder_urgency', emoji: '🚻', labelKey: 'symptom_bladder_urgency' },
-      { id: 'low_libido', emoji: '🌙', labelKey: 'symptom_low_libido' },
-      { id: 'dryness', emoji: '🌵', labelKey: 'symptom_dryness' },
-      { id: 'unusual_discharge', emoji: '💠', labelKey: 'symptom_unusual_discharge' },
+      { id: 'dryness', emoji: '✨', labelKey: 'symptom_dryness' },
+      { id: 'low_libido', emoji: '❤️', labelKey: 'symptom_low_libido' },
+      { id: 'bladder_urgency', emoji: '💧', labelKey: 'symptom_bladder_urgency' },
+      { id: 'pain_on_urination', emoji: '💧', labelKey: 'symptom_pain_on_urination' },
     ],
   },
   {

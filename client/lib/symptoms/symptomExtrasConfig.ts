@@ -446,6 +446,127 @@ export const SYMPTOM_EXTRAS_CONFIG: Partial<Record<SymptomId, readonly SymptomEx
   ],
   bloating: DIGESTION_EXTRAS,
   digestive_patterns: DIGESTION_EXTRAS,
+  bleeding: [
+    {
+      key: 'days_so_far',
+      labelKey: 'symptom_extra_bleeding_days_so_far',
+      layout: 'grid',
+      options: [
+        { value: '1', labelKey: 'symptom_extra_bleeding_days_1' },
+        { value: '2', labelKey: 'symptom_extra_bleeding_days_2' },
+        { value: '3', labelKey: 'symptom_extra_bleeding_days_3' },
+        { value: '4', labelKey: 'symptom_extra_bleeding_days_4' },
+        { value: '5', labelKey: 'symptom_extra_bleeding_days_5' },
+        { value: '6', labelKey: 'symptom_extra_bleeding_days_6' },
+        { value: '7', labelKey: 'symptom_extra_bleeding_days_7' },
+        { value: '8_plus', labelKey: 'symptom_extra_bleeding_days_8_plus' },
+      ],
+    },
+    {
+      key: 'flow_strength',
+      labelKey: 'symptom_extra_bleeding_how_strong',
+      layout: 'grid',
+      options: [
+        { value: 'light', labelKey: 'symptom_extra_bleeding_strength_light' },
+        { value: 'normal', labelKey: 'symptom_extra_bleeding_strength_normal' },
+        { value: 'heavy', labelKey: 'symptom_extra_bleeding_strength_heavy' },
+      ],
+    },
+  ],
+  spotting: [
+    {
+      key: 'when_occurred',
+      labelKey: 'symptom_extra_spotting_when_occurred',
+      layout: 'grid',
+      options: [
+        { value: 'cycle_independent', labelKey: 'symptom_extra_spotting_cycle_independent' },
+        { value: 'after_intercourse', labelKey: 'symptom_extra_spotting_after_intercourse' },
+        { value: 'on_hormone_therapy', labelKey: 'symptom_extra_spotting_hormone_therapy' },
+      ],
+    },
+  ],
+  cramps: [
+    {
+      key: 'when_in_cycle',
+      labelKey: 'symptom_extra_cramps_when_in_cycle',
+      layout: 'grid',
+      options: [
+        { value: 'start_only', labelKey: 'symptom_extra_cramps_start_only' },
+        { value: 'whole_cycle', labelKey: 'symptom_extra_cramps_whole_cycle' },
+        { value: 'cycle_independent', labelKey: 'symptom_extra_cramps_cycle_independent' },
+      ],
+    },
+  ],
+  dryness: [
+    {
+      key: 'when_noticeable',
+      labelKey: 'symptom_extra_dryness_when_noticeable',
+      layout: 'grid',
+      options: [
+        { value: 'only_during_sex', labelKey: 'symptom_extra_dryness_only_during_sex' },
+        { value: 'also_daily_life', labelKey: 'symptom_extra_dryness_also_daily_life' },
+        { value: 'both', labelKey: 'symptom_extra_dryness_both' },
+      ],
+    },
+    {
+      key: 'accompanying',
+      labelKey: 'symptom_extra_dryness_accompanying',
+      layout: 'grid',
+      options: [
+        { value: 'burning', labelKey: 'symptom_extra_dryness_burning' },
+        { value: 'itching', labelKey: 'symptom_extra_dryness_itching' },
+        { value: 'pain_during_sex', labelKey: 'symptom_extra_dryness_pain_during_sex' },
+        { value: 'none', labelKey: 'symptom_extra_accompany_none' },
+      ],
+    },
+  ],
+  low_libido: [
+    {
+      key: 'what_changed',
+      labelKey: 'symptom_extra_libido_what_changed',
+      layout: 'grid',
+      options: [
+        { value: 'less_desire', labelKey: 'symptom_extra_libido_less_desire' },
+        { value: 'low_energy', labelKey: 'symptom_extra_libido_low_energy' },
+        { value: 'avoidance_pain', labelKey: 'symptom_extra_libido_avoidance_pain' },
+      ],
+    },
+  ],
+  bladder_urgency: [
+    {
+      key: 'urgency_character',
+      labelKey: 'symptom_extra_urgency_character',
+      layout: 'grid',
+      options: [
+        { value: 'sudden', labelKey: 'symptom_extra_urgency_sudden' },
+        { value: 'frequent_small', labelKey: 'symptom_extra_urgency_frequent_small' },
+        { value: 'normal', labelKey: 'symptom_extra_urgency_normal' },
+      ],
+    },
+    {
+      key: 'involuntary_loss',
+      labelKey: 'symptom_extra_urgency_involuntary_loss',
+      options: YES_NO_OPTIONS,
+    },
+  ],
+  pain_on_urination: [
+    {
+      key: 'burning_or_pain',
+      labelKey: 'symptom_extra_pain_urination_burning_or_pain',
+      options: YES_NO_OPTIONS,
+    },
+    {
+      key: 'noticed',
+      labelKey: 'symptom_extra_pain_urination_noticed',
+      layout: 'grid',
+      options: [
+        { value: 'fever', labelKey: 'symptom_extra_digestion_fever' },
+        { value: 'flank_pain', labelKey: 'symptom_extra_pain_urination_flank_pain' },
+        { value: 'blood_in_urine', labelKey: 'symptom_extra_pain_urination_blood_in_urine' },
+        { value: 'none', labelKey: 'symptom_extra_accompany_none' },
+      ],
+    },
+  ],
 };
 
 export const getSymptomExtrasQuestions = (
