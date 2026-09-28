@@ -1,6 +1,7 @@
 import type { SymptomId } from '@syna/shared-types';
 import { useCallback, useEffect, useState } from 'react';
 
+import { getSymptomFavorites, replaceSymptomFavorites } from '@/lib/api';
 import {
   loadFavoriteSymptomIds,
   saveFavoriteSymptomIds,
@@ -15,14 +16,46 @@ export const useSymptomFavorites = () => {
 
     const load = async () => {
       try {
-        const stored = await loadFavoriteSymptomIds();
+        const { symptomIds } = await getSymptomFavorites();
+
+        if (symptomIds.length > 0) {
+          if (isMounted) {
+            setFavoriteIds(symptomIds);
+          }
+
+          await saveFavoriteSymptomIds(symptomIds);
+          return;
+        }
+
+        // One-time migrate device-local favorites to the API when the server list is empty.
+        const localIds = await loadFavoriteSymptomIds();
+
+        if (localIds.length > 0) {
+          const { symptomIds: saved } = await replaceSymptomFavorites({
+            symptomIds: localIds,
+          });
+
+          if (isMounted) {
+            setFavoriteIds(saved);
+          }
+
+          return;
+        }
 
         if (isMounted) {
-          setFavoriteIds(stored);
+          setFavoriteIds([]);
         }
       } catch {
-        if (isMounted) {
-          setFavoriteIds([]);
+        try {
+          const localIds = await loadFavoriteSymptomIds();
+
+          if (isMounted) {
+            setFavoriteIds(localIds);
+          }
+        } catch {
+          if (isMounted) {
+            setFavoriteIds([]);
+          }
         }
       } finally {
         if (isMounted) {
@@ -39,8 +72,11 @@ export const useSymptomFavorites = () => {
   }, []);
 
   const persist = useCallback(async (nextIds: readonly SymptomId[]) => {
-    await saveFavoriteSymptomIds(nextIds);
-    setFavoriteIds([...nextIds]);
+    const { symptomIds: saved } = await replaceSymptomFavorites({
+      symptomIds: [...nextIds],
+    });
+    setFavoriteIds(saved);
+    await saveFavoriteSymptomIds(saved);
   }, []);
 
   const toggleFavorite = useCallback(

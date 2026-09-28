@@ -50,6 +50,10 @@ export class UserEntity {
   @Column({ name: 'health_record', type: 'jsonb', nullable: true })
   healthRecord!: UserHealthRecord | null;
 
+  /** Favorite symptom ids for quick access on the entry screen. */
+  @Column({ name: 'favorite_symptom_ids', type: 'jsonb', default: () => "'[]'" })
+  favoriteSymptomIds!: string[];
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
 

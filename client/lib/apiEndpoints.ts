@@ -70,6 +70,8 @@ export const SYMPTOM_CATALOG = '/symptoms/catalog';
 export const SYMPTOM_CATALOG_ABSOLUTE = absolute(SYMPTOM_CATALOG);
 export const SYMPTOM_CUSTOM = '/symptoms/custom';
 export const SYMPTOM_CUSTOM_ABSOLUTE = absolute(SYMPTOM_CUSTOM);
+export const SYMPTOM_FAVORITES = '/symptoms/favorites';
+export const SYMPTOM_FAVORITES_ABSOLUTE = absolute(SYMPTOM_FAVORITES);
 export const SYMPTOM_LOGS = '/symptoms/logs';
 export const SYMPTOM_LOGS_ABSOLUTE = absolute(SYMPTOM_LOGS);
 

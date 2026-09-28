@@ -12,6 +12,7 @@ export type SymptomEntryOftenWithYouSectionProps = {
   symptomIds: readonly SymptomId[];
   dayEntries: readonly SymptomDayEntry[] | undefined;
   favoriteIds: readonly SymptomId[];
+  customLabelById?: ReadonlyMap<string, string>;
   onPressSymptom: (symptomId: SymptomId) => void;
   onToggleFavorite: (symptomId: SymptomId) => void;
 };
@@ -20,6 +21,7 @@ export const SymptomEntryOftenWithYouSection = ({
   symptomIds,
   dayEntries,
   favoriteIds,
+  customLabelById,
   onPressSymptom,
   onToggleFavorite,
 }: SymptomEntryOftenWithYouSectionProps) => {
@@ -64,6 +66,7 @@ export const SymptomEntryOftenWithYouSection = ({
                 intensity={entry?.intensity}
                 isSelected={Boolean(entry)}
                 isFavorite={favoriteSet.has(symptomId)}
+                customLabel={customLabelById?.get(symptomId)}
                 onPress={() => onPressSymptom(symptomId)}
                 onToggleFavorite={() => onToggleFavorite(symptomId)}
               />

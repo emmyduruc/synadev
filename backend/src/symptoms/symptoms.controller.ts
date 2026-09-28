@@ -17,8 +17,10 @@ import {
   CreateCustomSymptomDto,
   CustomSymptomDto,
   CustomSymptomsDto,
+  ReplaceSymptomFavoritesDto,
   ReplaceSymptomLogsDto,
   SymptomCatalogDto,
+  SymptomFavoritesDto,
   SymptomLogsDto,
 } from './dto/symptoms.dto';
 import { SymptomsService } from './symptoms.service';
@@ -67,6 +69,33 @@ export class SymptomsController {
     @Body() dto: CreateCustomSymptomDto,
   ): Promise<CustomSymptomDto> {
     return this.symptomsService.createCustomSymptom(clerkUser, dto);
+  }
+
+  @Get('favorites')
+  @ApiOperation({
+    summary: 'List favorite symptoms',
+    description: 'Returns the authenticated user favorite symptom ids for quick access.',
+  })
+  @ApiOkResponse({ description: 'Favorite symptoms', type: SymptomFavoritesDto })
+  @ApiStandardResponses({ unauthorized: true })
+  listFavorites(
+    @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
+  ): Promise<SymptomFavoritesDto> {
+    return this.symptomsService.listFavorites(clerkUser);
+  }
+
+  @Put('favorites')
+  @ApiOperation({
+    summary: 'Replace favorite symptoms',
+    description: 'Replaces the authenticated user favorite symptom id list.',
+  })
+  @ApiOkResponse({ description: 'Updated favorite symptoms', type: SymptomFavoritesDto })
+  @ApiStandardResponses({ unauthorized: true })
+  replaceFavorites(
+    @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
+    @Body() dto: ReplaceSymptomFavoritesDto,
+  ): Promise<SymptomFavoritesDto> {
+    return this.symptomsService.replaceFavorites(clerkUser, dto);
   }
 
   @Get('logs')

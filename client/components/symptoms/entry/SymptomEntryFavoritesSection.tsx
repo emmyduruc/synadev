@@ -10,6 +10,7 @@ import { findDayEntry } from '@/lib/symptoms/symptomEntryHelpers';
 export type SymptomEntryFavoritesSectionProps = {
   favoriteIds: readonly SymptomId[];
   dayEntries: readonly SymptomDayEntry[] | undefined;
+  customLabelById?: ReadonlyMap<string, string>;
   onPressSymptom: (symptomId: SymptomId) => void;
   onToggleFavorite: (symptomId: SymptomId) => void;
   onSelectFavorites?: () => void;
@@ -18,6 +19,7 @@ export type SymptomEntryFavoritesSectionProps = {
 export const SymptomEntryFavoritesSection = ({
   favoriteIds,
   dayEntries,
+  customLabelById,
   onPressSymptom,
   onToggleFavorite,
   onSelectFavorites,
@@ -63,6 +65,7 @@ export const SymptomEntryFavoritesSection = ({
                 intensity={entry?.intensity}
                 isSelected={Boolean(entry)}
                 isFavorite
+                customLabel={customLabelById?.get(symptomId)}
                 onPress={() => onPressSymptom(symptomId)}
                 onToggleFavorite={() => onToggleFavorite(symptomId)}
               />

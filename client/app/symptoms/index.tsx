@@ -323,6 +323,7 @@ const SymptomsScreen = () => {
                 <SymptomEntryFavoritesSection
                   favoriteIds={favoriteIds}
                   dayEntries={dayEntries}
+                  customLabelById={customLabelById}
                   onPressSymptom={handleOpenSymptom}
                   onToggleFavorite={handleToggleFavorite}
                   onSelectFavorites={() => {
@@ -336,6 +337,7 @@ const SymptomsScreen = () => {
                   categoryId={activeFilter}
                   dayEntries={dayEntries}
                   favoriteIds={favoriteIds}
+                  customSymptoms={customSymptoms}
                   onPressSymptom={handleOpenSymptom}
                   onToggleFavorite={handleToggleFavorite}
                 />
@@ -345,6 +347,7 @@ const SymptomsScreen = () => {
                 symptomIds={oftenIds}
                 dayEntries={dayEntries}
                 favoriteIds={favoriteIds}
+                customLabelById={customLabelById}
                 onPressSymptom={handleOpenSymptom}
                 onToggleFavorite={handleToggleFavorite}
               />

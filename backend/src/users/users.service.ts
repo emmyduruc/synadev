@@ -56,6 +56,7 @@ export class UsersService {
       locale: DEFAULT_APP_LOCALE,
       healthMetrics: null,
       healthRecord: null,
+      favoriteSymptomIds: [],
     });
 
     const saved = await this.usersRepository.save(created);
@@ -126,5 +127,31 @@ export class UsersService {
   async resolveUserId(clerkUser: AuthenticatedClerkUser): Promise<string> {
     const user = await this.ensureCurrentUser(clerkUser);
     return user.id;
+  }
+
+  async getFavoriteSymptomIds(clerkUser: AuthenticatedClerkUser): Promise<string[]> {
+    await this.ensureCurrentUser(clerkUser);
+
+    const entity = await this.usersRepository.findOneOrFail({
+      where: { clerkId: clerkUser.clerkId },
+    });
+
+    return Array.isArray(entity.favoriteSymptomIds) ? [...entity.favoriteSymptomIds] : [];
+  }
+
+  async replaceFavoriteSymptomIds(
+    clerkUser: AuthenticatedClerkUser,
+    symptomIds: readonly string[],
+  ): Promise<string[]> {
+    await this.ensureCurrentUser(clerkUser);
+
+    const entity = await this.usersRepository.findOneOrFail({
+      where: { clerkId: clerkUser.clerkId },
+    });
+
+    entity.favoriteSymptomIds = [...symptomIds];
+    const saved = await this.usersRepository.save(entity);
+
+    return Array.isArray(saved.favoriteSymptomIds) ? [...saved.favoriteSymptomIds] : [];
   }
 }

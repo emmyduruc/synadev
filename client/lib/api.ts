@@ -18,11 +18,13 @@ import {
   RegisterPushTokenSchema,
   ReplaceMoodLogsSchema,
   ReplacePeriodDaysSchema,
+  ReplaceSymptomFavoritesSchema,
   ReplaceSymptomLogsSchema,
   SubmitMrsIiAssessmentSchema,
   SubmitPam13AssessmentSchema,
   SubmitPhq2AssessmentSchema,
   SymptomCatalogSchema,
+  SymptomFavoritesSchema,
   SymptomLogsSchema,
   UpdateUserHealthMetricsSchema,
   UpdateUserHealthRecordSchema,
@@ -53,11 +55,13 @@ import type {
   RegisterPushTokenResponse,
   ReplaceMoodLogs,
   ReplacePeriodDays,
+  ReplaceSymptomFavorites,
   ReplaceSymptomLogs,
   SubmitMrsIiAssessment,
   SubmitPam13Assessment,
   SubmitPhq2Assessment,
   SymptomCatalog,
+  SymptomFavorites,
   SymptomLogs,
   UpdateUserHealthMetrics,
   UpdateUserHealthRecord,
@@ -83,6 +87,7 @@ import {
   PERIOD_DAYS,
   SYMPTOM_CATALOG,
   SYMPTOM_CUSTOM,
+  SYMPTOM_FAVORITES,
   SYMPTOM_LOGS,
   USERS_ME,
   USERS_ME_HEALTH_METRICS,
@@ -247,6 +252,24 @@ export const createCustomSymptom = (input: CreateCustomSymptom): Promise<CustomS
     body: input,
     bodySchema: CreateCustomSymptomSchema,
     responseSchema: CustomSymptomSchema,
+  });
+
+export const getSymptomFavorites = (): Promise<SymptomFavorites> =>
+  apiRequest({
+    url: SYMPTOM_FAVORITES,
+    method: 'GET',
+    responseSchema: SymptomFavoritesSchema,
+  });
+
+export const replaceSymptomFavorites = (
+  input: ReplaceSymptomFavorites,
+): Promise<SymptomFavorites> =>
+  apiRequest({
+    url: SYMPTOM_FAVORITES,
+    method: 'PUT',
+    body: input,
+    bodySchema: ReplaceSymptomFavoritesSchema,
+    responseSchema: SymptomFavoritesSchema,
   });
 
 export const getCyclePhase = (): Promise<CyclePhaseSnapshotDto> =>

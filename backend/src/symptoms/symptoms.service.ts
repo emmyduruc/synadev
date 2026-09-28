@@ -6,14 +6,16 @@ import type {
   CreateCustomSymptom,
   CustomSymptom,
   CustomSymptoms,
+  ReplaceSymptomFavorites,
   ReplaceSymptomLogs,
   SymptomCatalog,
   SymptomDayEntry,
+  SymptomFavorites,
   SymptomId,
   SymptomLogMap,
   SymptomLogs,
 } from '@syna/shared-types';
-import { CUSTOM_SYMPTOM_ID_PREFIX, isCustomSymptomId } from '@syna/shared-types';
+import { CUSTOM_SYMPTOM_ID_PREFIX, isCustomSymptomId, isSymptomId } from '@syna/shared-types';
 import { DataSource, IsNull, Repository } from 'typeorm';
 
 import type { AuthenticatedClerkUser } from '../auth/auth.types';
@@ -211,5 +213,25 @@ export class SymptomsService {
     });
 
     return { logs: cleaned };
+  }
+
+  async listFavorites(clerkUser: AuthenticatedClerkUser): Promise<SymptomFavorites> {
+    const ids = await this.usersService.getFavoriteSymptomIds(clerkUser);
+
+    return {
+      symptomIds: ids.filter((id): id is SymptomId => isSymptomId(id)),
+    };
+  }
+
+  async replaceFavorites(
+    clerkUser: AuthenticatedClerkUser,
+    input: ReplaceSymptomFavorites,
+  ): Promise<SymptomFavorites> {
+    const uniqueIds = [...new Set(input.symptomIds)];
+    const saved = await this.usersService.replaceFavoriteSymptomIds(clerkUser, uniqueIds);
+
+    return {
+      symptomIds: saved.filter((id): id is SymptomId => isSymptomId(id)),
+    };
   }
 }
