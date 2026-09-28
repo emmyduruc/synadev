@@ -8,6 +8,7 @@ import { FlameIcon } from '@/components/ui/icons/FlameIcon';
 import { HeartIcon } from '@/components/ui/icons/HeartIcon';
 import { JointStiffnessIcon } from '@/components/ui/icons/JointStiffnessIcon';
 import { MoodWavesIcon } from '@/components/ui/icons/MoodWavesIcon';
+import { MoonIcon } from '@/components/ui/icons/MoonIcon';
 import { SYMPTOM_CATEGORIES } from '@/lib/symptoms/symptomCatalog';
 import { semanticColors } from '@/lib/ui';
 
@@ -21,7 +22,7 @@ const categoryIcon = (categoryId: SymptomCategoryId): ReactElement => {
     case 'mood':
       return <MoodWavesIcon size={ICON_SIZE} color={ICON_COLOR} />;
     case 'sleep_energy':
-      return <BatteryLowIcon size={ICON_SIZE} color={ICON_COLOR} />;
+      return <MoonIcon size={ICON_SIZE} color={ICON_COLOR} />;
     case 'body_pain':
       return <HeartIcon size={ICON_SIZE} color={ICON_COLOR} />;
     case 'cycle':
@@ -53,7 +54,11 @@ export const getSymptomEntryIcon = (symptomId: SymptomId): ReactElement => {
     return <JointStiffnessIcon size={ICON_SIZE} color={ICON_COLOR} />;
   }
 
-  if (symptomId === 'fatigue' || symptomId === 'sleepy' || symptomId === 'insomnia') {
+  if (symptomId === 'insomnia' || symptomId === 'sleep_maintenance') {
+    return <MoonIcon size={ICON_SIZE} color={ICON_COLOR} />;
+  }
+
+  if (symptomId === 'fatigue' || symptomId === 'sleepy') {
     return <BatteryLowIcon size={ICON_SIZE} color={ICON_COLOR} />;
   }
 

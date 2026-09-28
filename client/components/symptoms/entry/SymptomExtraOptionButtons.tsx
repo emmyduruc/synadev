@@ -9,12 +9,14 @@ export type SymptomExtraOptionButtonsProps = {
   options: readonly SymptomExtraOption[];
   selectedValue?: string;
   onSelect: (value: string) => void;
+  layout?: 'row' | 'grid';
 };
 
 export const SymptomExtraOptionButtons = ({
   options,
   selectedValue,
   onSelect,
+  layout = 'row',
 }: SymptomExtraOptionButtonsProps) => {
   const { t } = useTranslate();
 
@@ -44,14 +46,21 @@ export const SymptomExtraOptionButtons = ({
     );
   };
 
-  if (options.length === 4) {
-    const rows = [options.slice(0, 2), options.slice(2, 4)];
+  const useGrid = layout === 'grid' || options.length === 4;
+
+  if (useGrid && options.length >= 3) {
+    const rows: SymptomExtraOption[][] = [];
+
+    for (let index = 0; index < options.length; index += 2) {
+      rows.push([...options.slice(index, index + 2)]);
+    }
 
     return (
       <Box gap="sm">
         {rows.map((row) => (
           <Box key={row.map((item) => item.value).join('-')} direction="row" gap="sm">
             {row.map((option) => renderButton(option, 'flex-1'))}
+            {row.length === 1 ? <Box className="flex-1" /> : null}
           </Box>
         ))}
       </Box>

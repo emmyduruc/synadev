@@ -65,8 +65,9 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
     wellClassName: 'bg-sage-mist',
     options: [
       { id: 'insomnia', emoji: '🌙', labelKey: 'symptom_insomnia' },
+      { id: 'sleep_maintenance', emoji: '🌙', labelKey: 'symptom_sleep_maintenance' },
       { id: 'fatigue', emoji: '🪫', labelKey: 'symptom_fatigue' },
-      { id: 'sleepy', emoji: '😴', labelKey: 'symptom_sleepy' },
+      { id: 'nocturia', emoji: '💧', labelKey: 'symptom_nocturia' },
     ],
   },
   {
@@ -106,7 +107,6 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
       { id: 'vaginal_dryness', emoji: '🌵', labelKey: 'symptom_vaginal_dryness' },
       { id: 'vaginal_itching', emoji: '🌿', labelKey: 'symptom_vaginal_itching' },
       { id: 'bladder_urgency', emoji: '🚻', labelKey: 'symptom_bladder_urgency' },
-      { id: 'nocturia', emoji: '💧', labelKey: 'symptom_nocturia' },
       { id: 'low_libido', emoji: '🌙', labelKey: 'symptom_low_libido' },
       { id: 'dryness', emoji: '🌵', labelKey: 'symptom_dryness' },
       { id: 'unusual_discharge', emoji: '💠', labelKey: 'symptom_unusual_discharge' },

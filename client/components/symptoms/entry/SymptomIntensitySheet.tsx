@@ -174,26 +174,27 @@ export const SymptomIntensitySheet = ({
             <Box gap="lg" className="pb-2">
               <SymptomIntensityRange value={intensity} onChange={handleIntensityChange} />
 
-              {questions.length > 0 ? (
-                <Box gap="md">
-                  <Text size="sm" weight="bold">
-                    {t('symptom_entry_extras_heading')}
-                  </Text>
+                {questions.length > 0 ? (
+                  <Box gap="md">
+                    <Text size="sm" weight="bold">
+                      {t('symptom_entry_extras_heading')}
+                    </Text>
 
-                  {questions.map((question) => (
-                    <Box key={question.key} gap="sm">
-                      <Text size="sm" weight="medium">
-                        {t(question.labelKey)}
-                      </Text>
-                      <SymptomExtraOptionButtons
-                        options={question.options}
-                        selectedValue={extras[question.key]}
-                        onSelect={(value) => handleExtraSelect(question.key, value)}
-                      />
-                    </Box>
-                  ))}
-                </Box>
-              ) : null}
+                    {questions.map((question) => (
+                      <Box key={question.key} gap="sm">
+                        <Text size="sm" weight="medium">
+                          {t(question.labelKey)}
+                        </Text>
+                        <SymptomExtraOptionButtons
+                          options={question.options}
+                          selectedValue={extras[question.key]}
+                          layout={question.layout}
+                          onSelect={(value) => handleExtraSelect(question.key, value)}
+                        />
+                      </Box>
+                    ))}
+                  </Box>
+                ) : null}
 
               {hasSelection ? (
                 <TouchableOpacity
