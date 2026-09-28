@@ -1,4 +1,7 @@
 import {
+  CreateCustomSymptomSchema,
+  CustomSymptomSchema,
+  CustomSymptomsSchema,
   CyclePhaseSnapshotSchema,
   ChatRequestSchema,
   ChatResponseSchema,
@@ -31,6 +34,9 @@ import {
 import type {
   ChatRequest,
   ChatResponse,
+  CreateCustomSymptom,
+  CustomSymptom,
+  CustomSymptoms,
   CyclePhaseSnapshotDto,
   GetHealthDailyMetricsQuery,
   HealthDailyMetrics,
@@ -76,6 +82,7 @@ import {
   NOTIFICATIONS_PUSH_TOKEN,
   PERIOD_DAYS,
   SYMPTOM_CATALOG,
+  SYMPTOM_CUSTOM,
   SYMPTOM_LOGS,
   USERS_ME,
   USERS_ME_HEALTH_METRICS,
@@ -224,6 +231,22 @@ export const replaceSymptomLogs = (input: ReplaceSymptomLogs): Promise<SymptomLo
     body: input,
     bodySchema: ReplaceSymptomLogsSchema,
     responseSchema: SymptomLogsSchema,
+  });
+
+export const getCustomSymptoms = (): Promise<CustomSymptoms> =>
+  apiRequest({
+    url: SYMPTOM_CUSTOM,
+    method: 'GET',
+    responseSchema: CustomSymptomsSchema,
+  });
+
+export const createCustomSymptom = (input: CreateCustomSymptom): Promise<CustomSymptom> =>
+  apiRequest({
+    url: SYMPTOM_CUSTOM,
+    method: 'POST',
+    body: input,
+    bodySchema: CreateCustomSymptomSchema,
+    responseSchema: CustomSymptomSchema,
   });
 
 export const getCyclePhase = (): Promise<CyclePhaseSnapshotDto> =>

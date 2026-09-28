@@ -63,9 +63,12 @@ export const useDoctorReport = ({
 
     const symptomsByDate = new Map<string, readonly string[]>();
 
-    for (const [dateKey, ids] of Object.entries(symptomLogs)) {
+    for (const [dateKey, entries] of Object.entries(symptomLogs)) {
       if (dateKey >= fromKey && dateKey <= toKey) {
-        symptomsByDate.set(dateKey, ids);
+        symptomsByDate.set(
+          dateKey,
+          entries.map((entry) => entry.symptomId),
+        );
       }
     }
 

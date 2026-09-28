@@ -9,6 +9,8 @@ export const SYMPTOM_CATEGORY = {
   urogenital: 'urogenital',
   digestion: 'digestion',
   skin: 'skin',
+  cognition: 'cognition',
+  miscellaneous: 'miscellaneous',
 } as const satisfies Record<string, SymptomCategoryId>;
 
 export type { SymptomCategoryId };
@@ -39,6 +41,7 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
       { id: 'hot_flashes', emoji: '🔥', labelKey: 'symptom_hot_flashes' },
       { id: 'night_sweats', emoji: '💦', labelKey: 'symptom_night_sweats' },
       { id: 'sweating', emoji: '🥵', labelKey: 'symptom_sweating' },
+      { id: 'chills', emoji: '❄️', labelKey: 'symptom_chills' },
     ],
   },
   {
@@ -74,6 +77,7 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
     options: [
       { id: 'headache', emoji: '🤕', labelKey: 'symptom_headache' },
       { id: 'joint_muscle_pain', emoji: '🦵', labelKey: 'symptom_joint_muscle_pain' },
+      { id: 'joint_stiffness', emoji: '🦴', labelKey: 'symptom_joint_stiffness' },
       { id: 'backache', emoji: '🩹', labelKey: 'symptom_backache' },
       { id: 'palpitations', emoji: '💓', labelKey: 'symptom_palpitations' },
       { id: 'breast_tenderness', emoji: '🌸', labelKey: 'symptom_breast_tenderness' },
@@ -102,7 +106,9 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
       { id: 'vaginal_dryness', emoji: '🌵', labelKey: 'symptom_vaginal_dryness' },
       { id: 'vaginal_itching', emoji: '🌿', labelKey: 'symptom_vaginal_itching' },
       { id: 'bladder_urgency', emoji: '🚻', labelKey: 'symptom_bladder_urgency' },
+      { id: 'nocturia', emoji: '💧', labelKey: 'symptom_nocturia' },
       { id: 'low_libido', emoji: '🌙', labelKey: 'symptom_low_libido' },
+      { id: 'dryness', emoji: '🌵', labelKey: 'symptom_dryness' },
       { id: 'unusual_discharge', emoji: '💠', labelKey: 'symptom_unusual_discharge' },
     ],
   },
@@ -117,6 +123,7 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
       { id: 'constipation', emoji: '🚽', labelKey: 'symptom_constipation' },
       { id: 'diarrhea', emoji: '💩', labelKey: 'symptom_diarrhea' },
       { id: 'cravings', emoji: '🍫', labelKey: 'symptom_cravings' },
+      { id: 'digestive_patterns', emoji: '🌀', labelKey: 'symptom_digestive_patterns' },
     ],
   },
   {
@@ -128,6 +135,23 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
       { id: 'acne', emoji: '🪞', labelKey: 'symptom_acne' },
       { id: 'dry_skin', emoji: '🏜️', labelKey: 'symptom_dry_skin' },
       { id: 'itchy_skin', emoji: '🪶', labelKey: 'symptom_itchy_skin' },
+      { id: 'skin_and_hair', emoji: '💇', labelKey: 'symptom_skin_and_hair' },
     ],
+  },
+  {
+    id: SYMPTOM_CATEGORY.cognition,
+    titleKey: 'symptom_category_cognition',
+    sectionClassName: 'border-lavender bg-lavender-light',
+    wellClassName: 'bg-lavender',
+    options: [
+      { id: 'forgetfulness', emoji: '🧠', labelKey: 'symptom_forgetfulness' },
+    ],
+  },
+  {
+    id: SYMPTOM_CATEGORY.miscellaneous,
+    titleKey: 'symptom_category_miscellaneous',
+    sectionClassName: 'border-border bg-muted/40',
+    wellClassName: 'bg-muted',
+    options: [],
   },
 ];

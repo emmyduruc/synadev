@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-syntax -- TypeORM entities must be classes */
 import {
+  Column,
   CreateDateColumn,
   Entity,
   Index,
@@ -23,6 +24,14 @@ export class SymptomEntryEntity {
 
   @PrimaryColumn({ name: 'symptom_id', type: 'varchar', length: 64 })
   symptomId!: string;
+
+  /** Intensity 0 (none) to 4 (very strong). */
+  @Column({ type: 'smallint', default: 2 })
+  intensity!: number;
+
+  /** Optional symptom-specific sheet answers. */
+  @Column({ type: 'jsonb', nullable: true })
+  extras!: Record<string, string> | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;

@@ -16,7 +16,6 @@ import {
   dashboardHorizontalScrollContentStyle,
   dashboardHorizontalScrollStyle,
 } from '@/lib/dashboard/horizontalScrollStyles';
-import { formatTodayDisplayDate } from '@/lib/date/formatDisplayDate';
 import {
   DASHBOARD_HEALTH_METRIC,
   type DashboardHealthMetricDisplay,
@@ -51,27 +50,13 @@ export const DashboardHealthMetricsRow = ({
 }: DashboardHealthMetricsRowProps) => {
   const { t } = useTranslate();
 
-  const todayLabel = formatTodayDisplayDate();
-
   return (
     <Box gap="sm">
-      <Box direction="row" align="center" justify="between" className="gap-3">
-        {!isConnected ? (
-          <Text size="2xs" color="foreground" className="flex-1 leading-relaxed">
-            {t('dashboard_health_connect_hint')}
-          </Text>
-        ) : (
-          <Box flex={1} />
-        )}
-        <Box
-          align="center"
-          justify="center"
-          className="rounded-full border border-white bg-card/90 px-3 py-1 shadow-sm">
-          <Text size="2xs" weight="semibold" color="foreground" responsive={false}>
-            {t('dashboard_health_today_label')} · {todayLabel}
-          </Text>
-        </Box>
-      </Box>
+      {!isConnected ? (
+        <Text size="2xs" color="foreground" className="leading-relaxed">
+          {t('dashboard_health_connect_hint')}
+        </Text>
+      ) : null}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

@@ -16,7 +16,7 @@ export type PatternChartSeries = {
   points: PatternChartPoint[];
 };
 
-const HEAT_SYMPTOM_IDS = new Set(['hot_flashes', 'night_sweats']);
+const HEAT_SYMPTOM_IDS = new Set(['hot_flashes', 'night_sweats', 'sweating', 'chills']);
 
 export const buildPatternChartSeries = (input: {
   dateKeys: readonly string[];

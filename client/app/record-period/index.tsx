@@ -44,22 +44,23 @@ const RecordPeriodScreen = () => {
   }, [hasHydratedDraft, isPeriodLoading, isSymptomLoading, symptomLogs]);
 
   const selectedSymptomIds = useMemo(
-    () => new Set(draftSymptoms[selectedDateKey] ?? []),
+    () => new Set((draftSymptoms[selectedDateKey] ?? []).map((entry) => entry.symptomId)),
     [draftSymptoms, selectedDateKey],
   );
 
   const handleToggleSymptom = useCallback(
     (symptomId: SymptomId) => {
       setDraftSymptoms((previous) => {
-        const current = new Set(previous[selectedDateKey] ?? []);
+        const current = [...(previous[selectedDateKey] ?? [])];
+        const index = current.findIndex((entry) => entry.symptomId === symptomId);
 
-        if (current.has(symptomId)) {
-          current.delete(symptomId);
+        if (index >= 0) {
+          current.splice(index, 1);
         } else {
-          current.add(symptomId);
+          current.push({ symptomId, intensity: 2 });
         }
 
-        return { ...previous, [selectedDateKey]: [...current] };
+        return { ...previous, [selectedDateKey]: current };
       });
     },
     [selectedDateKey],

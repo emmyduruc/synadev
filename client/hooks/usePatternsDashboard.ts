@@ -121,8 +121,11 @@ export const usePatternsDashboard = () => {
 
     const symptomsByDate = new Map<string, readonly string[]>();
 
-    for (const [dateKey, ids] of Object.entries(symptomLogs)) {
-      symptomsByDate.set(dateKey, ids);
+    for (const [dateKey, entries] of Object.entries(symptomLogs)) {
+      symptomsByDate.set(
+        dateKey,
+        entries.map((entry) => entry.symptomId),
+      );
     }
 
     const moodsByDate = new Map<string, PatternDailyMood>();
@@ -154,8 +157,11 @@ export const usePatternsDashboard = () => {
 
     const symptomsByDate = new Map<string, readonly string[]>();
 
-    for (const [dateKey, ids] of Object.entries(symptomLogs)) {
-      symptomsByDate.set(dateKey, ids);
+    for (const [dateKey, entries] of Object.entries(symptomLogs)) {
+      symptomsByDate.set(
+        dateKey,
+        entries.map((entry) => entry.symptomId),
+      );
     }
 
     const moodsByDate = new Map<string, PatternDailyMood>();

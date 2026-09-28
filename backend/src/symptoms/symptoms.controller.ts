@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -13,6 +14,9 @@ import { ApiStandardResponses } from '../common/decorators/api-standard-response
 import { SWAGGER_TAGS } from '../swagger/swagger.constants';
 
 import {
+  CreateCustomSymptomDto,
+  CustomSymptomDto,
+  CustomSymptomsDto,
   ReplaceSymptomLogsDto,
   SymptomCatalogDto,
   SymptomLogsDto,
@@ -29,18 +33,46 @@ export class SymptomsController {
   @Get('catalog')
   @ApiOperation({
     summary: 'Get symptom catalog',
-    description: 'Returns seeded symptom categories and child symptom ids (1NF reference data).',
+    description:
+      'Returns seeded symptom categories plus the authenticated user custom symptoms.',
   })
   @ApiOkResponse({ description: 'Symptom catalog', type: SymptomCatalogDto })
   @ApiStandardResponses({ unauthorized: true })
-  getCatalog(): Promise<SymptomCatalogDto> {
-    return this.symptomsService.getCatalog();
+  getCatalog(@CurrentClerkUser() clerkUser: AuthenticatedClerkUser): Promise<SymptomCatalogDto> {
+    return this.symptomsService.getCatalog(clerkUser);
+  }
+
+  @Get('custom')
+  @ApiOperation({
+    summary: 'List custom symptoms',
+    description: 'Returns user-defined own symptoms for the authenticated user.',
+  })
+  @ApiOkResponse({ description: 'Custom symptoms', type: CustomSymptomsDto })
+  @ApiStandardResponses({ unauthorized: true })
+  listCustom(
+    @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
+  ): Promise<CustomSymptomsDto> {
+    return this.symptomsService.listCustomSymptoms(clerkUser);
+  }
+
+  @Post('custom')
+  @ApiOperation({
+    summary: 'Create custom symptom',
+    description: 'Creates a user-defined symptom with designation and optional category.',
+  })
+  @ApiCreatedResponse({ description: 'Created custom symptom', type: CustomSymptomDto })
+  @ApiStandardResponses({ unauthorized: true })
+  createCustom(
+    @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
+    @Body() dto: CreateCustomSymptomDto,
+  ): Promise<CustomSymptomDto> {
+    return this.symptomsService.createCustomSymptom(clerkUser, dto);
   }
 
   @Get('logs')
   @ApiOperation({
     summary: 'List symptom logs',
-    description: 'Returns selected symptom ids keyed by YYYY-MM-DD for the authenticated user.',
+    description: 'Returns selected symptom entries keyed by YYYY-MM-DD for the authenticated user.',
   })
   @ApiOkResponse({ description: 'Symptom logs', type: SymptomLogsDto })
   @ApiStandardResponses({ unauthorized: true })

@@ -1,13 +1,20 @@
+import { randomBytes } from 'node:crypto';
+
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type {
+  CreateCustomSymptom,
+  CustomSymptom,
+  CustomSymptoms,
   ReplaceSymptomLogs,
   SymptomCatalog,
+  SymptomDayEntry,
   SymptomId,
   SymptomLogMap,
   SymptomLogs,
 } from '@syna/shared-types';
-import { DataSource, Repository } from 'typeorm';
+import { CUSTOM_SYMPTOM_ID_PREFIX, isCustomSymptomId } from '@syna/shared-types';
+import { DataSource, IsNull, Repository } from 'typeorm';
 
 import type { AuthenticatedClerkUser } from '../auth/auth.types';
 import { UsersService } from '../users/users.service';
@@ -24,6 +31,25 @@ const toDateKey = (value: string | Date): string => {
   return value.toISOString().slice(0, 10);
 };
 
+const clampIntensity = (value: number | null | undefined): number => {
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    return 2;
+  }
+
+  if (value < 0) {
+    return 0;
+  }
+
+  if (value > 4) {
+    return 4;
+  }
+
+  return Math.trunc(value);
+};
+
+const createCustomSymptomId = (): string =>
+  `${CUSTOM_SYMPTOM_ID_PREFIX}${randomBytes(8).toString('hex')}`;
+
 @Injectable()
 export class SymptomsService {
   constructor(
@@ -37,11 +63,19 @@ export class SymptomsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async getCatalog(): Promise<SymptomCatalog> {
+  async getCatalog(clerkUser?: AuthenticatedClerkUser): Promise<SymptomCatalog> {
     const categories = await this.symptomCategoriesRepository.find({
       order: { sortOrder: 'ASC' },
     });
+
+    const userId = clerkUser
+      ? await this.usersService.resolveUserId(clerkUser)
+      : null;
+
     const symptoms = await this.symptomsRepository.find({
+      where: userId
+        ? [{ userId: IsNull() }, { userId }]
+        : { userId: IsNull() },
       order: { sortOrder: 'ASC' },
     });
 
@@ -60,6 +94,49 @@ export class SymptomsService {
     };
   }
 
+  async listCustomSymptoms(clerkUser: AuthenticatedClerkUser): Promise<CustomSymptoms> {
+    const userId = await this.usersService.resolveUserId(clerkUser);
+    const rows = await this.symptomsRepository.find({
+      where: { userId },
+      order: { sortOrder: 'ASC', id: 'ASC' },
+    });
+
+    return {
+      symptoms: rows
+        .filter((row) => isCustomSymptomId(row.id) && Boolean(row.label))
+        .map((row) => ({
+          id: row.id as SymptomId,
+          label: row.label as string,
+          categoryId: row.categoryId as CustomSymptom['categoryId'],
+        })),
+    };
+  }
+
+  async createCustomSymptom(
+    clerkUser: AuthenticatedClerkUser,
+    input: CreateCustomSymptom,
+  ): Promise<CustomSymptom> {
+    const userId = await this.usersService.resolveUserId(clerkUser);
+    const id = createCustomSymptomId();
+    const label = input.label.trim();
+
+    const row = this.symptomsRepository.create({
+      id,
+      userId,
+      label,
+      categoryId: input.categoryId,
+      sortOrder: 100,
+    });
+
+    await this.symptomsRepository.save(row);
+
+    return {
+      id: row.id as SymptomId,
+      label,
+      categoryId: row.categoryId as CustomSymptom['categoryId'],
+    };
+  }
+
   async listLogs(clerkUser: AuthenticatedClerkUser): Promise<SymptomLogs> {
     const userId = await this.usersService.resolveUserId(clerkUser);
     const rows = await this.symptomEntriesRepository.find({
@@ -72,7 +149,12 @@ export class SymptomsService {
     for (const row of rows) {
       const dateKey = toDateKey(row.logDate);
       const existing = logs[dateKey] ?? [];
-      logs[dateKey] = [...existing, row.symptomId as SymptomId];
+      const entry: SymptomDayEntry = {
+        symptomId: row.symptomId as SymptomId,
+        intensity: clampIntensity(row.intensity),
+        ...(row.extras ? { extras: row.extras } : {}),
+      };
+      logs[dateKey] = [...existing, entry];
     }
 
     return { logs };
@@ -86,11 +168,21 @@ export class SymptomsService {
 
     const cleaned: SymptomLogMap = {};
 
-    for (const [logDate, ids] of Object.entries(input.logs)) {
-      const unique = [...new Set(ids)];
+    for (const [logDate, entries] of Object.entries(input.logs)) {
+      const byId = new Map<SymptomId, SymptomDayEntry>();
 
-      if (unique.length > 0) {
-        cleaned[logDate] = unique;
+      for (const entry of entries) {
+        byId.set(entry.symptomId, {
+          symptomId: entry.symptomId,
+          intensity: clampIntensity(entry.intensity),
+          ...(entry.extras && Object.keys(entry.extras).length > 0
+            ? { extras: entry.extras }
+            : {}),
+        });
+      }
+
+      if (byId.size > 0) {
+        cleaned[logDate] = [...byId.values()];
       }
     }
 
@@ -99,9 +191,17 @@ export class SymptomsService {
 
       const rows: SymptomEntryEntity[] = [];
 
-      for (const [logDate, ids] of Object.entries(cleaned)) {
-        for (const symptomId of ids) {
-          rows.push(manager.create(SymptomEntryEntity, { userId, logDate, symptomId }));
+      for (const [logDate, entries] of Object.entries(cleaned)) {
+        for (const entry of entries) {
+          rows.push(
+            manager.create(SymptomEntryEntity, {
+              userId,
+              logDate,
+              symptomId: entry.symptomId,
+              intensity: entry.intensity,
+              extras: entry.extras ?? null,
+            }),
+          );
         }
       }
 
