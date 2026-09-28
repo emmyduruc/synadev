@@ -3,12 +3,14 @@ import type { ReactElement } from 'react';
 
 import { BatteryLowIcon } from '@/components/ui/icons/BatteryLowIcon';
 import { ChillsIcon } from '@/components/ui/icons/ChillsIcon';
+import { CloudIcon } from '@/components/ui/icons/CloudIcon';
 import { DropletIcon } from '@/components/ui/icons/DropletIcon';
 import { FlameIcon } from '@/components/ui/icons/FlameIcon';
 import { HeartIcon } from '@/components/ui/icons/HeartIcon';
 import { JointStiffnessIcon } from '@/components/ui/icons/JointStiffnessIcon';
 import { MoodWavesIcon } from '@/components/ui/icons/MoodWavesIcon';
 import { MoonIcon } from '@/components/ui/icons/MoonIcon';
+import { SparkOutlineIcon } from '@/components/ui/icons/SparkOutlineIcon';
 import { SYMPTOM_CATEGORIES } from '@/lib/symptoms/symptomCatalog';
 import { semanticColors } from '@/lib/ui';
 
@@ -32,6 +34,8 @@ const categoryIcon = (categoryId: SymptomCategoryId): ReactElement => {
       return <DropletIcon size={ICON_SIZE} color={ICON_COLOR} />;
     case 'skin':
       return <HeartIcon size={ICON_SIZE} color={ICON_COLOR} />;
+    case 'cognition':
+      return <CloudIcon size={ICON_SIZE} color={ICON_COLOR} />;
     default:
       return <DropletIcon size={ICON_SIZE} color={ICON_COLOR} />;
   }
@@ -62,13 +66,19 @@ export const getSymptomEntryIcon = (symptomId: SymptomId): ReactElement => {
     return <BatteryLowIcon size={ICON_SIZE} color={ICON_COLOR} />;
   }
 
+  if (symptomId === 'irritable') {
+    return <SparkOutlineIcon size={ICON_SIZE} color={ICON_COLOR} />;
+  }
+
+  if (symptomId === 'low_mood' || symptomId === 'brain_fog') {
+    return <CloudIcon size={ICON_SIZE} color={ICON_COLOR} />;
+  }
+
   if (
     symptomId === 'mood_swings'
-    || symptomId === 'irritable'
     || symptomId === 'anxious'
-    || symptomId === 'low_mood'
+    || symptomId === 'inner_restlessness'
     || symptomId === 'calm'
-    || symptomId === 'brain_fog'
   ) {
     return <MoodWavesIcon size={ICON_SIZE} color={ICON_COLOR} />;
   }

@@ -50,12 +50,11 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
     sectionClassName: 'border-lavender bg-lavender-light',
     wellClassName: 'bg-lavender',
     options: [
-      { id: 'calm', emoji: '😌', labelKey: 'symptom_calm' },
-      { id: 'irritable', emoji: '😠', labelKey: 'symptom_irritable' },
-      { id: 'anxious', emoji: '😰', labelKey: 'symptom_anxious' },
-      { id: 'low_mood', emoji: '😔', labelKey: 'symptom_low_mood' },
+      { id: 'irritable', emoji: '✨', labelKey: 'symptom_irritable' },
+      { id: 'anxious', emoji: '🌊', labelKey: 'symptom_anxious' },
+      { id: 'low_mood', emoji: '☁️', labelKey: 'symptom_low_mood' },
       { id: 'mood_swings', emoji: '🎭', labelKey: 'symptom_mood_swings' },
-      { id: 'brain_fog', emoji: '🌫️', labelKey: 'symptom_brain_fog' },
+      { id: 'inner_restlessness', emoji: '🌀', labelKey: 'symptom_inner_restlessness' },
     ],
   },
   {
@@ -145,6 +144,7 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
     wellClassName: 'bg-lavender',
     options: [
       { id: 'forgetfulness', emoji: '🧠', labelKey: 'symptom_forgetfulness' },
+      { id: 'brain_fog', emoji: '🌫️', labelKey: 'symptom_brain_fog' },
     ],
   },
   {

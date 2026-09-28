@@ -31,6 +31,7 @@ export const SYMPTOM_IDS = [
   'anxious',
   'low_mood',
   'mood_swings',
+  'inner_restlessness',
   'brain_fog',
   'insomnia',
   'sleep_maintenance',

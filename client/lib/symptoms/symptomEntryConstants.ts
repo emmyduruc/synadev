@@ -44,7 +44,7 @@ export const SYMPTOM_ENTRY_FILTER_LABEL_KEY: Record<SymptomEntryFilterId, string
   favorites: 'symptom_entry_filter_favorites',
   vasomotor: 'symptom_entry_filter_heat_sweating',
   sleep_energy: 'symptom_entry_filter_sleep_energy',
-  mood: 'symptom_category_mood',
+  mood: 'symptom_entry_filter_mood_psyche',
   body_pain: 'symptom_category_body_pain',
   cycle: 'symptom_category_cycle',
   urogenital: 'symptom_category_urogenital',
