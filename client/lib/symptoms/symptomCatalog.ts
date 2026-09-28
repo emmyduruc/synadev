@@ -111,18 +111,6 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
     ],
   },
   {
-    id: SYMPTOM_CATEGORY.digestion,
-    titleKey: 'symptom_category_digestion',
-    sectionClassName: 'border-sage-mist bg-sage-mist-light',
-    wellClassName: 'bg-sage-mist',
-    options: [
-      { id: 'nausea', emoji: '🤢', labelKey: 'symptom_nausea' },
-      { id: 'constipation', emoji: '🚽', labelKey: 'symptom_constipation' },
-      { id: 'diarrhea', emoji: '💩', labelKey: 'symptom_diarrhea' },
-      { id: 'cravings', emoji: '🍫', labelKey: 'symptom_cravings' },
-    ],
-  },
-  {
     id: SYMPTOM_CATEGORY.skin,
     titleKey: 'symptom_category_skin',
     sectionClassName: 'border-apricot bg-apricot-light',
@@ -140,8 +128,10 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
     sectionClassName: 'border-lavender bg-lavender-light',
     wellClassName: 'bg-lavender',
     options: [
-      { id: 'forgetfulness', emoji: '🧠', labelKey: 'symptom_forgetfulness' },
       { id: 'brain_fog', emoji: '🌫️', labelKey: 'symptom_brain_fog' },
+      { id: 'concentration_problems', emoji: '🎯', labelKey: 'symptom_concentration_problems' },
+      { id: 'word_finding', emoji: '💬', labelKey: 'symptom_word_finding' },
+      { id: 'forgetfulness', emoji: '🧠', labelKey: 'symptom_forgetfulness' },
     ],
   },
   {

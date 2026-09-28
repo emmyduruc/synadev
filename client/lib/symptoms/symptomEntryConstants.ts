@@ -18,14 +18,13 @@ export const SYMPTOM_ENTRY_FILTER = {
   bodyPain: SYMPTOM_CATEGORY.bodyPain,
   cycle: SYMPTOM_CATEGORY.cycle,
   urogenital: SYMPTOM_CATEGORY.urogenital,
-  digestion: SYMPTOM_CATEGORY.digestion,
   skin: SYMPTOM_CATEGORY.skin,
   cognition: SYMPTOM_CATEGORY.cognition,
 } as const;
 
 export type SymptomEntryFilterId =
   | typeof SYMPTOM_ENTRY_FILTER.favorites
-  | Exclude<SymptomCategoryId, 'miscellaneous'>;
+  | Exclude<SymptomCategoryId, 'miscellaneous' | 'digestion'>;
 
 export const SYMPTOM_ENTRY_FILTER_ORDER: readonly SymptomEntryFilterId[] = [
   SYMPTOM_ENTRY_FILTER.favorites,
@@ -35,9 +34,8 @@ export const SYMPTOM_ENTRY_FILTER_ORDER: readonly SymptomEntryFilterId[] = [
   SYMPTOM_ENTRY_FILTER.bodyPain,
   SYMPTOM_ENTRY_FILTER.cycle,
   SYMPTOM_ENTRY_FILTER.urogenital,
-  SYMPTOM_ENTRY_FILTER.digestion,
-  SYMPTOM_ENTRY_FILTER.skin,
   SYMPTOM_ENTRY_FILTER.cognition,
+  SYMPTOM_ENTRY_FILTER.skin,
 ];
 
 export const SYMPTOM_ENTRY_FILTER_LABEL_KEY: Record<SymptomEntryFilterId, string> = {
@@ -48,9 +46,8 @@ export const SYMPTOM_ENTRY_FILTER_LABEL_KEY: Record<SymptomEntryFilterId, string
   body_pain: 'symptom_category_body_pain',
   cycle: 'symptom_category_cycle',
   urogenital: 'symptom_category_urogenital',
-  digestion: 'symptom_category_digestion',
-  skin: 'symptom_category_skin',
   cognition: 'symptom_category_cognition',
+  skin: 'symptom_entry_filter_skin_hair',
 };
 
 /** Categories offered when creating an own symptom (matches prototype selector). */

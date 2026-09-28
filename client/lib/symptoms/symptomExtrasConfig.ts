@@ -567,6 +567,59 @@ export const SYMPTOM_EXTRAS_CONFIG: Partial<Record<SymptomId, readonly SymptomEx
       ],
     },
   ],
+  brain_fog: [
+    {
+      key: 'what_affected',
+      labelKey: 'symptom_extra_brain_fog_what_affected',
+      layout: 'grid',
+      options: [
+        { value: 'concentration', labelKey: 'symptom_extra_brain_fog_concentration' },
+        { value: 'memory', labelKey: 'symptom_extra_brain_fog_memory' },
+        { value: 'word_finding', labelKey: 'symptom_extra_brain_fog_word_finding' },
+      ],
+    },
+  ],
+  concentration_problems: [
+    {
+      key: 'during_what',
+      labelKey: 'symptom_extra_concentration_during_what',
+      layout: 'grid',
+      options: [
+        { value: 'work', labelKey: 'symptom_extra_concentration_work' },
+        { value: 'reading', labelKey: 'symptom_extra_concentration_reading' },
+        { value: 'daily_life', labelKey: 'symptom_extra_concentration_daily_life' },
+      ],
+    },
+    {
+      key: 'made_mistakes',
+      labelKey: 'symptom_extra_concentration_made_mistakes',
+      options: YES_NO_OPTIONS,
+    },
+  ],
+  word_finding: [
+    {
+      key: 'how_often',
+      labelKey: 'symptom_extra_word_finding_how_often',
+      layout: 'grid',
+      options: [
+        { value: 'rarely', labelKey: 'symptom_extra_word_finding_rarely' },
+        { value: 'several_daily', labelKey: 'symptom_extra_word_finding_several_daily' },
+        { value: 'constantly', labelKey: 'symptom_extra_word_finding_constantly' },
+      ],
+    },
+  ],
+  forgetfulness: [
+    {
+      key: 'what_happened',
+      labelKey: 'symptom_extra_forgetfulness_what_happened',
+      layout: 'grid',
+      options: [
+        { value: 'forgot_appointments', labelKey: 'symptom_extra_forgetfulness_appointments' },
+        { value: 'forgot_names', labelKey: 'symptom_extra_forgetfulness_names' },
+        { value: 'daily_life_uncertain', labelKey: 'symptom_extra_forgetfulness_daily_uncertain' },
+      ],
+    },
+  ],
 };
 
 export const getSymptomExtrasQuestions = (

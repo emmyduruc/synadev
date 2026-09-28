@@ -2,6 +2,7 @@ import type { SymptomCategoryId, SymptomId } from '@syna/shared-types';
 import type { ReactElement } from 'react';
 
 import { BatteryLowIcon } from '@/components/ui/icons/BatteryLowIcon';
+import { BrainIcon } from '@/components/ui/icons/BrainIcon';
 import { ChillsIcon } from '@/components/ui/icons/ChillsIcon';
 import { CloudIcon } from '@/components/ui/icons/CloudIcon';
 import { DropletIcon } from '@/components/ui/icons/DropletIcon';
@@ -31,12 +32,10 @@ const categoryIcon = (categoryId: SymptomCategoryId): ReactElement => {
     case 'cycle':
     case 'urogenital':
       return <DropletIcon size={ICON_SIZE} color={ICON_COLOR} />;
-    case 'digestion':
-      return <HorizontalWavesIcon size={ICON_SIZE} color={ICON_COLOR} />;
     case 'skin':
       return <HeartIcon size={ICON_SIZE} color={ICON_COLOR} />;
     case 'cognition':
-      return <CloudIcon size={ICON_SIZE} color={ICON_COLOR} />;
+      return <BrainIcon size={ICON_SIZE} color={ICON_COLOR} />;
     default:
       return <DropletIcon size={ICON_SIZE} color={ICON_COLOR} />;
   }
@@ -87,8 +86,17 @@ export const getSymptomEntryIcon = (symptomId: SymptomId): ReactElement => {
     return <SparkOutlineIcon size={ICON_SIZE} color={ICON_COLOR} />;
   }
 
-  if (symptomId === 'low_mood' || symptomId === 'brain_fog') {
+  if (symptomId === 'low_mood') {
     return <CloudIcon size={ICON_SIZE} color={ICON_COLOR} />;
+  }
+
+  if (
+    symptomId === 'brain_fog'
+    || symptomId === 'concentration_problems'
+    || symptomId === 'word_finding'
+    || symptomId === 'forgetfulness'
+  ) {
+    return <BrainIcon size={ICON_SIZE} color={ICON_COLOR} />;
   }
 
   if (

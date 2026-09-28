@@ -72,6 +72,8 @@ export const SYMPTOM_IDS = [
   'dryness',
   'skin_and_hair',
   'forgetfulness',
+  'concentration_problems',
+  'word_finding',
 ] as const;
 
 export const CatalogSymptomIdSchema = z
