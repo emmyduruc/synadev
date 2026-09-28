@@ -12,11 +12,12 @@ import { SymptomEntryDateStrip } from '@/components/symptoms/entry/SymptomEntryD
 import { SymptomEntryFavoritesSection } from '@/components/symptoms/entry/SymptomEntryFavoritesSection';
 import { SymptomEntryFilterChips } from '@/components/symptoms/entry/SymptomEntryFilterChips';
 import { SymptomEntryHeader } from '@/components/symptoms/entry/SymptomEntryHeader';
+import { SymptomEntryMoodTab } from '@/components/symptoms/entry/SymptomEntryMoodTab';
 import { SymptomEntryNoneTodayCard } from '@/components/symptoms/entry/SymptomEntryNoneTodayCard';
 import { SymptomEntryNoticeBox } from '@/components/symptoms/entry/SymptomEntryNoticeBox';
 import { SymptomEntryOftenWithYouSection } from '@/components/symptoms/entry/SymptomEntryOftenWithYouSection';
 import { SymptomEntryOwnSymptomButton } from '@/components/symptoms/entry/SymptomEntryOwnSymptomButton';
-import { SymptomEntryPeriodMoodPlaceholder } from '@/components/symptoms/entry/SymptomEntryPeriodMoodPlaceholder';
+import { SymptomEntryPeriodTab } from '@/components/symptoms/entry/SymptomEntryPeriodTab';
 import { SymptomEntryPersistentSection } from '@/components/symptoms/entry/SymptomEntryPersistentSection';
 import { SymptomEntryTabs } from '@/components/symptoms/entry/SymptomEntryTabs';
 import { SymptomEntryTodayBanner } from '@/components/symptoms/entry/SymptomEntryTodayBanner';
@@ -25,11 +26,20 @@ import { SymptomOwnSymptomSheet } from '@/components/symptoms/entry/SymptomOwnSy
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
 import { useCustomSymptoms } from '@/hooks/useCustomSymptoms';
+import { useMoodLog } from '@/hooks/useMoodLog';
+import { usePeriodDates } from '@/hooks/usePeriodDates';
 import { useSymptomFavorites } from '@/hooks/useSymptomFavorites';
 import { useSymptomLog } from '@/hooks/useSymptomLog';
 import { useTranslate } from '@/hooks/useTranslate';
 import { toDateKey } from '@/lib/date/dateKeys';
 import { CONFETTI_ACTION } from '@/lib/gamification/confettiActions';
+import {
+  DEFAULT_MOOD_SCALE_VALUE,
+  EMPTY_MOOD_ENTRY,
+  isMoodEntryEmpty,
+  type MoodEntry,
+  type MoodLogMap,
+} from '@/lib/mood/moodLogStorage';
 import {
   DEFAULT_SYMPTOM_INTENSITY,
   SYMPTOM_ENTRY_FILTER,
@@ -52,11 +62,18 @@ const SymptomsScreen = () => {
   const { celebrate } = useConfettiCelebration();
   const { top: safeAreaTop, bottom: safeAreaBottom } = useSafeAreaInsets();
   const { logs, isLoading, persist } = useSymptomLog();
+  const {
+    logs: moodLogs,
+    isLoading: isMoodLoading,
+    persist: persistMoodLogs,
+  } = useMoodLog();
+  const { dateKeys: periodDateKeys, persist: persistPeriodDates } = usePeriodDates();
   const { favoriteIds, toggleFavorite, isFavorite } = useSymptomFavorites();
   const { customSymptoms, addCustomSymptom } = useCustomSymptoms();
 
   const [selectedDateKey, setSelectedDateKey] = useState(() => toDateKey(new Date()));
   const [draft, setDraft] = useState<SymptomLogMap>({});
+  const [moodDraft, setMoodDraft] = useState<MoodLogMap>({});
   const [activeTab, setActiveTab] = useState<SymptomEntryTabId>(SYMPTOM_ENTRY_TAB.symptoms);
   const [activeFilter, setActiveFilter] = useState<SymptomEntryFilterId>(
     SYMPTOM_ENTRY_FILTER.favorites,
@@ -64,8 +81,10 @@ const SymptomsScreen = () => {
   const [sheetSymptomId, setSheetSymptomId] = useState<SymptomId | null>(null);
   const [isOwnSheetVisible, setIsOwnSheetVisible] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSavingPeriod, setIsSavingPeriod] = useState(false);
   const [noneTodayKeys, setNoneTodayKeys] = useState<Record<string, boolean>>({});
   const hasInitialised = useRef(false);
+  const hasMoodInitialised = useRef(false);
 
   useEffect(() => {
     if (isLoading || hasInitialised.current) {
@@ -76,9 +95,19 @@ const SymptomsScreen = () => {
     setDraft({ ...logs });
   }, [isLoading, logs]);
 
+  useEffect(() => {
+    if (isMoodLoading || hasMoodInitialised.current) {
+      return;
+    }
+
+    hasMoodInitialised.current = true;
+    setMoodDraft({ ...moodLogs });
+  }, [isMoodLoading, moodLogs]);
+
   const dayEntries = draft[selectedDateKey];
   const selectedCount = dayEntries?.length ?? 0;
   const isNoneToday = Boolean(noneTodayKeys[selectedDateKey]) && selectedCount === 0;
+  const moodEntry = moodDraft[selectedDateKey] ?? EMPTY_MOOD_ENTRY;
 
   const customLabelById = useMemo(() => {
     const map = new Map<string, string>();
@@ -176,13 +205,76 @@ const SymptomsScreen = () => {
     setIsSaving(true);
 
     try {
-      await persist(draft);
+      const nextMoodLogs: MoodLogMap = {};
+
+      for (const [dateKey, entry] of Object.entries(moodDraft)) {
+        if (!isMoodEntryEmpty(entry)) {
+          nextMoodLogs[dateKey] = entry;
+        }
+      }
+
+      await Promise.all([persist(draft), persistMoodLogs(nextMoodLogs)]);
       celebrate(CONFETTI_ACTION.symptomsLogged);
       router.back();
     } finally {
       setIsSaving(false);
     }
-  }, [celebrate, draft, isSaving, persist, router]);
+  }, [celebrate, draft, isSaving, moodDraft, persist, persistMoodLogs, router]);
+
+  const handleMoodEntryChange = useCallback(
+    (next: MoodEntry) => {
+      const normalized: MoodEntry = isMoodEntryEmpty(next)
+        ? next
+        : {
+            ...next,
+            energy: next.energy > 0 ? next.energy : DEFAULT_MOOD_SCALE_VALUE,
+            stress: next.stress > 0 ? next.stress : DEFAULT_MOOD_SCALE_VALUE,
+          };
+
+      setMoodDraft((previous) => {
+        if (isMoodEntryEmpty(normalized)) {
+          const updated = { ...previous };
+          delete updated[selectedDateKey];
+
+          return updated;
+        }
+
+        return { ...previous, [selectedDateKey]: normalized };
+      });
+    },
+    [selectedDateKey],
+  );
+
+  const handlePeriodBleedingChange = useCallback(
+    async (isBleeding: boolean) => {
+      if (isSavingPeriod) {
+        return;
+      }
+
+      const currentlyBleeding = periodDateKeys.has(selectedDateKey);
+
+      if (isBleeding === currentlyBleeding) {
+        return;
+      }
+
+      setIsSavingPeriod(true);
+
+      try {
+        const nextPeriodDates = new Set(periodDateKeys);
+
+        if (isBleeding) {
+          nextPeriodDates.add(selectedDateKey);
+        } else {
+          nextPeriodDates.delete(selectedDateKey);
+        }
+
+        await persistPeriodDates(nextPeriodDates);
+      } finally {
+        setIsSavingPeriod(false);
+      }
+    },
+    [isSavingPeriod, periodDateKeys, persistPeriodDates, selectedDateKey],
+  );
 
   const handleOwnSymptomCreated = useCallback(
     (symptom: CustomSymptom) => {
@@ -274,9 +366,21 @@ const SymptomsScreen = () => {
 
               <SymptomEntryNoticeBox />
             </>
-          ) : (
-            <SymptomEntryPeriodMoodPlaceholder tab={activeTab} />
-          )}
+          ) : null}
+
+          {activeTab === SYMPTOM_ENTRY_TAB.period ? (
+            <SymptomEntryPeriodTab
+              isBleeding={periodDateKeys.has(selectedDateKey)}
+              isSaving={isSavingPeriod}
+              onChangeBleeding={(isBleeding) => {
+                void handlePeriodBleedingChange(isBleeding);
+              }}
+            />
+          ) : null}
+
+          {activeTab === SYMPTOM_ENTRY_TAB.mood ? (
+            <SymptomEntryMoodTab entry={moodEntry} onChange={handleMoodEntryChange} />
+          ) : null}
         </Box>
       </ScrollView>
 

@@ -39,6 +39,9 @@ export class MoodEntryEntity {
   @Column({ type: 'text', default: '' })
   note!: string;
 
+  @Column({ name: 'medication_change', type: 'boolean', nullable: true })
+  medicationChange!: boolean | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
 

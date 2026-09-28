@@ -27,6 +27,7 @@ const isMoodEntryEmpty = (entry: MoodEntry): boolean =>
   entry.feelings.length === 0 &&
   entry.energy === 0 &&
   entry.stress === 0 &&
+  entry.medicationChange === null &&
   entry.note.trim().length === 0;
 
 const mapEntityToEntry = (entity: MoodEntryEntity): MoodEntry => ({
@@ -36,6 +37,7 @@ const mapEntityToEntry = (entity: MoodEntryEntity): MoodEntry => ({
   ),
   energy: entity.energy,
   stress: entity.stress,
+  medicationChange: entity.medicationChange ?? null,
   note: entity.note,
 });
 
@@ -88,6 +90,7 @@ export class MoodService {
           primaryMoodId: entry.primaryMood,
           energy: entry.energy,
           stress: entry.stress,
+          medicationChange: entry.medicationChange,
           note: entry.note.trim(),
           feelings: feelings.map((feelingId) =>
             manager.create(MoodEntryFeelingEntity, { feelingId }),

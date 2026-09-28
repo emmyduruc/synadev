@@ -3,6 +3,11 @@ import { z } from 'zod';
 import { IsoDateSchema } from './iso-date.schema';
 
 export const MOOD_IDS = [
+  'good',
+  'balanced',
+  'irritated',
+  'depressed',
+  'tense',
   'happy',
   'calm',
   'content',
@@ -45,6 +50,10 @@ export const MoodEntrySchema = z
       .describe('Secondary feelings (multi-select, excludes primary)'),
     energy: MoodScaleSchema.describe('Energy level 0–5'),
     stress: MoodScaleSchema.describe('Stress level 0–5'),
+    medicationChange: z
+      .boolean()
+      .nullable()
+      .describe('Whether medication changed that day; null = unanswered'),
     note: z.string().max(2000).describe('Optional free-text note'),
   })
   .describe('Mood check-in for a single calendar day');
