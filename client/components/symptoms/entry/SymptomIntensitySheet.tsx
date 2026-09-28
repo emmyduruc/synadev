@@ -176,10 +176,6 @@ export const SymptomIntensitySheet = ({
 
                 {questions.length > 0 ? (
                   <Box gap="md">
-                    <Text size="sm" weight="bold">
-                      {t('symptom_entry_extras_heading')}
-                    </Text>
-
                     {questions.map((question) => (
                       <Box key={question.key} gap="sm">
                         <Text size="sm" weight="medium">

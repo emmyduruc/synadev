@@ -2,33 +2,26 @@ import { Path, Svg } from 'react-native-svg';
 
 import { semanticColors } from '@/lib/ui';
 
-export type JointStiffnessIconProps = {
+export type HorizontalWavesIconProps = {
   size?: number;
   color?: string;
 };
 
-/** Three vertical wavy lines for joint/muscle body-pain symptoms. */
-export const JointStiffnessIcon = ({
+/** Two horizontal wavy lines (dizziness, bloating, digestion patterns). */
+export const HorizontalWavesIcon = ({
   size = 24,
   color = semanticColors.splashBackground,
-}: JointStiffnessIconProps) => (
+}: HorizontalWavesIconProps) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path
-      d="M6 4C4.5 6.5 4.5 9 6 11.5C7.5 14 7.5 16.5 6 20"
+      d="M3 9C5.5 6.5 8.5 6.5 11 9C13.5 11.5 16.5 11.5 19 9C20 8 21 7.5 22 7.5"
       stroke={color}
       strokeWidth={1.8}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <Path
-      d="M12 4C10.5 6.5 10.5 9 12 11.5C13.5 14 13.5 16.5 12 20"
-      stroke={color}
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <Path
-      d="M18 4C19.5 6.5 19.5 9 18 11.5C16.5 14 16.5 16.5 18 20"
+      d="M3 15C5.5 12.5 8.5 12.5 11 15C13.5 17.5 16.5 17.5 19 15C20 14 21 13.5 22 13.5"
       stroke={color}
       strokeWidth={1.8}
       strokeLinecap="round"

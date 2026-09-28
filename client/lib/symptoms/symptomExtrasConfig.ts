@@ -18,6 +18,31 @@ const YES_NO_OPTIONS: readonly SymptomExtraOption[] = [
   { value: 'no', labelKey: 'symptom_extra_no' },
 ];
 
+const DIGESTION_EXTRAS: readonly SymptomExtraQuestion[] = [
+  {
+    key: 'digestion_pattern',
+    labelKey: 'symptom_extra_digestion_how_was',
+    layout: 'grid',
+    options: [
+      { value: 'normal', labelKey: 'symptom_extra_digestion_normal' },
+      { value: 'alternating', labelKey: 'symptom_extra_digestion_alternating' },
+      { value: 'persistent_constipation', labelKey: 'symptom_extra_digestion_constipation' },
+      { value: 'persistent_diarrhea', labelKey: 'symptom_extra_digestion_diarrhea' },
+    ],
+  },
+  {
+    key: 'noticed',
+    labelKey: 'symptom_extra_digestion_noticed',
+    layout: 'grid',
+    options: [
+      { value: 'blood_in_stool', labelKey: 'symptom_extra_digestion_blood_in_stool' },
+      { value: 'weight_loss', labelKey: 'symptom_extra_digestion_weight_loss' },
+      { value: 'fever', labelKey: 'symptom_extra_digestion_fever' },
+      { value: 'none', labelKey: 'symptom_extra_accompany_none' },
+    ],
+  },
+];
+
 export const SYMPTOM_EXTRAS_CONFIG: Partial<Record<SymptomId, readonly SymptomExtraQuestion[]>> = {
   nocturia: [
     {
@@ -142,6 +167,7 @@ export const SYMPTOM_EXTRAS_CONFIG: Partial<Record<SymptomId, readonly SymptomEx
     {
       key: 'day_frequency',
       labelKey: 'symptom_extra_mood_day_frequency',
+      layout: 'grid',
       options: [
         { value: '0', labelKey: 'symptom_extra_freq_0' },
         { value: '1_3', labelKey: 'symptom_extra_freq_1_3' },
@@ -153,6 +179,68 @@ export const SYMPTOM_EXTRAS_CONFIG: Partial<Record<SymptomId, readonly SymptomEx
       key: 'clear_triggers',
       labelKey: 'symptom_extra_mood_clear_triggers',
       options: YES_NO_OPTIONS,
+    },
+  ],
+  irritable: [
+    {
+      key: 'course',
+      labelKey: 'symptom_extra_irritable_course',
+      options: [
+        { value: 'short_waves', labelKey: 'symptom_extra_irritable_short_waves' },
+        { value: 'persistent', labelKey: 'symptom_extra_irritable_persistent' },
+      ],
+    },
+    {
+      key: 'strained_relationships',
+      labelKey: 'symptom_extra_irritable_strained_relationships',
+      options: YES_NO_OPTIONS,
+    },
+  ],
+  anxious: [
+    {
+      key: 'how_shown',
+      labelKey: 'symptom_extra_anxious_how_shown',
+      layout: 'grid',
+      options: [
+        { value: 'free_floating', labelKey: 'symptom_extra_anxious_free_floating' },
+        { value: 'panic_attacks', labelKey: 'symptom_extra_anxious_panic_attacks' },
+        { value: 'strong_worries', labelKey: 'symptom_extra_anxious_strong_worries' },
+        { value: 'physical_symptoms', labelKey: 'symptom_extra_anxious_physical' },
+      ],
+    },
+    {
+      key: 'avoided_something',
+      labelKey: 'symptom_extra_anxious_avoided',
+      options: YES_NO_OPTIONS,
+    },
+  ],
+  low_mood: [
+    {
+      key: 'what_noticeable',
+      labelKey: 'symptom_extra_low_mood_noticeable',
+      layout: 'grid',
+      options: [
+        { value: 'little_joy', labelKey: 'symptom_extra_low_mood_little_joy' },
+        { value: 'loss_of_interest', labelKey: 'symptom_extra_low_mood_loss_of_interest' },
+        { value: 'negative_thoughts', labelKey: 'symptom_extra_low_mood_negative_thoughts' },
+      ],
+    },
+    {
+      key: 'social_withdrawal',
+      labelKey: 'symptom_extra_low_mood_social_withdrawal',
+      options: YES_NO_OPTIONS,
+    },
+  ],
+  inner_restlessness: [
+    {
+      key: 'how_felt',
+      labelKey: 'symptom_extra_inner_restlessness_how_felt',
+      layout: 'grid',
+      options: [
+        { value: 'physically_driven', labelKey: 'symptom_extra_inner_restlessness_driven' },
+        { value: 'racing_thoughts', labelKey: 'symptom_extra_inner_restlessness_racing' },
+        { value: 'tension_no_cause', labelKey: 'symptom_extra_inner_restlessness_tension' },
+      ],
     },
   ],
   hot_flashes: [
@@ -215,6 +303,29 @@ export const SYMPTOM_EXTRAS_CONFIG: Partial<Record<SymptomId, readonly SymptomEx
       options: YES_NO_OPTIONS,
     },
   ],
+  joint_muscle_pain: [
+    {
+      key: 'which_joints',
+      labelKey: 'symptom_extra_joint_pain_which_joints',
+      layout: 'grid',
+      options: [
+        { value: 'hands_fingers', labelKey: 'symptom_extra_joint_hands_fingers' },
+        { value: 'knee_hip', labelKey: 'symptom_extra_joint_knee_hip' },
+        { value: 'spine', labelKey: 'symptom_extra_joint_spine' },
+        { value: 'several', labelKey: 'symptom_extra_joint_several' },
+      ],
+    },
+    {
+      key: 'morning_stiffness_30_plus',
+      labelKey: 'symptom_extra_joint_pain_morning_stiffness',
+      options: YES_NO_OPTIONS,
+    },
+    {
+      key: 'swelling_or_redness',
+      labelKey: 'symptom_extra_joint_pain_swelling_redness',
+      options: YES_NO_OPTIONS,
+    },
+  ],
   joint_stiffness: [
     {
       key: 'morning_duration',
@@ -227,6 +338,114 @@ export const SYMPTOM_EXTRAS_CONFIG: Partial<Record<SymptomId, readonly SymptomEx
       ],
     },
   ],
+  muscle_pain: [
+    {
+      key: 'where',
+      labelKey: 'symptom_extra_muscle_pain_where',
+      layout: 'grid',
+      options: [
+        { value: 'local', labelKey: 'symptom_extra_muscle_local' },
+        { value: 'several_regions', labelKey: 'symptom_extra_muscle_several_regions' },
+        { value: 'whole_body', labelKey: 'symptom_extra_muscle_whole_body' },
+      ],
+    },
+    {
+      key: 'worse_with_movement',
+      labelKey: 'symptom_extra_muscle_pain_worse_movement',
+      options: YES_NO_OPTIONS,
+    },
+  ],
+  headache: [
+    {
+      key: 'pain_character',
+      labelKey: 'symptom_extra_headache_pain_character',
+      layout: 'grid',
+      options: [
+        { value: 'one_sided_pulsating', labelKey: 'symptom_extra_headache_one_sided_pulsating' },
+        { value: 'both_sides_dull', labelKey: 'symptom_extra_headache_both_sides_dull' },
+        { value: 'new_different', labelKey: 'symptom_extra_headache_new_different' },
+      ],
+    },
+    {
+      key: 'accompanying',
+      labelKey: 'symptom_extra_headache_accompanying',
+      layout: 'grid',
+      options: [
+        { value: 'nausea', labelKey: 'symptom_extra_headache_nausea' },
+        { value: 'light_sensitivity', labelKey: 'symptom_extra_headache_light_sensitivity' },
+        { value: 'noise_sensitivity', labelKey: 'symptom_extra_headache_noise_sensitivity' },
+      ],
+    },
+  ],
+  palpitations: [
+    {
+      key: 'at_rest',
+      labelKey: 'symptom_extra_palpitations_at_rest',
+      options: YES_NO_OPTIONS,
+    },
+    {
+      key: 'accompanying',
+      labelKey: 'symptom_extra_palpitations_accompanying',
+      layout: 'grid',
+      options: [
+        { value: 'chest_pain', labelKey: 'symptom_extra_palpitations_chest_pain' },
+        { value: 'shortness_of_breath', labelKey: 'symptom_extra_palpitations_shortness_breath' },
+        { value: 'fainting_feeling', labelKey: 'symptom_extra_palpitations_fainting_feeling' },
+        { value: 'none', labelKey: 'symptom_extra_accompany_none' },
+      ],
+    },
+    {
+      key: 'with_heat_or_anxiety',
+      labelKey: 'symptom_extra_palpitations_with_heat_anxiety',
+      options: YES_NO_OPTIONS,
+    },
+  ],
+  dizziness: [
+    {
+      key: 'character',
+      labelKey: 'symptom_extra_dizziness_character',
+      layout: 'grid',
+      options: [
+        { value: 'spinning', labelKey: 'symptom_extra_dizziness_spinning' },
+        { value: 'swaying', labelKey: 'symptom_extra_dizziness_swaying' },
+        { value: 'lightheaded', labelKey: 'symptom_extra_dizziness_lightheaded' },
+      ],
+    },
+    {
+      key: 'when_occurred',
+      labelKey: 'symptom_extra_dizziness_when_occurred',
+      layout: 'grid',
+      options: [
+        { value: 'position_change', labelKey: 'symptom_extra_dizziness_position_change' },
+        { value: 'stress', labelKey: 'symptom_extra_trigger_stress' },
+        { value: 'exertion', labelKey: 'symptom_extra_dizziness_exertion' },
+        { value: 'none', labelKey: 'symptom_extra_accompany_none' },
+      ],
+    },
+  ],
+  tingling: [
+    {
+      key: 'where',
+      labelKey: 'symptom_extra_tingling_where',
+      layout: 'grid',
+      options: [
+        { value: 'hands', labelKey: 'symptom_extra_tingling_hands' },
+        { value: 'feet', labelKey: 'symptom_extra_tingling_feet' },
+        { value: 'one_sided', labelKey: 'symptom_extra_tingling_one_sided' },
+        { value: 'both_sides', labelKey: 'symptom_extra_tingling_both_sides' },
+      ],
+    },
+    {
+      key: 'duration',
+      labelKey: 'symptom_extra_tingling_duration',
+      options: [
+        { value: 'short_episodes', labelKey: 'symptom_extra_tingling_short_episodes' },
+        { value: 'persistent', labelKey: 'symptom_extra_tingling_persistent' },
+      ],
+    },
+  ],
+  bloating: DIGESTION_EXTRAS,
+  digestive_patterns: DIGESTION_EXTRAS,
 };
 
 export const getSymptomExtrasQuestions = (
