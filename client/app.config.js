@@ -62,6 +62,18 @@ if (existingEnvFiles.length > 0) {
   loadEnvFiles(existingEnvFiles, { silent: true });
 }
 
+// Expo never overrides keys already on process.env. Root `.env` often preloads
+// Cloud Run `EXPO_PUBLIC_API_URL`, so apply the client env file with overwrite.
+if (fs.existsSync(clientEnvFile)) {
+  const { parseEnvFiles } = require('@expo/env');
+  const { env: clientEnv } = parseEnvFiles([clientEnvFile]);
+  for (const [key, value] of Object.entries(clientEnv)) {
+    if (key.startsWith('EXPO_PUBLIC_') && typeof value === 'string') {
+      process.env[key] = value;
+    }
+  }
+}
+
 /** @type {import('expo/config').ExpoConfig} */
 const appConfig = require('./app.json').expo;
 

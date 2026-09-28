@@ -4,7 +4,17 @@
  * Absolute helpers are provided for logging / non-Axios callers.
  */
 
-export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
+import Constants from 'expo-constants';
+
+const apiUrlFromExtra = (): string | undefined => {
+  const extra = Constants.expoConfig?.extra as { apiUrl?: string } | undefined;
+  const fromExtra = extra?.apiUrl?.trim();
+  return fromExtra || undefined;
+};
+
+/** Prefer app.config `extra.apiUrl` so `.env.dev` wins over a preloaded Cloud Run URL. */
+export const API_BASE_URL =
+  apiUrlFromExtra() ?? process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
 
 const absolute = (path: string): string => `${API_BASE_URL}${path}`;
 

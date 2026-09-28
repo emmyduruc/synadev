@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 import {
   type GestureResponderEvent,
   type LayoutChangeEvent,
-  Pressable,
   View,
 } from 'react-native';
 
@@ -22,6 +21,7 @@ export type SymptomEntryMoodScaleFieldProps = {
 
 const TRACK_HEIGHT = 6;
 const THUMB_SIZE = 22;
+const HIT_AREA_HEIGHT = 32;
 const MIN = 1;
 const MAX = MOOD_SCALE_MAX;
 
@@ -72,7 +72,7 @@ export const SymptomEntryMoodScaleField = ({
         </Text>
       </Box>
 
-      <Pressable
+      <View
         accessibilityRole="adjustable"
         accessibilityValue={{ min: MIN, max: MAX, now: clamped, text: valueLabel }}
         onLayout={(event: LayoutChangeEvent) => {
@@ -80,36 +80,40 @@ export const SymptomEntryMoodScaleField = ({
         }}
         onStartShouldSetResponder={() => true}
         onMoveShouldSetResponder={() => true}
+        onStartShouldSetResponderCapture={() => true}
+        onMoveShouldSetResponderCapture={() => true}
+        onResponderTerminationRequest={() => false}
         onResponderGrant={handleResponder}
         onResponderMove={handleResponder}
-        className="justify-center py-2">
-        <View
-          style={{
-            height: TRACK_HEIGHT,
-            borderRadius: TRACK_HEIGHT / 2,
-            backgroundColor: semanticColors.border,
-            overflow: 'hidden',
-          }}>
+        className="w-full py-2">
+        <View pointerEvents="none" style={{ height: HIT_AREA_HEIGHT, justifyContent: 'center' }}>
           <View
             style={{
-              width: `${ratio * 100}%`,
               height: TRACK_HEIGHT,
+              borderRadius: TRACK_HEIGHT / 2,
+              backgroundColor: semanticColors.border,
+            }}>
+            <View
+              style={{
+                width: `${ratio * 100}%`,
+                height: TRACK_HEIGHT,
+                borderRadius: TRACK_HEIGHT / 2,
+                backgroundColor: semanticColors.splashBackground,
+              }}
+            />
+          </View>
+          <View
+            style={{
+              position: 'absolute',
+              left: thumbLeft,
+              width: THUMB_SIZE,
+              height: THUMB_SIZE,
+              borderRadius: THUMB_SIZE / 2,
               backgroundColor: semanticColors.splashBackground,
             }}
           />
         </View>
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            left: thumbLeft,
-            width: THUMB_SIZE,
-            height: THUMB_SIZE,
-            borderRadius: THUMB_SIZE / 2,
-            backgroundColor: semanticColors.splashBackground,
-          }}
-        />
-      </Pressable>
+      </View>
 
       <Box direction="row" justify="between">
         <Text size="xs" color="foreground-muted" responsive={false}>
