@@ -12,6 +12,7 @@ import { HorizontalWavesIcon } from '@/components/ui/icons/HorizontalWavesIcon';
 import { JointStiffnessIcon } from '@/components/ui/icons/JointStiffnessIcon';
 import { MoodWavesIcon } from '@/components/ui/icons/MoodWavesIcon';
 import { MoonIcon } from '@/components/ui/icons/MoonIcon';
+import { SparkleIcon } from '@/components/ui/icons/SparkleIcon';
 import { SparkOutlineIcon } from '@/components/ui/icons/SparkOutlineIcon';
 import { SYMPTOM_CATEGORIES } from '@/lib/symptoms/symptomCatalog';
 import { semanticColors } from '@/lib/ui';
@@ -33,7 +34,7 @@ const categoryIcon = (categoryId: SymptomCategoryId): ReactElement => {
     case 'urogenital':
       return <DropletIcon size={ICON_SIZE} color={ICON_COLOR} />;
     case 'skin':
-      return <HeartIcon size={ICON_SIZE} color={ICON_COLOR} />;
+      return <SparkleIcon size={ICON_SIZE} color={ICON_COLOR} />;
     case 'cognition':
       return <BrainIcon size={ICON_SIZE} color={ICON_COLOR} />;
     default:
@@ -134,6 +135,18 @@ export const getSymptomEntryIcon = (symptomId: SymptomId): ReactElement => {
 
   if (symptomId === 'cramps') {
     return <JointStiffnessIcon size={ICON_SIZE} color={ICON_COLOR} />;
+  }
+
+  if (symptomId === 'skin_and_hair') {
+    return <SparkleIcon size={ICON_SIZE} color={ICON_COLOR} />;
+  }
+
+  if (
+    symptomId === 'dry_skin'
+    || symptomId === 'itchy_skin'
+    || symptomId === 'hair_loss'
+  ) {
+    return <SparkOutlineIcon size={ICON_SIZE} color={ICON_COLOR} />;
   }
 
   const category = SYMPTOM_CATEGORIES.find((item) =>

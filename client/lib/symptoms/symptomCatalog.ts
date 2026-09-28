@@ -116,10 +116,10 @@ export const SYMPTOM_CATEGORIES: readonly SymptomCategory[] = [
     sectionClassName: 'border-apricot bg-apricot-light',
     wellClassName: 'bg-apricot',
     options: [
-      { id: 'acne', emoji: '🪞', labelKey: 'symptom_acne' },
+      { id: 'skin_and_hair', emoji: '✨', labelKey: 'symptom_skin_and_hair' },
       { id: 'dry_skin', emoji: '🏜️', labelKey: 'symptom_dry_skin' },
       { id: 'itchy_skin', emoji: '🪶', labelKey: 'symptom_itchy_skin' },
-      { id: 'skin_and_hair', emoji: '💇', labelKey: 'symptom_skin_and_hair' },
+      { id: 'hair_loss', emoji: '💇', labelKey: 'symptom_hair_loss' },
     ],
   },
   {

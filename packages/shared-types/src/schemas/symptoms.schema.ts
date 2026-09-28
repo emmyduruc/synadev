@@ -69,6 +69,7 @@ export const SYMPTOM_IDS = [
   'acne',
   'dry_skin',
   'itchy_skin',
+  'hair_loss',
   'dryness',
   'skin_and_hair',
   'forgetfulness',

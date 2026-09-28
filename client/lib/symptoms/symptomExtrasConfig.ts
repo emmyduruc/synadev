@@ -620,6 +620,58 @@ export const SYMPTOM_EXTRAS_CONFIG: Partial<Record<SymptomId, readonly SymptomEx
       ],
     },
   ],
+  dry_skin: [
+    {
+      key: 'where',
+      labelKey: 'symptom_extra_dry_skin_where',
+      layout: 'grid',
+      options: [
+        { value: 'local', labelKey: 'symptom_extra_muscle_local' },
+        { value: 'several_regions', labelKey: 'symptom_extra_muscle_several_regions' },
+        { value: 'whole_body', labelKey: 'symptom_extra_muscle_whole_body' },
+      ],
+    },
+    {
+      key: 'itching_at_night',
+      labelKey: 'symptom_extra_dry_skin_itching_at_night',
+      options: YES_NO_OPTIONS,
+    },
+  ],
+  itchy_skin: [
+    {
+      key: 'rash_visible',
+      labelKey: 'symptom_extra_itching_rash_visible',
+      options: YES_NO_OPTIONS,
+    },
+    {
+      key: 'stronger_at_night',
+      labelKey: 'symptom_extra_itching_stronger_at_night',
+      options: YES_NO_OPTIONS,
+    },
+  ],
+  hair_loss: [
+    {
+      key: 'how_shown',
+      labelKey: 'symptom_extra_hair_loss_how_shown',
+      layout: 'grid',
+      options: [
+        { value: 'diffuse', labelKey: 'symptom_extra_hair_loss_diffuse' },
+        { value: 'patchy', labelKey: 'symptom_extra_hair_loss_patchy' },
+        { value: 'receding', labelKey: 'symptom_extra_hair_loss_receding' },
+      ],
+    },
+    {
+      key: 'accompanying',
+      labelKey: 'symptom_extra_hair_loss_accompanying',
+      layout: 'grid',
+      options: [
+        { value: 'weight_gain', labelKey: 'symptom_extra_hair_loss_weight_gain' },
+        { value: 'cold_intolerance', labelKey: 'symptom_extra_hair_loss_cold_intolerance' },
+        { value: 'fatigue', labelKey: 'symptom_extra_hair_loss_fatigue' },
+        { value: 'none', labelKey: 'symptom_extra_accompany_none' },
+      ],
+    },
+  ],
 };
 
 export const getSymptomExtrasQuestions = (
