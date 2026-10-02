@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native';
 import { CourseCooccurrenceCard } from '@/components/course/CourseCooccurrenceCard';
 import { CourseDayDetailSheet } from '@/components/course/CourseDayDetailSheet';
 import { CourseFrequenciesCard } from '@/components/course/CourseFrequenciesCard';
+import { CourseInfoCard } from '@/components/course/CourseInfoCard';
 import { CoursePeriodHeader } from '@/components/course/CoursePeriodHeader';
 import { CourseRowInsightSheet } from '@/components/course/CourseRowInsightSheet';
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
@@ -123,6 +124,14 @@ const CourseTabScreen = () => {
                 highlightedDateKeys={highlightedDateKeys}
                 onPressRow={handlePressRow}
                 onPressTile={handlePressTile}
+              />
+              <CourseInfoCard
+                titleKey="course_changes_heading"
+                bodyKey="course_changes_empty_body"
+              />
+              <CourseInfoCard
+                titleKey="course_history_why_heading"
+                bodyKey="course_history_why_body"
               />
             </Box>
           </ScrollView>
