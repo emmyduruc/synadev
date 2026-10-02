@@ -35,6 +35,7 @@ export const semanticColors = {
     sageMistLight: colors['sage-mist'].light,
     dustyRose: colors['dusty-rose'].DEFAULT,
     dustyRoseLight: colors['dusty-rose'].light,
+    heat2: colors.heat[2],
     apricot: colors.apricot.DEFAULT,
     apricotLight: colors.apricot.light,
     slate: colors.slate.DEFAULT,

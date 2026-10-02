@@ -104,6 +104,16 @@ export const colors = {
     DEFAULT: '#DAB3B3',
     light: '#F4EBEB',
   },
+  /**
+   * Heat scale — frequency tiles / vasomotor accents (design sheet `--heat-*`).
+   * `heat-2` fills the segmented frequency bars on Courses.
+   */
+  heat: {
+    1: '#F4EBEB',
+    2: '#DAB3B3',
+    3: '#C48B8B',
+    4: '#A55972',
+  },
   apricot: {
     DEFAULT: '#F1D5B0',
     light: '#F7F0E8',
