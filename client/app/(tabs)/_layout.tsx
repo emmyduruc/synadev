@@ -27,26 +27,28 @@ const TabsLayout = () => {
       }}>
       <Tabs.Screen
         name={TAB_ROUTE.start}
-        options={{ title: t('tab_start_label') }}
-      />
-      {/* Temporarily hidden from the bottom tab bar. Will be reinstated later. */}
-      {/*
-      <Tabs.Screen
-        name={TAB_ROUTE.patterns}
-        options={{ title: t('tab_patterns_label') }}
+        options={{ title: t('tab_today_label') }}
       />
       <Tabs.Screen
-        name={TAB_ROUTE.syna}
-        options={{ title: t('tab_syna_label') }}
+        name={TAB_ROUTE.course}
+        options={{ title: t('tab_course_label') }}
       />
-      */}
       <Tabs.Screen
         name={TAB_ROUTE.report}
         options={{ title: t('tab_report_label') }}
       />
+      {/* Kept for deep links / in-app navigation; hidden from the tab bar. */}
       <Tabs.Screen
         name={TAB_ROUTE.profile}
-        options={{ title: t('tab_profile_label') }}
+        options={{ title: t('tab_profile_label'), href: null }}
+      />
+      <Tabs.Screen
+        name={TAB_ROUTE.patterns}
+        options={{ title: t('tab_patterns_label'), href: null }}
+      />
+      <Tabs.Screen
+        name={TAB_ROUTE.syna}
+        options={{ title: t('tab_syna_label'), href: null }}
       />
     </Tabs>
   );

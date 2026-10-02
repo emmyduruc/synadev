@@ -24,6 +24,7 @@ export const ROUTES = {
   mood: '/mood',
   tabs: {
     start: '/(tabs)',
+    course: '/(tabs)/course',
     patterns: '/(tabs)/patterns',
     syna: '/(tabs)/syna',
     report: '/(tabs)/report',

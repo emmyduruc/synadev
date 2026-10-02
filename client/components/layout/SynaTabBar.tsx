@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -5,8 +6,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/components/ui/Text';
 import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import { useTranslate } from '@/hooks/useTranslate';
-import { TAB_BAR, TAB_ROUTE, type TabRouteName } from '@/lib/navigation/constants';
+import {
+  TAB_BAR,
+  TAB_BAR_VISIBLE_ROUTES,
+  TAB_ROUTE,
+  type TabBarVisibleRoute,
+  type TabRouteName,
+} from '@/lib/navigation/constants';
 import type { SynaTabBarProps } from '@/lib/navigation/types';
+import { ROUTES } from '@/lib/routes';
 import { semanticColors } from '@/lib/ui';
 
 const TAB_BAR_DISPLAY = {
@@ -15,68 +23,39 @@ const TAB_BAR_DISPLAY = {
 
 type TabIconName = SymbolViewProps['name'];
 
-const TAB_ICON: Record<TabRouteName, TabIconName> = {
+const TAB_ICON: Record<TabBarVisibleRoute, TabIconName> = {
   [TAB_ROUTE.start]: {
-    ios: 'house.fill',
+    ios: 'house',
     android: 'home',
     web: 'home',
   },
-  [TAB_ROUTE.patterns]: {
-    ios: 'square.stack.3d.up.fill',
-    android: 'layers',
-    web: 'layers',
+  [TAB_ROUTE.capture]: {
+    ios: 'plus',
+    android: 'add',
+    web: 'add',
   },
-  [TAB_ROUTE.syna]: {
-    ios: 'sparkles',
-    android: 'auto_awesome',
-    web: 'auto_awesome',
+  [TAB_ROUTE.course]: {
+    ios: 'chart.bar',
+    android: 'bar_chart',
+    web: 'bar_chart',
   },
   [TAB_ROUTE.report]: {
-    ios: 'doc.text.fill',
+    ios: 'doc.text',
     android: 'description',
     web: 'description',
   },
-  [TAB_ROUTE.profile]: {
-    ios: 'person.fill',
-    android: 'person',
-    web: 'person',
-  },
 };
 
-const TAB_LABEL_KEY: Record<TabRouteName, string> = {
-  [TAB_ROUTE.start]: 'tab_start_label',
-  [TAB_ROUTE.patterns]: 'tab_patterns_label',
-  [TAB_ROUTE.syna]: 'tab_syna_label',
+const TAB_LABEL_KEY: Record<TabBarVisibleRoute, string> = {
+  [TAB_ROUTE.start]: 'tab_today_label',
+  [TAB_ROUTE.capture]: 'tab_capture_label',
+  [TAB_ROUTE.course]: 'tab_course_label',
   [TAB_ROUTE.report]: 'tab_report_label',
-  [TAB_ROUTE.profile]: 'tab_profile_label',
-};
-
-const isTabRouteName = (routeName: string): routeName is TabRouteName =>
-  Object.values(TAB_ROUTE).includes(routeName as TabRouteName);
-
-const resolveTabColors = (isFocused: boolean, isCenter: boolean) => {
-  if (isCenter) {
-    return {
-      icon: semanticColors.iconOnPrimary,
-      label: semanticColors.splashBackground,
-    };
-  }
-
-  if (isFocused) {
-    return {
-      icon: semanticColors.foreground,
-      label: semanticColors.foreground,
-    };
-  }
-
-  return {
-    icon: semanticColors.ovum.slateLight,
-    label: semanticColors.ovum.slateLight,
-  };
 };
 
 export const SynaTabBar = ({ state, descriptors, navigation }: SynaTabBarProps) => {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const { t } = useTranslate();
   const focusedOptions = descriptors[state.routes[state.index]?.key]?.options;
   const tabBarStyle = focusedOptions?.tabBarStyle as
@@ -87,27 +66,34 @@ export const SynaTabBar = ({ state, descriptors, navigation }: SynaTabBarProps) 
     return null;
   }
 
+  const focusedRouteName = state.routes[state.index]?.name;
+  const mutedColor = semanticColors.ovum.slateLight;
+  const activeColor = semanticColors.foreground;
+
   return (
-    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, TAB_BAR.minBottomPadding) }]}>
-      {state.routes.map((route, index) => {
-        if (!isTabRouteName(route.name)) {
-          return null;
-        }
-
-        const tabRoute = route.name;
-        const isFocused = state.index === index;
-        const isCenter = tabRoute === TAB_BAR.centerRoute;
-        const showBadge = tabRoute === TAB_BAR.badgeRoute;
-
-        // Temporarily hidden from the bottom tab bar. Will be reinstated later.
-        if (tabRoute === TAB_ROUTE.patterns || tabRoute === TAB_ROUTE.syna) {
-          return null;
-        }
-
+    <View
+      style={[
+        styles.container,
+        { paddingBottom: Math.max(insets.bottom, TAB_BAR.minBottomPadding) },
+      ]}>
+      {TAB_BAR_VISIBLE_ROUTES.map((tabRoute) => {
         const label = t(TAB_LABEL_KEY[tabRoute]);
-        const { icon: iconColor, label: labelColor } = resolveTabColors(isFocused, isCenter);
+        const isCapture = tabRoute === TAB_ROUTE.capture;
+        const isFocused = !isCapture && focusedRouteName === tabRoute;
+        const color = isFocused ? activeColor : mutedColor;
 
         const onPress = () => {
+          if (isCapture) {
+            router.push(ROUTES.symptoms);
+            return;
+          }
+
+          const route = state.routes.find((item) => item.name === tabRoute);
+
+          if (!route) {
+            return;
+          }
+
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
@@ -115,50 +101,22 @@ export const SynaTabBar = ({ state, descriptors, navigation }: SynaTabBarProps) 
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
+            navigation.navigate(route.name as TabRouteName);
           }
         };
 
-        if (isCenter) {
-          return (
-            <TouchableOpacity
-              key={route.key}
-              accessibilityRole="button"
-              accessibilityState={{ selected: isFocused }}
-              accessibilityLabel={label}
-              onPress={onPress}
-              style={styles.centerTab}>
-              <View style={styles.centerButton}>
-                <SymbolView
-                  name={TAB_ICON[tabRoute]}
-                  size={24}
-                  tintColor={iconColor}
-                />
-              </View>
-              <Text size="2xs" weight="semibold" style={{ color: labelColor }}>
-                {label}
-              </Text>
-            </TouchableOpacity>
-          );
-        }
-
         return (
           <TouchableOpacity
-            key={route.key}
+            key={tabRoute}
             accessibilityRole="button"
             accessibilityState={{ selected: isFocused }}
             accessibilityLabel={label}
             onPress={onPress}
             style={styles.tab}>
             <View style={styles.iconWrap}>
-              <SymbolView
-                name={TAB_ICON[tabRoute]}
-                size={22}
-                tintColor={iconColor}
-              />
-              {showBadge ? <View style={styles.badge} /> : null}
+              <SymbolView name={TAB_ICON[tabRoute]} size={22} tintColor={color} />
             </View>
-            <Text size="2xs" weight="medium" style={{ color: labelColor }}>
+            <Text size="2xs" weight="medium" style={{ color }}>
               {label}
             </Text>
           </TouchableOpacity>
@@ -189,39 +147,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: 4,
-    // Keep in sync with TAB_BAR.contentHeight (paddingTop 10 + row 52).
     minHeight: 52,
   },
   iconWrap: {
     position: 'relative',
-  },
-  badge: {
-    position: 'absolute',
-    top: -2,
-    right: -4,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: semanticColors.splashBackground,
-  },
-  centerTab: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginTop: -TAB_BAR.centerButtonLift,
-    gap: 6,
-  },
-  centerButton: {
-    width: TAB_BAR.centerButtonSize,
-    height: TAB_BAR.centerButtonSize,
-    borderRadius: TAB_BAR.centerButtonSize / 2,
-    backgroundColor: semanticColors.splashBackground,
+    height: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: semanticColors.splashBackground,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 6,
   },
 });
