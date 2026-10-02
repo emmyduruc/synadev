@@ -1,7 +1,11 @@
+import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { getPeriodDays, replacePeriodDays } from '@/lib/api';
-import { emitPeriodDatesChanged } from '@/lib/period/periodDatesEvents';
+import {
+  emitPeriodDatesChanged,
+  subscribePeriodDatesChanged,
+} from '@/lib/period/periodDatesEvents';
 
 export const usePeriodDates = () => {
   const [dateKeys, setDateKeys] = useState<Set<string>>(new Set());
@@ -20,9 +24,19 @@ export const usePeriodDates = () => {
     }
   }, []);
 
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
+  useFocusEffect(
+    useCallback(() => {
+      void refresh();
+    }, [refresh]),
+  );
+
+  useEffect(
+    () =>
+      subscribePeriodDatesChanged(() => {
+        void refresh();
+      }),
+    [refresh],
+  );
 
   const persist = useCallback(async (nextDateKeys: ReadonlySet<string>) => {
     const sorted = [...new Set(nextDateKeys)].sort();
