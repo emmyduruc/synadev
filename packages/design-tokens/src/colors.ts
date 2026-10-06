@@ -126,6 +126,35 @@ export const colors = {
   'pastel-lavender': {
     DEFAULT: '#E7ECF2',
   },
+  /** Page / brand surface tokens (design sheet --page, --surround, --surface). */
+  surround: {
+    DEFAULT: '#E7ECF2',
+  },
+  'pastel-rose': {
+    DEFAULT: '#F7EFF2',
+  },
+  cream: {
+    DEFAULT: '#F8F6F1',
+  },
+  'pastel-apricot': {
+    DEFAULT: '#F8EBDD',
+  },
+  'plum-soft': {
+    DEFAULT: '#E7ECF2',
+  },
+  'pastel-lavender-line': {
+    DEFAULT: '#EFEBF3',
+  },
+  page: {
+    DEFAULT: '#F7EFF2',
+    /** Vertical page wash stops (cream/apricot → rose → plum/lavender). */
+    gradientTop: '#F8F1E7',
+    gradientMid: '#F7EFF2',
+    gradientBottom: '#EBE8F1',
+  },
+  surface: {
+    DEFAULT: 'rgba(252, 253, 255, 0.88)',
+  },
   /**
    * Report / clinical surfaces (CSS vars from the report design sheet).
    * Prefer these for report screens and matching marketing washes.
@@ -146,7 +175,8 @@ export const colors = {
     bleeding: '#B07A8C',
   },
   background: {
-    DEFAULT: '#F8F5F1',
+    /** App page base (= --page / --pastel-rose). */
+    DEFAULT: '#F7EFF2',
     dark: '#0A0A0A',
   },
   foreground: {

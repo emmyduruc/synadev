@@ -7,6 +7,14 @@ export const semanticColors = {
   foreground: colors.foreground.DEFAULT,
   foregroundMuted: colors.foreground.muted,
   background: colors.background.DEFAULT,
+  surround: colors.surround.DEFAULT,
+  page: {
+    DEFAULT: colors.page.DEFAULT,
+    gradientTop: colors.page.gradientTop,
+    gradientMid: colors.page.gradientMid,
+    gradientBottom: colors.page.gradientBottom,
+  },
+  surface: colors.surface.DEFAULT,
   card: colors.card.DEFAULT,
   muted: colors.muted.DEFAULT,
   mutedForeground: colors.muted.foreground,
@@ -44,6 +52,11 @@ export const semanticColors = {
     slate: colors.slate.DEFAULT,
     slateLight: colors.slate.light,
     pastelLavender: colors['pastel-lavender'].DEFAULT,
+    pastelRose: colors['pastel-rose'].DEFAULT,
+    cream: colors.cream.DEFAULT,
+    pastelApricot: colors['pastel-apricot'].DEFAULT,
+    plumSoft: colors['plum-soft'].DEFAULT,
+    pastelLavenderLine: colors['pastel-lavender-line'].DEFAULT,
   },
   /** Report / clinical surfaces from the report design sheet */
   report: {

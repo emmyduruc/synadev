@@ -15,6 +15,7 @@ import { useEasUpdates } from '@/hooks/useEasUpdates';
 import { getClerkPublishableKey } from '@/lib/clerk/env';
 import { useAppFonts } from '@/lib/fonts/useAppFonts';
 import '@/lib/i18n';
+import { semanticColors } from '@/lib/ui';
 
 export {
   ErrorBoundary,
@@ -55,5 +56,6 @@ export default RootLayout;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: semanticColors.surround,
   },
 });

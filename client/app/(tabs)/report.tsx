@@ -1,54 +1,135 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ScrollView } from 'react-native';
 
+import { CourseCooccurrenceCard } from '@/components/course/CourseCooccurrenceCard';
+import { CourseDayDetailSheet } from '@/components/course/CourseDayDetailSheet';
+import { CourseRowInsightSheet } from '@/components/course/CourseRowInsightSheet';
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import { MascotLoadingGate } from '@/components/loading/MascotLoadingGate';
-import { DoctorReportContent } from '@/components/report/DoctorReportContent';
+import { ReportCoverageCard } from '@/components/report/ReportCoverageCard';
 import { ReportDateRangeSheet } from '@/components/report/ReportDateRangeSheet';
-import { ReportTabBar, type ReportTabOption } from '@/components/report/ReportTabBar';
-import { UserReportContent } from '@/components/report/UserReportContent';
-import { AppHeader, Box, Text } from '@/components/ui';
-import { CalendarIcon } from '@/components/ui/icons/CalendarIcon';
-import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
-import { useDoctorReport } from '@/hooks/useDoctorReport';
+import { ReportPeriodHeader } from '@/components/report/ReportPeriodHeader';
+import { ReportQuestionsCard } from '@/components/report/ReportQuestionsCard';
+import { AppHeader, Box } from '@/components/ui';
+import { useCourseScreenData } from '@/hooks/useCourseScreenData';
 import { useReportDateRange } from '@/hooks/useReportDateRange';
 import { useTranslate } from '@/hooks/useTranslate';
-import { useUserReport } from '@/hooks/useUserReport';
-import { DASHBOARD_ICON_WELL } from '@/lib/dashboard/surfaces';
+import { buildCourseDayDetail } from '@/lib/course/buildCourseDayDetail';
+import { buildCourseRowInsight } from '@/lib/course/buildCourseRowInsight';
+import type {
+  CourseCooccurrenceRow,
+  CourseCooccurrenceRowId,
+  CourseCooccurrenceTile,
+} from '@/lib/course/courseCooccurrence';
 import { LOADING_VARIANT } from '@/lib/loading/loadingVariants';
-import { REPORT_TAB, type ReportTabId } from '@/lib/report/reportConstants';
-import { formatReportDateKey } from '@/lib/report/reportDateRange';
-import { cn, semanticColors } from '@/lib/ui';
+import {
+  formatReportPeriodMonthYear,
+  formatReportPeriodRangeLabel,
+} from '@/lib/report/formatReportPeriod';
 
 const ReportTabScreen = () => {
-  const { t } = useTranslate();
-  const [activeTabId, setActiveTabId] = useState<ReportTabId>(REPORT_TAB.forYou);
+  const { t, language } = useTranslate();
   const [isRangeSheetOpen, setIsRangeSheetOpen] = useState(false);
-  const isForYou = activeTabId === REPORT_TAB.forYou;
+  const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
+  const [selectedRowId, setSelectedRowId] = useState<CourseCooccurrenceRowId | null>(
+    null,
+  );
 
   const {
     range,
     bounds,
+    windowDays,
     isLoading: isRangeLoading,
-    isCustom,
     applyRange,
     resetToDefault,
-  } = useReportDateRange(!isForYou);
+  } = useReportDateRange(true);
 
-  const { isLoading: isUserLoading, report: userReport } = useUserReport({ range });
-  const { isLoading: isDoctorLoading, report: doctorReport } = useDoctorReport({
-    range,
-  });
+  const {
+    frequencySummary,
+    cooccurrenceSummary,
+    symptomLogs,
+    periodDateKeys,
+    healthRows,
+    isLoading: isCourseLoading,
+  } = useCourseScreenData();
 
-  const tabs: readonly ReportTabOption[] = [
-    { id: REPORT_TAB.forYou, label: t('report_tab_for_you') },
-    { id: REPORT_TAB.forDoctor, label: t('report_tab_for_doctor') },
-  ];
+  const monthYearLabel = useMemo(
+    () => formatReportPeriodMonthYear(range.toDateKey, language),
+    [language, range.toDateKey],
+  );
 
-  const isContentLoading = isRangeLoading || (isForYou ? isUserLoading : isDoctorLoading);
-  const isReportReady =
-    !isContentLoading && (isForYou ? Boolean(userReport) : Boolean(doctorReport));
+  const rangeLabel = useMemo(
+    () => formatReportPeriodRangeLabel(range.fromDateKey, range.toDateKey),
+    [range.fromDateKey, range.toDateKey],
+  );
+
+  const selectedDetail = useMemo(() => {
+    if (!selectedDateKey) {
+      return null;
+    }
+
+    return buildCourseDayDetail({
+      dateKey: selectedDateKey,
+      symptomLogs,
+      healthRows,
+      periodDateKeys,
+    });
+  }, [healthRows, periodDateKeys, selectedDateKey, symptomLogs]);
+
+  const selectedRowInsight = useMemo(() => {
+    if (!selectedRowId) {
+      return null;
+    }
+
+    return buildCourseRowInsight(cooccurrenceSummary, selectedRowId);
+  }, [cooccurrenceSummary, selectedRowId]);
+
+  const highlightedDateKeys = useMemo(() => {
+    if (!selectedRowInsight) {
+      return undefined;
+    }
+
+    return new Set(selectedRowInsight.eventDateKeys);
+  }, [selectedRowInsight]);
+
+  const handlePressTile = (_row: CourseCooccurrenceRow, tile: CourseCooccurrenceTile) => {
+    if (tile.kind === 'empty') {
+      return;
+    }
+
+    const detail = buildCourseDayDetail({
+      dateKey: tile.dateKey,
+      symptomLogs,
+      healthRows,
+      periodDateKeys,
+    });
+
+    if (!detail.hasContent) {
+      return;
+    }
+
+    setSelectedRowId(null);
+    setSelectedDateKey(tile.dateKey);
+  };
+
+  const handlePressRow = (row: CourseCooccurrenceRow) => {
+    if (selectedRowId === row.id) {
+      setSelectedRowId(null);
+      return;
+    }
+
+    const insight = buildCourseRowInsight(cooccurrenceSummary, row.id);
+
+    if (!insight) {
+      return;
+    }
+
+    setSelectedDateKey(null);
+    setSelectedRowId(row.id);
+  };
+
+  const isReady = !isRangeLoading && !isCourseLoading;
 
   return (
     <SynaGradientBackground>
@@ -56,55 +137,41 @@ const ReportTabScreen = () => {
         <Box flex={1}>
           <AppHeader title={t('tab_report_title')} showBack={false} />
 
-          <Box
-            direction="row"
-            align="center"
-            gap="sm"
-            paddingX="md"
-            paddingY="sm">
-            <Box className="min-w-0 flex-1">
-              <ReportTabBar
-                tabs={tabs}
-                activeTabId={activeTabId}
-                onTabChange={setActiveTabId}
-              />
-            </Box>
-
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel={t('report_date_range_open_accessibility')}
-              onPress={() => setIsRangeSheetOpen(true)}
-              className={cn('h-11 w-11', DASHBOARD_ICON_WELL.calendar)}>
-              <CalendarIcon size={20} color={semanticColors.foreground} />
-            </TouchableOpacity>
-          </Box>
-
-          {isCustom ? (
-            <Box paddingX="md" className="pb-1">
-              <Text size="2xs" className="text-black/60">
-                {t('report_date_range_active_label', {
-                  from: formatReportDateKey(range.fromDateKey),
-                  to: formatReportDateKey(range.toDateKey),
-                })}
-              </Text>
-            </Box>
-          ) : null}
-
           <MascotLoadingGate
-            isReady={isReportReady}
+            isReady={isReady}
             variant={LOADING_VARIANT.report}
             className="flex-1">
             <ScrollView
               className="flex-1"
               contentContainerStyle={{ paddingBottom: 32, flexGrow: 1 }}
               showsVerticalScrollIndicator={false}>
-              <Box paddingX="md" className="pt-2">
-                {isForYou && userReport ? (
-                  <UserReportContent report={userReport} />
-                ) : null}
-                {!isForYou && doctorReport ? (
-                  <DoctorReportContent report={doctorReport} />
-                ) : null}
+              <Box paddingX="lg" gap="lg" className="pt-2">
+                <ReportPeriodHeader
+                  monthYearLabel={monthYearLabel}
+                  windowDays={windowDays}
+                  rangeLabel={rangeLabel}
+                  onChangePeriod={() => setIsRangeSheetOpen(true)}
+                />
+
+                <ReportQuestionsCard />
+
+                <ReportCoverageCard
+                  documentedDays={frequencySummary.documentedDays}
+                  windowDays={frequencySummary.windowDays}
+                  emptyDays={frequencySummary.emptyDays}
+                  symptomFreeDays={0}
+                  backfilledCount={0}
+                  backfilledAfterOneDay={0}
+                  backfilledAfterFourDays={0}
+                />
+
+                <CourseCooccurrenceCard
+                  summary={cooccurrenceSummary}
+                  selectedRowId={selectedRowId}
+                  highlightedDateKeys={highlightedDateKeys}
+                  onPressRow={handlePressRow}
+                  onPressTile={handlePressTile}
+                />
               </Box>
             </ScrollView>
           </MascotLoadingGate>
@@ -124,6 +191,18 @@ const ReportTabScreen = () => {
           resetToDefault();
           setIsRangeSheetOpen(false);
         }}
+      />
+
+      <CourseDayDetailSheet
+        detail={selectedDetail}
+        visible={selectedDetail !== null}
+        onClose={() => setSelectedDateKey(null)}
+      />
+
+      <CourseRowInsightSheet
+        insight={selectedRowInsight}
+        visible={selectedRowInsight !== null}
+        onClose={() => setSelectedRowId(null)}
       />
     </SynaGradientBackground>
   );
