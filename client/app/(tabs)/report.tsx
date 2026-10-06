@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView } from 'react-native';
 
 import { CourseCooccurrenceCard } from '@/components/course/CourseCooccurrenceCard';
@@ -16,7 +16,11 @@ import { ReportMechanismCard } from '@/components/report/ReportMechanismCard';
 import { ReportNightComparisonCard } from '@/components/report/ReportNightComparisonCard';
 import { ReportNumbersCard } from '@/components/report/ReportNumbersCard';
 import { ReportObservationCard } from '@/components/report/ReportObservationCard';
-import { ReportPeriodHeader } from '@/components/report/ReportPeriodHeader';
+import {
+  ReportPeriodHeader,
+  type ReportPeriodNotice,
+} from '@/components/report/ReportPeriodHeader';
+import { ReportPeriodPresetSheet } from '@/components/report/ReportPeriodPresetSheet';
 import { ReportQuestionsCard } from '@/components/report/ReportQuestionsCard';
 import { ReportTogetherCard } from '@/components/report/ReportTogetherCard';
 import { AppHeader, Box } from '@/components/ui';
@@ -31,36 +35,53 @@ import type {
   CourseCooccurrenceTile,
 } from '@/lib/course/courseCooccurrence';
 import { LOADING_VARIANT } from '@/lib/loading/loadingVariants';
+import { countDocumentedDaysInRange } from '@/lib/report/countDocumentedDaysInRange';
 import {
   formatReportPeriodMonthYear,
   formatReportPeriodRangeLabel,
 } from '@/lib/report/formatReportPeriod';
+import {
+  REPORT_PERIOD_PRESET,
+  type ReportPeriodPresetOptionId,
+} from '@/lib/report/reportPeriodPresets';
 
 const ReportTabScreen = () => {
   const { t, language } = useTranslate();
-  const [isRangeSheetOpen, setIsRangeSheetOpen] = useState(false);
+  const [isPresetSheetOpen, setIsPresetSheetOpen] = useState(false);
+  const [isCustomRangeSheetOpen, setIsCustomRangeSheetOpen] = useState(false);
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
   const [selectedRowId, setSelectedRowId] = useState<CourseCooccurrenceRowId | null>(
     null,
   );
+  const [periodNotice, setPeriodNotice] = useState<ReportPeriodNotice | null>(null);
+  const noticeBaselineRef = useRef<number | null>(null);
 
   const {
     range,
     bounds,
     windowDays,
+    presetId,
     isLoading: isRangeLoading,
     applyRange,
+    applyPreset,
     resetToDefault,
   } = useReportDateRange(true);
 
   const {
-    frequencySummary,
     cooccurrenceSummary,
     symptomLogs,
     periodDateKeys,
     healthRows,
     isLoading: isCourseLoading,
   } = useCourseScreenData();
+
+  const documentedDays = useMemo(
+    () =>
+      countDocumentedDaysInRange(symptomLogs, range.fromDateKey, range.toDateKey),
+    [range.fromDateKey, range.toDateKey, symptomLogs],
+  );
+
+  const emptyDays = Math.max(0, windowDays - documentedDays);
 
   const monthYearLabel = useMemo(
     () => formatReportPeriodMonthYear(range.toDateKey, language),
@@ -71,6 +92,31 @@ const ReportTabScreen = () => {
     () => formatReportPeriodRangeLabel(range.fromDateKey, range.toDateKey),
     [range.fromDateKey, range.toDateKey],
   );
+
+  const selectedPresetOptionId =
+    presetId === REPORT_PERIOD_PRESET.custom
+      ? null
+      : (presetId as ReportPeriodPresetOptionId);
+
+  useEffect(() => {
+    const baseline = noticeBaselineRef.current;
+
+    if (baseline === null) {
+      return;
+    }
+
+    if (documentedDays !== baseline) {
+      setPeriodNotice({
+        currentDocumentedDays: documentedDays,
+        previousDocumentedDays: baseline,
+      });
+      return;
+    }
+
+    if (presetId === REPORT_PERIOD_PRESET.days28) {
+      setPeriodNotice(null);
+    }
+  }, [documentedDays, presetId]);
 
   const selectedDetail = useMemo(() => {
     if (!selectedDateKey) {
@@ -100,6 +146,18 @@ const ReportTabScreen = () => {
 
     return new Set(selectedRowInsight.eventDateKeys);
   }, [selectedRowInsight]);
+
+  const handleSelectPreset = (nextPresetId: ReportPeriodPresetOptionId) => {
+    noticeBaselineRef.current = documentedDays;
+    applyPreset(nextPresetId);
+    setIsPresetSheetOpen(false);
+  };
+
+  const handleApplyCustomRange = (next: typeof range) => {
+    noticeBaselineRef.current = documentedDays;
+    applyRange(next);
+    setIsCustomRangeSheetOpen(false);
+  };
 
   const handlePressTile = (_row: CourseCooccurrenceRow, tile: CourseCooccurrenceTile) => {
     if (tile.kind === 'empty') {
@@ -158,15 +216,16 @@ const ReportTabScreen = () => {
                   monthYearLabel={monthYearLabel}
                   windowDays={windowDays}
                   rangeLabel={rangeLabel}
-                  onChangePeriod={() => setIsRangeSheetOpen(true)}
+                  periodNotice={periodNotice}
+                  onChangePeriod={() => setIsPresetSheetOpen(true)}
                 />
 
                 <ReportQuestionsCard />
 
                 <ReportCoverageCard
-                  documentedDays={frequencySummary.documentedDays}
-                  windowDays={frequencySummary.windowDays}
-                  emptyDays={frequencySummary.emptyDays}
+                  documentedDays={documentedDays}
+                  windowDays={windowDays}
+                  emptyDays={emptyDays}
                   symptomFreeDays={0}
                   backfilledCount={0}
                   backfilledAfterOneDay={0}
@@ -202,18 +261,28 @@ const ReportTabScreen = () => {
         </Box>
       </SafeAreaScreen>
 
+      <ReportPeriodPresetSheet
+        visible={isPresetSheetOpen}
+        selectedPresetId={selectedPresetOptionId}
+        onSelectPreset={handleSelectPreset}
+        onPressCustom={() => {
+          setIsPresetSheetOpen(false);
+          setIsCustomRangeSheetOpen(true);
+        }}
+        onClose={() => setIsPresetSheetOpen(false)}
+      />
+
       <ReportDateRangeSheet
-        visible={isRangeSheetOpen}
+        visible={isCustomRangeSheetOpen}
         initialRange={range}
         bounds={bounds}
-        onCancel={() => setIsRangeSheetOpen(false)}
-        onApply={(next) => {
-          applyRange(next);
-          setIsRangeSheetOpen(false);
-        }}
+        onCancel={() => setIsCustomRangeSheetOpen(false)}
+        onApply={handleApplyCustomRange}
         onReset={() => {
+          noticeBaselineRef.current = null;
           resetToDefault();
-          setIsRangeSheetOpen(false);
+          setIsCustomRangeSheetOpen(false);
+          setPeriodNotice(null);
         }}
       />
 
