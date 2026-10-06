@@ -9,9 +9,11 @@ import { SynaGradientBackground } from '@/components/layout/SynaGradientBackgrou
 import { MascotLoadingGate } from '@/components/loading/MascotLoadingGate';
 import { ReportActionsSection } from '@/components/report/ReportActionsSection';
 import { ReportBaselineCard } from '@/components/report/ReportBaselineCard';
+import { ReportConcernsSheet } from '@/components/report/ReportConcernsSheet';
 import { ReportCoverageCard } from '@/components/report/ReportCoverageCard';
 import { ReportDateRangeSheet } from '@/components/report/ReportDateRangeSheet';
 import { ReportDisclaimerCard } from '@/components/report/ReportDisclaimerCard';
+import { ReportDoctorQuestionsSheet } from '@/components/report/ReportDoctorQuestionsSheet';
 import { ReportMechanismCard } from '@/components/report/ReportMechanismCard';
 import { ReportNightComparisonCard } from '@/components/report/ReportNightComparisonCard';
 import { ReportNumbersCard } from '@/components/report/ReportNumbersCard';
@@ -40,6 +42,8 @@ import {
   formatReportPeriodMonthYear,
   formatReportPeriodRangeLabel,
 } from '@/lib/report/formatReportPeriod';
+import type { ReportConcernId } from '@/lib/report/reportConcerns';
+import type { ReportDoctorQuestionId } from '@/lib/report/reportDoctorQuestions';
 import {
   REPORT_PERIOD_PRESET,
   type ReportPeriodPresetOptionId,
@@ -49,6 +53,14 @@ const ReportTabScreen = () => {
   const { t, language } = useTranslate();
   const [isPresetSheetOpen, setIsPresetSheetOpen] = useState(false);
   const [isCustomRangeSheetOpen, setIsCustomRangeSheetOpen] = useState(false);
+  const [isDoctorQuestionsSheetOpen, setIsDoctorQuestionsSheetOpen] = useState(false);
+  const [isConcernsSheetOpen, setIsConcernsSheetOpen] = useState(false);
+  const [selectedDoctorQuestionIds, setSelectedDoctorQuestionIds] = useState<
+    ReportDoctorQuestionId[]
+  >([]);
+  const [customDoctorQuestions, setCustomDoctorQuestions] = useState<string[]>([]);
+  const [selectedConcernIds, setSelectedConcernIds] = useState<ReportConcernId[]>([]);
+  const [concernFreeText, setConcernFreeText] = useState('');
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
   const [selectedRowId, setSelectedRowId] = useState<CourseCooccurrenceRowId | null>(
     null,
@@ -220,7 +232,14 @@ const ReportTabScreen = () => {
                   onChangePeriod={() => setIsPresetSheetOpen(true)}
                 />
 
-                <ReportQuestionsCard />
+                <ReportQuestionsCard
+                  selectedQuestionIds={selectedDoctorQuestionIds}
+                  customQuestions={customDoctorQuestions}
+                  selectedConcernIds={selectedConcernIds}
+                  concernFreeText={concernFreeText}
+                  onPressAddQuestions={() => setIsDoctorQuestionsSheetOpen(true)}
+                  onPressAddConcerns={() => setIsConcernsSheetOpen(true)}
+                />
 
                 <ReportCoverageCard
                   documentedDays={documentedDays}
@@ -270,6 +289,30 @@ const ReportTabScreen = () => {
           setIsCustomRangeSheetOpen(true);
         }}
         onClose={() => setIsPresetSheetOpen(false)}
+      />
+
+      <ReportDoctorQuestionsSheet
+        visible={isDoctorQuestionsSheetOpen}
+        selectedQuestionIds={selectedDoctorQuestionIds}
+        customQuestions={customDoctorQuestions}
+        onClose={() => setIsDoctorQuestionsSheetOpen(false)}
+        onApply={(selection) => {
+          setSelectedDoctorQuestionIds([...selection.questionIds]);
+          setCustomDoctorQuestions([...selection.customQuestions]);
+          setIsDoctorQuestionsSheetOpen(false);
+        }}
+      />
+
+      <ReportConcernsSheet
+        visible={isConcernsSheetOpen}
+        selectedConcernIds={selectedConcernIds}
+        freeText={concernFreeText}
+        onClose={() => setIsConcernsSheetOpen(false)}
+        onApply={(selection) => {
+          setSelectedConcernIds([...selection.concernIds]);
+          setConcernFreeText(selection.freeText);
+          setIsConcernsSheetOpen(false);
+        }}
       />
 
       <ReportDateRangeSheet

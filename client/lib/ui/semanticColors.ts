@@ -128,6 +128,7 @@ export const BUTTON_VARIANT = {
   outline: 'outline',
   ghost: 'ghost',
   danger: 'danger',
+  soft: 'soft',
 } as const satisfies Record<ButtonVariant, ButtonVariant>;
 
 export const VALIDATION_CHARS = {
@@ -151,6 +152,8 @@ export const COLOR_SCHEME = {
 } as const;
 
 export const isLightButtonVariant = (variant: ButtonVariant): boolean =>
-  variant === BUTTON_VARIANT.outline || variant === BUTTON_VARIANT.ghost;
+  variant === BUTTON_VARIANT.outline ||
+  variant === BUTTON_VARIANT.ghost ||
+  variant === BUTTON_VARIANT.soft;
 
 export const TOUCHABLE_ACTIVE_OPACITY = 0.7;

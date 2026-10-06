@@ -208,6 +208,8 @@ export const buttonVariantClasses: Record<ButtonVariant, string> = {
   outline: 'border border-primary-300 bg-white/70 active:bg-white',
   ghost: 'bg-transparent active:bg-white/50',
   danger: 'bg-error-500 active:bg-error-700',
+  /** Cool blue-ish wash (--pastel-lavender / surround). */
+  soft: 'border-0 bg-pastel-lavender active:opacity-90',
 };
 
 export const buttonTextClasses: Record<ButtonVariant, string> = {
@@ -216,6 +218,7 @@ export const buttonTextClasses: Record<ButtonVariant, string> = {
   outline: 'text-foreground',
   ghost: 'text-foreground',
   danger: 'text-white',
+  soft: 'text-foreground',
 };
 
 export const buttonSizeClasses: Record<ButtonSize, string> = {

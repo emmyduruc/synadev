@@ -3,8 +3,6 @@ import { Button } from '@/components/ui/Button';
 import { useTranslate } from '@/hooks/useTranslate';
 import { semanticColors } from '@/lib/ui';
 
-const softButtonStyle = { backgroundColor: semanticColors.report.dataBackground };
-
 export type ReportActionsSectionProps = {
   onPressCreatePdf?: () => void;
   onPressAppointmentMode?: () => void;
@@ -26,41 +24,36 @@ export const ReportActionsSection = ({
         fullWidth
         size="lg"
         onPress={onPressCreatePdf ?? (() => undefined)}
-        className="rounded-2xl border-0 bg-foreground"
+        className="rounded-2xl border-0"
+        style={{ backgroundColor: semanticColors.ink2 }}
         textClassName="text-white">
         {t('report_action_create_pdf')}
       </Button>
 
       <Button
-        variant="outline"
+        variant="soft"
         fullWidth
         size="lg"
         onPress={onPressAppointmentMode ?? (() => undefined)}
-        style={softButtonStyle}
-        className="rounded-2xl border-0"
-        textClassName="text-foreground">
+        className="rounded-2xl">
         {t('report_action_appointment_mode')}
       </Button>
 
       <Button
-        variant="outline"
+        variant="soft"
         fullWidth
         size="lg"
         onPress={onPressGiveFeedback ?? (() => undefined)}
-        style={softButtonStyle}
-        className="rounded-2xl border-0"
-        textClassName="text-foreground">
+        className="rounded-2xl">
         {t('report_action_give_feedback')}
       </Button>
 
       <Button
-        variant="outline"
+        variant="soft"
         fullWidth
         size="lg"
         onPress={onPressEarlierReports ?? (() => undefined)}
-        style={softButtonStyle}
-        className="rounded-2xl border-0"
-        textClassName="text-foreground">
+        className="rounded-2xl">
         {t('report_action_earlier_reports')}
       </Button>
     </Box>

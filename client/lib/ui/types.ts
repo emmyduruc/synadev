@@ -32,7 +32,13 @@ export type ColorTone =
   | 'background'
   | 'white';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'ghost'
+  | 'danger'
+  | 'soft';
 
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
