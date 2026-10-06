@@ -21,7 +21,7 @@ export const ReportPeriodHeader = ({
   return (
     <Box gap="sm">
       <Box gap="xs">
-        <Text size="2xl" weight="bold" className="leading-tight">
+        <Text size="xl" weight="bold" className="leading-tight">
           {t('report_period_title', {
             monthYear: monthYearLabel,
             days: windowDays,
@@ -30,13 +30,13 @@ export const ReportPeriodHeader = ({
         <Text size="sm" color="foreground-muted" className="leading-relaxed">
           {rangeLabel}
         </Text>
-        <Text size="xs" color="foreground-muted" className="leading-relaxed">
+        <Text size="xs" color="foreground-subtle" className="leading-relaxed">
           {t('report_period_appointment_placeholder')}
         </Text>
       </Box>
 
-      <Box direction="row" align="center" justify="between" gap="sm">
-        <Box className="rounded-full bg-primary-100 px-3 py-1.5">
+      <Box className='mt-2' direction="row" align="center" justify="between" gap="sm">
+        <Box className="rounded-full bg-primary-200 px-3 py-1.5">
           <Text size="2xs" weight="medium" color="foreground">
             {t('report_period_status_placeholder')}
           </Text>

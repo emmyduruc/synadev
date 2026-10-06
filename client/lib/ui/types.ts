@@ -28,6 +28,7 @@ export type ColorTone =
   | 'error'
   | 'foreground'
   | 'foreground-muted'
+  | 'foreground-subtle'
   | 'background'
   | 'white';
 

@@ -6,6 +6,9 @@ import { colors } from '@/utils/colors';
 export const semanticColors = {
   foreground: colors.foreground.DEFAULT,
   foregroundMuted: colors.foreground.muted,
+  foregroundSubtle: colors.foreground.subtle,
+  ink2: colors.ink[2],
+  ink3: colors.ink[3],
   background: colors.background.DEFAULT,
   surround: colors.surround.DEFAULT,
   page: {

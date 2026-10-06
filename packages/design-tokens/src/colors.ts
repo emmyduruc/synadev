@@ -83,7 +83,16 @@ export const colors = {
   },
   muted: {
     DEFAULT: '#EFEDEA',
-    foreground: '#7E7E8A',
+    /** Meta / tertiary text (= --ink-3). */
+    foreground: '#706168',
+  },
+  /**
+   * Prototype ink text (warm plum, not cool gray).
+   * --ink-2 body secondary, --ink-3 meta.
+   */
+  ink: {
+    2: '#5B4A52',
+    3: '#706168',
   },
   border: {
     DEFAULT: '#EAE8E5',
@@ -119,8 +128,8 @@ export const colors = {
     light: '#F7F0E8',
   },
   slate: {
-    DEFAULT: '#4C4C56',
-    light: '#868691',
+    DEFAULT: '#5B4A52',
+    light: '#706168',
   },
   /** Soft pastel lavender wash (oklch 94.1% 0.0097 252.8) — intro illustration panels */
   'pastel-lavender': {
@@ -181,7 +190,10 @@ export const colors = {
   },
   foreground: {
     DEFAULT: '#3F3037',
-    muted: '#7E7E8A',
+    /** Secondary body text (= --ink-2). Replaces cool gray. */
+    muted: '#5B4A52',
+    /** Meta / caption text (= --ink-3). */
+    subtle: '#706168',
     dark: '#FAFAFA',
   },
 } as const;

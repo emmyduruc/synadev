@@ -127,6 +127,7 @@ export const colorClasses: Record<ColorTone, string> = {
   error: 'text-error-700',
   foreground: 'text-foreground',
   'foreground-muted': 'text-foreground-muted',
+  'foreground-subtle': 'text-foreground-subtle',
   background: 'text-background',
   white: 'text-white',
 };
@@ -141,6 +142,7 @@ export const backgroundColorClasses: Record<ColorTone, string> = {
   error: 'bg-error-50',
   foreground: 'bg-foreground',
   'foreground-muted': 'bg-neutral-200',
+  'foreground-subtle': 'bg-neutral-100',
   background: 'bg-background',
   white: 'bg-white',
 };
@@ -155,6 +157,7 @@ export const borderColorClasses: Record<ColorTone, string> = {
   error: 'border-error-500',
   foreground: 'border-foreground',
   'foreground-muted': 'border-neutral-300',
+  'foreground-subtle': 'border-neutral-200',
   background: 'border-background',
   white: 'border-white',
 };

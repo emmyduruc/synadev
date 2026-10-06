@@ -7,10 +7,18 @@ import { CourseRowInsightSheet } from '@/components/course/CourseRowInsightSheet
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
 import { MascotLoadingGate } from '@/components/loading/MascotLoadingGate';
+import { ReportActionsSection } from '@/components/report/ReportActionsSection';
+import { ReportBaselineCard } from '@/components/report/ReportBaselineCard';
 import { ReportCoverageCard } from '@/components/report/ReportCoverageCard';
 import { ReportDateRangeSheet } from '@/components/report/ReportDateRangeSheet';
+import { ReportDisclaimerCard } from '@/components/report/ReportDisclaimerCard';
+import { ReportMechanismCard } from '@/components/report/ReportMechanismCard';
+import { ReportNightComparisonCard } from '@/components/report/ReportNightComparisonCard';
+import { ReportNumbersCard } from '@/components/report/ReportNumbersCard';
+import { ReportObservationCard } from '@/components/report/ReportObservationCard';
 import { ReportPeriodHeader } from '@/components/report/ReportPeriodHeader';
 import { ReportQuestionsCard } from '@/components/report/ReportQuestionsCard';
+import { ReportTogetherCard } from '@/components/report/ReportTogetherCard';
 import { AppHeader, Box } from '@/components/ui';
 import { useCourseScreenData } from '@/hooks/useCourseScreenData';
 import { useReportDateRange } from '@/hooks/useReportDateRange';
@@ -172,6 +180,22 @@ const ReportTabScreen = () => {
                   onPressRow={handlePressRow}
                   onPressTile={handlePressTile}
                 />
+
+                <ReportTogetherCard />
+
+                <ReportMechanismCard />
+
+                <ReportNumbersCard />
+
+                <ReportNightComparisonCard />
+
+                <ReportObservationCard />
+
+                <ReportBaselineCard />
+
+                <ReportDisclaimerCard />
+
+                <ReportActionsSection />
               </Box>
             </ScrollView>
           </MascotLoadingGate>
