@@ -34,13 +34,13 @@ export const ReportDoctorQuestionCategoryChips = ({
               accessibilityRole="button"
               accessibilityState={{ selected: isActive }}
               onPress={() => onChangeCategory(categoryId)}
-              className="rounded-full border px-3.5 py-2"
+              className="rounded-full border px-4 py-3"
               style={{
                 backgroundColor: isActive ? semanticColors.ink2 : semanticColors.card,
                 borderColor: isActive ? semanticColors.ink2 : semanticColors.border,
               }}>
               <Text
-                size="xs"
+                size="sm"
                 weight="medium"
                 responsive={false}
                 style={{ color: isActive ? semanticColors.card : semanticColors.ink2 }}>

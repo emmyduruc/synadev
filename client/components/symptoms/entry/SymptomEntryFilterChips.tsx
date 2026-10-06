@@ -35,13 +35,13 @@ export const SymptomEntryFilterChips = ({
               accessibilityState={{ selected: isActive }}
               onPress={() => onChangeFilter(filterId)}
               className={cn(
-                'rounded-full border px-3.5 py-2',
+                'rounded-full border px-4 py-3',
                 isActive
                   ? 'border-primary-500 bg-primary-500'
                   : 'border-border bg-card',
               )}>
               <Text
-                size="xs"
+                size="sm"
                 weight="medium"
                 color={isActive ? 'white' : 'foreground'}
                 responsive={false}>
