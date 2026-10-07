@@ -15,10 +15,6 @@ const MrsIiAssessmentScreen = () => {
   const { t } = useTranslate();
   const { submit } = useSubmitMrsIiAssessment();
 
-  const handleClose = useCallback(() => {
-    router.back();
-  }, [router]);
-
   const handleSave = useCallback(
     async (payload: MrsIiSubmissionPayload) => {
       await submit(payload);
@@ -30,7 +26,7 @@ const MrsIiAssessmentScreen = () => {
     [router, submit, t],
   );
 
-  return <MenopauseScaleWizard onClose={handleClose} onSave={handleSave} />;
+  return <MenopauseScaleWizard onSave={handleSave} />;
 };
 
 export default MrsIiAssessmentScreen;

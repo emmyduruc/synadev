@@ -1,112 +1,100 @@
+import { useRef } from 'react';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { MenopauseScaleIntro } from '@/components/mrs/MenopauseScaleIntro';
-import { MenopauseScaleQuestionnaire } from '@/components/mrs/MenopauseScaleQuestionnaire';
+import { MrsIiQuestionStep } from '@/components/mrs/MrsIiQuestionStep';
 import { Box } from '@/components/ui/Box';
-import { ModalCancelSaveFooter } from '@/components/ui/ModalCancelSaveFooter';
-import { Text } from '@/components/ui/Text';
-import {
-  MRS_II_WIZARD_STEP,
-  useMenopauseScaleWizard,
-} from '@/hooks/useMenopauseScaleWizard';
-import { useTranslate } from '@/hooks/useTranslate';
-import type { MrsIiSubmissionPayload } from '@/lib/mrs/mrsIiTypes';
+import { useMenopauseScaleWizard } from '@/hooks/useMenopauseScaleWizard';
+import { buildMrsIiSubmissionPayload } from '@/lib/mrs/mrsIiScoring';
+import type {
+  MrsIiAnswersByItem,
+  MrsIiSeverityValue,
+  MrsIiSubmissionPayload,
+} from '@/lib/mrs/mrsIiTypes';
+import { semanticColors } from '@/lib/ui';
 
 export type MenopauseScaleWizardProps = {
-  onClose: () => void;
   onSave: (payload: MrsIiSubmissionPayload) => void | Promise<void>;
 };
 
+const ADVANCE_DELAY_MS = 220;
+
 /**
- * Full-screen modal wizard. Uses explicit safe-area insets (same pattern as
- * DailyLogModal) because SafeAreaView edges are unreliable inside fullScreenModal.
+ * Full-screen MRS-II wizard: one question per step with auto-advance.
+ * Uses explicit safe-area insets because SafeAreaView edges are unreliable
+ * inside fullScreenModal.
  */
-export const MenopauseScaleWizard = ({ onClose, onSave }: MenopauseScaleWizardProps) => {
-  const { t } = useTranslate();
+export const MenopauseScaleWizard = ({ onSave }: MenopauseScaleWizardProps) => {
   const { top: safeAreaTop, bottom: safeAreaBottom } = useSafeAreaInsets();
   const {
-    step,
+    questionNumber,
+    currentItem,
+    currentAnswer,
     answers,
-    answeredCount,
-    isComplete,
+    isLastQuestion,
     isSaving,
     setIsSaving,
     setItemAnswer,
-    goToQuestionnaire,
-    goToIntro,
-    buildPayload,
+    goToNextQuestion,
   } = useMenopauseScaleWizard();
+  const isAdvancingRef = useRef(false);
 
-  const isIntro = step === MRS_II_WIZARD_STEP.intro;
-
-  const handlePrimary = async () => {
-    if (isIntro) {
-      goToQuestionnaire();
+  const handleSelect = (value: MrsIiSeverityValue) => {
+    if (isSaving || isAdvancingRef.current) {
       return;
     }
 
-    const payload = buildPayload();
+    const nextAnswers: MrsIiAnswersByItem = {
+      ...answers,
+      [currentItem.id]: value,
+    };
 
-    if (!payload || isSaving) {
-      return;
-    }
+    setItemAnswer(currentItem.id, value);
+    isAdvancingRef.current = true;
 
-    setIsSaving(true);
+    setTimeout(() => {
+      void (async () => {
+        try {
+          if (!isLastQuestion) {
+            goToNextQuestion();
+            return;
+          }
 
-    try {
-      await onSave(payload);
-    } finally {
-      setIsSaving(false);
-    }
-  };
+          const payload = buildMrsIiSubmissionPayload(nextAnswers);
 
-  const handleSecondary = () => {
-    if (isIntro) {
-      onClose();
-      return;
-    }
+          if (!payload) {
+            return;
+          }
 
-    goToIntro();
+          setIsSaving(true);
+          await onSave(payload);
+        } finally {
+          setIsSaving(false);
+          isAdvancingRef.current = false;
+        }
+      })();
+    }, ADVANCE_DELAY_MS);
   };
 
   return (
-    <Box flex={1} fullWidth background="background">
-      <Box style={{ paddingTop: safeAreaTop }}>
-        <Box align="center" paddingX="lg" paddingY="sm">
-          <Text size="lg" weight="bold">
-            {t('mrs_ii_wizard_header')}
-          </Text>
-        </Box>
-      </Box>
-
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingBottom: 24 }}>
-        {isIntro ? (
-          <MenopauseScaleIntro />
-        ) : (
-          <MenopauseScaleQuestionnaire
-            answers={answers}
-            answeredCount={answeredCount}
-            onChangeItem={setItemAnswer}
+    <Box
+      flex={1}
+      fullWidth
+      style={{ backgroundColor: semanticColors.page.DEFAULT }}>
+      <Box style={{ paddingTop: safeAreaTop }} flex={1}>
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: safeAreaBottom + 16 }}>
+          <MrsIiQuestionStep
+            item={currentItem}
+            questionNumber={questionNumber}
+            value={currentAnswer}
+            disabled={isSaving}
+            onSelect={handleSelect}
           />
-        )}
-      </ScrollView>
-
-      <Box style={{ paddingBottom: safeAreaBottom }}>
-        <ModalCancelSaveFooter
-          onCancel={handleSecondary}
-          onSave={() => {
-            void handlePrimary();
-          }}
-          isSaving={isSaving}
-          saveDisabled={!isIntro && !isComplete}
-          cancelLabelKey="wizard_previous_button"
-          saveLabelKey={isIntro ? 'wizard_next_button' : 'mrs_ii_save_button'}
-        />
+        </ScrollView>
       </Box>
     </Box>
   );

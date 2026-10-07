@@ -7,6 +7,7 @@ export type MrsIiItem = {
   index: number;
   subscaleId: MrsIiSubscaleId;
   titleKey: string;
+  questionKey: string;
   explanationKey: string;
 };
 
@@ -27,6 +28,7 @@ export const MRS_II_ITEMS: readonly MrsIiItem[] = [
     index: 1,
     subscaleId: MRS_II_SUBSCALE.somatic,
     titleKey: 'mrs_ii_item_hot_flushes',
+    questionKey: 'mrs_ii_question_hot_flushes',
     explanationKey: 'mrs_ii_item_hot_flushes_explanation',
   },
   {
@@ -34,6 +36,7 @@ export const MRS_II_ITEMS: readonly MrsIiItem[] = [
     index: 2,
     subscaleId: MRS_II_SUBSCALE.somatic,
     titleKey: 'mrs_ii_item_heart_discomfort',
+    questionKey: 'mrs_ii_question_heart_discomfort',
     explanationKey: 'mrs_ii_item_heart_discomfort_explanation',
   },
   {
@@ -41,6 +44,7 @@ export const MRS_II_ITEMS: readonly MrsIiItem[] = [
     index: 3,
     subscaleId: MRS_II_SUBSCALE.somatic,
     titleKey: 'mrs_ii_item_sleep_problems',
+    questionKey: 'mrs_ii_question_sleep_problems',
     explanationKey: 'mrs_ii_item_sleep_problems_explanation',
   },
   {
@@ -48,6 +52,7 @@ export const MRS_II_ITEMS: readonly MrsIiItem[] = [
     index: 4,
     subscaleId: MRS_II_SUBSCALE.somatic,
     titleKey: 'mrs_ii_item_joint_muscular_discomfort',
+    questionKey: 'mrs_ii_question_joint_muscular_discomfort',
     explanationKey: 'mrs_ii_item_joint_muscular_discomfort_explanation',
   },
   {
@@ -55,6 +60,7 @@ export const MRS_II_ITEMS: readonly MrsIiItem[] = [
     index: 5,
     subscaleId: MRS_II_SUBSCALE.psychological,
     titleKey: 'mrs_ii_item_depressive_mood',
+    questionKey: 'mrs_ii_question_depressive_mood',
     explanationKey: 'mrs_ii_item_depressive_mood_explanation',
   },
   {
@@ -62,6 +68,7 @@ export const MRS_II_ITEMS: readonly MrsIiItem[] = [
     index: 6,
     subscaleId: MRS_II_SUBSCALE.psychological,
     titleKey: 'mrs_ii_item_irritability',
+    questionKey: 'mrs_ii_question_irritability',
     explanationKey: 'mrs_ii_item_irritability_explanation',
   },
   {
@@ -69,6 +76,7 @@ export const MRS_II_ITEMS: readonly MrsIiItem[] = [
     index: 7,
     subscaleId: MRS_II_SUBSCALE.psychological,
     titleKey: 'mrs_ii_item_anxiety',
+    questionKey: 'mrs_ii_question_anxiety',
     explanationKey: 'mrs_ii_item_anxiety_explanation',
   },
   {
@@ -76,6 +84,7 @@ export const MRS_II_ITEMS: readonly MrsIiItem[] = [
     index: 8,
     subscaleId: MRS_II_SUBSCALE.psychological,
     titleKey: 'mrs_ii_item_physical_mental_exhaustion',
+    questionKey: 'mrs_ii_question_physical_mental_exhaustion',
     explanationKey: 'mrs_ii_item_physical_mental_exhaustion_explanation',
   },
   {
@@ -83,6 +92,7 @@ export const MRS_II_ITEMS: readonly MrsIiItem[] = [
     index: 9,
     subscaleId: MRS_II_SUBSCALE.urogenital,
     titleKey: 'mrs_ii_item_sexual_problems',
+    questionKey: 'mrs_ii_question_sexual_problems',
     explanationKey: 'mrs_ii_item_sexual_problems_explanation',
   },
   {
@@ -90,6 +100,7 @@ export const MRS_II_ITEMS: readonly MrsIiItem[] = [
     index: 10,
     subscaleId: MRS_II_SUBSCALE.urogenital,
     titleKey: 'mrs_ii_item_bladder_problems',
+    questionKey: 'mrs_ii_question_bladder_problems',
     explanationKey: 'mrs_ii_item_bladder_problems_explanation',
   },
   {
@@ -97,6 +108,7 @@ export const MRS_II_ITEMS: readonly MrsIiItem[] = [
     index: 11,
     subscaleId: MRS_II_SUBSCALE.urogenital,
     titleKey: 'mrs_ii_item_vaginal_dryness',
+    questionKey: 'mrs_ii_question_vaginal_dryness',
     explanationKey: 'mrs_ii_item_vaginal_dryness_explanation',
   },
 ] as const;

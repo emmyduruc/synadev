@@ -184,6 +184,7 @@ const StartTabScreen = () => {
               />
               <DashboardNextStepsCard
                 onPressFirstEntry={() => router.push(ROUTES.symptoms)}
+                onPressMrsIi={() => router.push(ROUTES.assessment.mrsIi)}
               />
               <DashboardInsightsSection />
             </Box>

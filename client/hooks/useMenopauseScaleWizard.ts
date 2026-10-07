@@ -1,6 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { createEmptyMrsIiAnswers } from '@/lib/mrs/mrsIiCatalog';
+import {
+  createEmptyMrsIiAnswers,
+  MRS_II_ITEM_COUNT,
+  MRS_II_ITEMS,
+} from '@/lib/mrs/mrsIiCatalog';
 import {
   buildMrsIiSubmissionPayload,
   countAnsweredMrsIiItems,
@@ -13,21 +17,17 @@ import type {
   MrsIiSubmissionPayload,
 } from '@/lib/mrs/mrsIiTypes';
 
-export const MRS_II_WIZARD_STEP = {
-  intro: 'intro',
-  questionnaire: 'questionnaire',
-} as const;
-
-export type MrsIiWizardStep =
-  (typeof MRS_II_WIZARD_STEP)[keyof typeof MRS_II_WIZARD_STEP];
-
 export const useMenopauseScaleWizard = () => {
-  const [step, setStep] = useState<MrsIiWizardStep>(MRS_II_WIZARD_STEP.intro);
+  const [questionIndex, setQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<MrsIiAnswersByItem>(createEmptyMrsIiAnswers);
   const [isSaving, setIsSaving] = useState(false);
 
+  const currentItem = MRS_II_ITEMS[questionIndex] ?? MRS_II_ITEMS[0];
+  const currentAnswer = answers[currentItem.id];
   const answeredCount = useMemo(() => countAnsweredMrsIiItems(answers), [answers]);
   const isComplete = useMemo(() => isMrsIiComplete(answers), [answers]);
+  const isLastQuestion = questionIndex >= MRS_II_ITEM_COUNT - 1;
+  const questionNumber = questionIndex + 1;
 
   const setItemAnswer = useCallback(
     (itemId: MrsIiItemId, value: MrsIiSeverityValue) => {
@@ -36,12 +36,14 @@ export const useMenopauseScaleWizard = () => {
     [],
   );
 
-  const goToQuestionnaire = useCallback(() => {
-    setStep(MRS_II_WIZARD_STEP.questionnaire);
+  const goToNextQuestion = useCallback(() => {
+    setQuestionIndex((previous) =>
+      Math.min(previous + 1, MRS_II_ITEM_COUNT - 1),
+    );
   }, []);
 
-  const goToIntro = useCallback(() => {
-    setStep(MRS_II_WIZARD_STEP.intro);
+  const goToPreviousQuestion = useCallback(() => {
+    setQuestionIndex((previous) => Math.max(previous - 1, 0));
   }, []);
 
   const buildPayload = useCallback((): MrsIiSubmissionPayload | null => {
@@ -49,15 +51,19 @@ export const useMenopauseScaleWizard = () => {
   }, [answers]);
 
   return {
-    step,
+    questionIndex,
+    questionNumber,
+    currentItem,
+    currentAnswer,
     answers,
     answeredCount,
     isComplete,
+    isLastQuestion,
     isSaving,
     setIsSaving,
     setItemAnswer,
-    goToQuestionnaire,
-    goToIntro,
+    goToNextQuestion,
+    goToPreviousQuestion,
     buildPayload,
   };
 };
