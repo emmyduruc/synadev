@@ -10,7 +10,8 @@ export type DashboardSetupStepId =
 export const DASHBOARD_SETUP_STEPS = [
   DASHBOARD_SETUP_STEP.health,
   DASHBOARD_SETUP_STEP.mrsIi,
-  DASHBOARD_SETUP_STEP.pam13,
+  // Version 2: PAM-13 setup step on the dashboard progress card
+  // DASHBOARD_SETUP_STEP.pam13,
 ] as const;
 
 export type DashboardSetupStepState = {

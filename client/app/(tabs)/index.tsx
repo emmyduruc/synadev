@@ -151,9 +151,10 @@ const StartTabScreen = () => {
                   onStartMrsIi={() => {
                     router.push(ROUTES.assessment.mrsIi);
                   }}
-                  onStartPam13={() => {
-                    router.push(ROUTES.assessment.patientActivationMeasure);
-                  }}
+                  // Version 2: PAM-13 assessment from dashboard setup
+                  // onStartPam13={() => {
+                  //   router.push(ROUTES.assessment.patientActivationMeasure);
+                  // }}
                 />
               ) : null}
 

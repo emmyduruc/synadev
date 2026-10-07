@@ -26,7 +26,8 @@ export type DashboardSetupProgressProps = {
   onConnectHealth: () => void;
   onInstallHealthConnect: () => void;
   onStartMrsIi: () => void;
-  onStartPam13: () => void;
+  // Version 2: PAM-13 setup CTA
+  // onStartPam13: () => void;
 };
 
 const stepLabelKey = (stepId: DashboardSetupStepId): string => {
@@ -79,7 +80,7 @@ export const DashboardSetupProgress = ({
   onConnectHealth,
   onInstallHealthConnect,
   onStartMrsIi,
-  onStartPam13,
+  // onStartPam13,
 }: DashboardSetupProgressProps) => {
   const { t } = useTranslate();
   const [selectedStepId, setSelectedStepId] = useState<DashboardSetupStepId | null>(
@@ -106,12 +107,14 @@ export const DashboardSetupProgress = ({
     ctaLabelKey = 'dashboard_setup_cta_mrs_ii';
     onPressCta = onStartMrsIi;
     ctaLoading = false;
-  } else if (currentStepId === DASHBOARD_SETUP_STEP.pam13) {
-    titleKey = 'dashboard_setup_title_pam_13';
-    ctaLabelKey = 'dashboard_setup_cta_pam_13';
-    onPressCta = onStartPam13;
-    ctaLoading = false;
   }
+  // Version 2: PAM-13 setup CTA
+  // else if (currentStepId === DASHBOARD_SETUP_STEP.pam13) {
+  //   titleKey = 'dashboard_setup_title_pam_13';
+  //   ctaLabelKey = 'dashboard_setup_cta_pam_13';
+  //   onPressCta = onStartPam13;
+  //   ctaLoading = false;
+  // }
 
   const selectedStep = selectedStepId
     ? steps.find((step) => step.id === selectedStepId)

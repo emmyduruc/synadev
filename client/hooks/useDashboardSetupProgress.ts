@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 
 import { useDashboardHealth } from '@/hooks/useDashboardHealth';
 import { useMenopauseScaleBanner } from '@/hooks/useMenopauseScaleBanner';
-import { usePatientActivationMeasureBanner } from '@/hooks/usePatientActivationMeasureBanner';
+// Version 2: PAM-13 setup progress
+// import { usePatientActivationMeasureBanner } from '@/hooks/usePatientActivationMeasureBanner';
 import {
   getDashboardSetupSteps,
   type DashboardSetupStepId,
@@ -17,22 +18,24 @@ export const useDashboardSetupProgress = () => {
     isLoading: isMrsLoading,
     refresh: refreshMrs,
   } = useMenopauseScaleBanner();
-  const {
-    isCompleted: isPamCompleted,
-    isLoading: isPamLoading,
-    refresh: refreshPam,
-  } = usePatientActivationMeasureBanner();
+  // Version 2: PAM-13 setup progress
+  // const {
+  //   isCompleted: isPamCompleted,
+  //   isLoading: isPamLoading,
+  //   refresh: refreshPam,
+  // } = usePatientActivationMeasureBanner();
 
-  const isLoading = isMrsLoading || isPamLoading;
+  const isLoading = isMrsLoading;
 
   const steps = useMemo(
     () =>
       getDashboardSetupSteps({
         health: health.isConnected,
         mrsIi: isMrsCompleted,
-        pam13: isPamCompleted,
+        // Version 2: PAM-13 — mark complete so it never blocks while deferred
+        pam13: true,
       }),
-    [health.isConnected, isMrsCompleted, isPamCompleted],
+    [health.isConnected, isMrsCompleted],
   );
 
   const currentStep = steps.find((step) => step.isCurrent) ?? null;
@@ -50,7 +53,9 @@ export const useDashboardSetupProgress = () => {
     isFullyComplete,
     isSetupLoading: isLoading,
     refreshAssessments: async () => {
-      await Promise.all([refreshMrs(), refreshPam()]);
+      await refreshMrs();
+      // Version 2: PAM-13 setup progress
+      // await Promise.all([refreshMrs(), refreshPam()]);
     },
     ctaAction: (currentStep?.id ?? null) as DashboardSetupCtaAction | null,
   };
