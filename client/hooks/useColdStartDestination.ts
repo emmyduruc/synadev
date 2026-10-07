@@ -14,7 +14,7 @@ import { ROUTES } from '@/lib/routes';
  * Never blocks on `/users/me` when SecureStore already has a complete bio.
  */
 export const useColdStartDestination = (): Href | null => {
-  const { isLoaded, isSignedIn } = useAuth({ treatPendingAsSignedOut: false });
+  const { isLoaded, isSignedIn, userId } = useAuth({ treatPendingAsSignedOut: false });
   const [destination, setDestination] = useState<Href | null>(null);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export const useColdStartDestination = (): Href | null => {
     let isActive = true;
 
     const resolve = async () => {
-      const cached = await resolveCachedPostAuthDestination();
+      const cached = await resolveCachedPostAuthDestination(userId);
 
       if (!isActive) {
         return;
@@ -57,7 +57,7 @@ export const useColdStartDestination = (): Href | null => {
         return;
       }
 
-      const next = await resolvePostAuthDestination();
+      const next = await resolvePostAuthDestination(userId);
 
       if (isActive) {
         setDestination(next);
@@ -69,7 +69,7 @@ export const useColdStartDestination = (): Href | null => {
     return () => {
       isActive = false;
     };
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, userId]);
 
   return destination;
 };

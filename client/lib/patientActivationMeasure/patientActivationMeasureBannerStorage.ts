@@ -20,3 +20,10 @@ export const getPatientActivationMeasureAssessmentCompleted = async (): Promise<
 export const setPatientActivationMeasureAssessmentCompleted = async (): Promise<void> => {
   await SecureStore.setItemAsync(COMPLETED_KEY, 'true');
 };
+
+export const clearPatientActivationMeasureBannerStorage = async (): Promise<void> => {
+  await Promise.all([
+    SecureStore.deleteItemAsync(BANNER_DISMISSED_KEY),
+    SecureStore.deleteItemAsync(COMPLETED_KEY),
+  ]);
+};

@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/Button';
 import { ConfirmationModal } from '@/components/ui/ConfirmationModal';
 import { useDeleteAccount } from '@/hooks/useDeleteAccount';
 import { useTranslate } from '@/hooks/useTranslate';
-import { clearLocalUserData } from '@/lib/auth/clearLocalUserData';
 import { ROUTES } from '@/lib/routes';
 import { toast } from '@/lib/sonner';
 import { BUTTON_VARIANT } from '@/lib/ui';
@@ -57,9 +56,10 @@ export const ProfileAccountActions = () => {
         return;
       }
 
+      // Sign-out keeps SecureStore caches (bio, settings) so the same account
+      // can return without repeating onboarding. Delete account clears them.
       setIsSigningOut(true);
       queryClient.clear();
-      await clearLocalUserData();
       await leaveToWelcome();
     } catch {
       const errorKey =

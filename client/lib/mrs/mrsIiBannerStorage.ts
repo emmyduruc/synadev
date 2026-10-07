@@ -20,3 +20,10 @@ export const getMrsIiAssessmentCompleted = async (): Promise<boolean> => {
 export const setMrsIiAssessmentCompleted = async (): Promise<void> => {
   await SecureStore.setItemAsync(MRS_II_COMPLETED_KEY, 'true');
 };
+
+export const clearMrsIiBannerStorage = async (): Promise<void> => {
+  await Promise.all([
+    SecureStore.deleteItemAsync(MRS_II_BANNER_DISMISSED_KEY),
+    SecureStore.deleteItemAsync(MRS_II_COMPLETED_KEY),
+  ]);
+};

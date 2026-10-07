@@ -7,18 +7,18 @@ import type { BioData } from '@/lib/profile/bioDataStorage';
 import { ROUTES } from '@/lib/routes';
 
 /**
- * Post-register bio details. If the DB profile is already complete, go home.
- * Prefills any fields already stored so returning users are not re-asked.
+ * Post-register bio details. Only skip when the server confirms a complete bio.
+ * Never trust a previous account's SecureStore cache on this device.
  */
 const BioDataOnboardingScreen = () => {
   const router = useRouter();
-  const { bioData, isLoading, isComplete, persist } = useBioData();
+  const { bioData, isLoading, isComplete, hasSyncedFromServer, persist } = useBioData();
 
   useEffect(() => {
-    if (!isLoading && isComplete) {
+    if (!isLoading && hasSyncedFromServer && isComplete) {
       router.replace(ROUTES.home);
     }
-  }, [isComplete, isLoading, router]);
+  }, [hasSyncedFromServer, isComplete, isLoading, router]);
 
   const handleComplete = useCallback(
     async (nextBioData: BioData) => {
@@ -28,7 +28,7 @@ const BioDataOnboardingScreen = () => {
     [persist, router],
   );
 
-  if (isLoading || isComplete) {
+  if (isLoading || !hasSyncedFromServer || isComplete) {
     return null;
   }
 

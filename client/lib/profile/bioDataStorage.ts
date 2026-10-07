@@ -9,6 +9,10 @@ export type BioData = {
   address: string;
 };
 
+type StoredBioPayload = BioData & {
+  ownerClerkId: string;
+};
+
 export const EMPTY_BIO_DATA: BioData = {
   firstName: '',
   lastName: '',
@@ -31,6 +35,13 @@ export const BIO_DATA_REQUIRED_FIELDS: readonly BioDataFieldId[] = [
   BIO_DATA_FIELD.dateOfBirth,
 ];
 
+/** Bumped on sign-out / delete so in-flight writes cannot restore a previous account. */
+let writeGeneration = 0;
+
+export const invalidateBioDataWrites = (): void => {
+  writeGeneration += 1;
+};
+
 const isBioDataShape = (value: unknown): value is BioData => {
   if (!value || typeof value !== 'object') {
     return false;
@@ -46,27 +57,79 @@ const isBioDataShape = (value: unknown): value is BioData => {
   );
 };
 
-export const loadBioData = async (): Promise<BioData> => {
+const toBioData = (value: BioData): BioData => ({
+  firstName: value.firstName,
+  lastName: value.lastName,
+  dateOfBirth: value.dateOfBirth,
+  address: value.address,
+});
+
+const parseStoredPayload = (raw: string): StoredBioPayload | null => {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+
+    if (!isBioDataShape(parsed)) {
+      return null;
+    }
+
+    const record = parsed as BioData & { ownerClerkId?: unknown };
+    const ownerClerkId =
+      typeof record.ownerClerkId === 'string' && record.ownerClerkId.trim().length > 0
+        ? record.ownerClerkId.trim()
+        : null;
+
+    if (!ownerClerkId) {
+      // Legacy unscoped cache from a previous install — never reuse across accounts.
+      return null;
+    }
+
+    return {
+      ...toBioData(record),
+      ownerClerkId,
+    };
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Loads bio only when it belongs to this Clerk user.
+ * Missing or foreign cache → empty (forces onboarding for a new account on the same device).
+ */
+export const loadBioDataForClerkUser = async (clerkUserId: string): Promise<BioData> => {
+  if (!clerkUserId.trim()) {
+    return EMPTY_BIO_DATA;
+  }
+
   const raw = await SecureStore.getItemAsync(BIO_DATA_STORAGE_KEY);
 
   if (!raw) {
     return EMPTY_BIO_DATA;
   }
 
-  try {
-    const parsed: unknown = JSON.parse(raw);
+  const stored = parseStoredPayload(raw);
 
-    if (!isBioDataShape(parsed)) {
-      return EMPTY_BIO_DATA;
-    }
-
-    return parsed;
-  } catch {
+  if (!stored || stored.ownerClerkId !== clerkUserId) {
     return EMPTY_BIO_DATA;
   }
+
+  return toBioData(stored);
 };
 
-export const saveBioData = async (bioData: BioData): Promise<void> => {
+/** @deprecated Prefer loadBioDataForClerkUser — unscoped reads always return empty. */
+export const loadBioData = async (): Promise<BioData> => EMPTY_BIO_DATA;
+
+export const saveBioData = async (
+  bioData: BioData,
+  ownerClerkId: string,
+): Promise<void> => {
+  const generation = writeGeneration;
+  const owner = ownerClerkId.trim();
+
+  if (!owner) {
+    return;
+  }
+
   const isEmpty =
     !bioData.firstName.trim()
     && !bioData.lastName.trim()
@@ -74,11 +137,24 @@ export const saveBioData = async (bioData: BioData): Promise<void> => {
     && !bioData.address.trim();
 
   if (isEmpty) {
+    if (generation !== writeGeneration) {
+      return;
+    }
+
     await clearBioData();
     return;
   }
 
-  await SecureStore.setItemAsync(BIO_DATA_STORAGE_KEY, JSON.stringify(bioData));
+  if (generation !== writeGeneration) {
+    return;
+  }
+
+  const payload: StoredBioPayload = {
+    ...toBioData(bioData),
+    ownerClerkId: owner,
+  };
+
+  await SecureStore.setItemAsync(BIO_DATA_STORAGE_KEY, JSON.stringify(payload));
 };
 
 /** Clears the local cache — used when DB has no bio (null / incomplete). */

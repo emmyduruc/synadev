@@ -35,3 +35,7 @@ export const saveFavoriteSymptomIds = async (symptomIds: readonly SymptomId[]): 
 
   await SecureStore.setItemAsync(SYMPTOM_FAVORITES_STORAGE_KEY, JSON.stringify([...symptomIds]));
 };
+
+export const clearFavoriteSymptomIds = async (): Promise<void> => {
+  await SecureStore.deleteItemAsync(SYMPTOM_FAVORITES_STORAGE_KEY);
+};

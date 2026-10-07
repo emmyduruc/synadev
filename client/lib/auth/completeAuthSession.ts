@@ -34,7 +34,7 @@ export const completeAuthSession = async (
         description: successDescription,
       });
 
-      const destination = await resolvePostAuthDestination();
+      const destination = await resolvePostAuthDestination(session?.user?.id);
       router.replace(decorateUrl(destination as string) as Href);
     },
   });

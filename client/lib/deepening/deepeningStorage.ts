@@ -128,4 +128,8 @@ export const saveDeepeningEntries = async (
   await SecureStore.setItemAsync(DEEPENING_STORAGE_KEY, JSON.stringify(entries));
 };
 
+export const clearDeepeningEntries = async (): Promise<void> => {
+  await SecureStore.deleteItemAsync(DEEPENING_STORAGE_KEY);
+};
+
 export { EMPTY_BLOOD_PRESSURE_VALUE, EMPTY_MIGRAINE_VALUE };

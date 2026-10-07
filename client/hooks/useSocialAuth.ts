@@ -31,6 +31,8 @@ export const useSocialAuth = () => {
         toast.success(t('login_success_title'), {
           description: t('login_success_description'),
         });
+        // Do not pass React `userId` here — it can still be the previous account
+        // until the next render. Network resolve uses `user.clerkId` from the API.
         const destination = await resolvePostAuthDestination();
         router.replace(destination);
       }

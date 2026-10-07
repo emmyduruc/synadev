@@ -10,3 +10,7 @@ export const getProfileCompletionBannerDismissed = async (): Promise<boolean> =>
 export const setProfileCompletionBannerDismissed = async (): Promise<void> => {
   await SecureStore.setItemAsync(PROFILE_COMPLETION_BANNER_DISMISSED_KEY, 'true');
 };
+
+export const clearProfileCompletionBannerDismissed = async (): Promise<void> => {
+  await SecureStore.deleteItemAsync(PROFILE_COMPLETION_BANNER_DISMISSED_KEY);
+};

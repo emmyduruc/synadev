@@ -59,3 +59,7 @@ export const loadHealthConnectionSummary = async (): Promise<HealthConnectionSum
 
 export const isHealthConnected = (summary: HealthConnectionSummary | null): boolean =>
   summary?.status === HEALTH_READ_STATUS.connected;
+
+export const clearHealthConnectionSummary = async (): Promise<void> => {
+  await SecureStore.deleteItemAsync(HEALTH_SNAPSHOT_STORAGE_KEY);
+};

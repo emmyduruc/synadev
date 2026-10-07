@@ -4,7 +4,7 @@ import { getCurrentUser } from '@/lib/api';
 import { waitForAccessToken } from '@/lib/http/authToken';
 import {
   isBioDataComplete,
-  loadBioData,
+  loadBioDataForClerkUser,
   saveBioData,
 } from '@/lib/profile/bioDataStorage';
 import { mapUserToBioData } from '@/lib/profile/mapUserToBioData';
@@ -38,10 +38,16 @@ const fetchCurrentUserWithRetry = async () => {
 
 /**
  * Fast local-only routing for returning users. No network.
- * Complete bio cache → home; otherwise null (caller should network-resolve).
+ * Complete bio cache for this Clerk user → home; otherwise null (caller should network-resolve).
  */
-export const resolveCachedPostAuthDestination = async (): Promise<Href | null> => {
-  const cached = await loadBioData();
+export const resolveCachedPostAuthDestination = async (
+  clerkUserId: string | null | undefined,
+): Promise<Href | null> => {
+  if (!clerkUserId) {
+    return null;
+  }
+
+  const cached = await loadBioDataForClerkUser(clerkUserId);
 
   if (isBioDataComplete(cached)) {
     return ROUTES.home;
@@ -53,9 +59,12 @@ export const resolveCachedPostAuthDestination = async (): Promise<Href | null> =
 /**
  * DB is the source of truth for post-auth routing.
  * Incomplete bio → onboarding (prefilling any fields already in DB).
- * Transient API/auth failures must not force onboarding for returning users.
+ * Transient API/auth failures must not force onboarding for returning users
+ * when this device already has a complete bio cache for the same Clerk user.
  */
-export const resolvePostAuthDestination = async (): Promise<Href> => {
+export const resolvePostAuthDestination = async (
+  clerkUserId?: string | null,
+): Promise<Href> => {
   try {
     const token = await waitForAccessToken();
 
@@ -65,22 +74,26 @@ export const resolvePostAuthDestination = async (): Promise<Href> => {
 
     const user = await fetchCurrentUserWithRetry();
     const bioFromDb = mapUserToBioData(user);
+    const ownerClerkId = user.clerkId || clerkUserId || '';
 
     if (user.isBioComplete) {
-      await saveBioData(bioFromDb);
+      await saveBioData(bioFromDb, ownerClerkId);
       return ROUTES.home;
     }
 
     // Keep partial DB values so onboarding can prefill names / DOB already stored.
-    await saveBioData(bioFromDb);
+    await saveBioData(bioFromDb, ownerClerkId);
     return ROUTES.onboarding.bioData;
   } catch {
-    const cached = await loadBioData();
+    if (clerkUserId) {
+      const cached = await loadBioDataForClerkUser(clerkUserId);
 
-    if (isBioDataComplete(cached)) {
-      return ROUTES.home;
+      if (isBioDataComplete(cached)) {
+        return ROUTES.home;
+      }
     }
 
+    // New accounts (or cleared caches) must start onboarding — never reuse another user's bio.
     return ROUTES.onboarding.bioData;
   }
 };
