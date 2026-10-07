@@ -41,6 +41,7 @@ export type ButtonVariant =
   | 'outline'
   | 'ghost'
   | 'danger'
+  | 'warning'
   | 'soft';
 
 export type ButtonSize = 'sm' | 'md' | 'lg';

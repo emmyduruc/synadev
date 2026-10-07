@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { createClerkClient } from '@clerk/backend';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type {
   AppLocale,
+  DeleteAccountResult,
   UpdateUserHealthMetrics,
   UpdateUserHealthRecord,
   UpdateUserProfile,
@@ -11,6 +13,7 @@ import { DEFAULT_APP_LOCALE } from '@syna/shared-types';
 import { Repository } from 'typeorm';
 
 import type { AuthenticatedClerkUser } from '../auth/auth.types';
+import { parseClerkEnv } from '../auth/clerk.config';
 
 import { UserEntity } from './user.entity';
 import {
@@ -23,6 +26,8 @@ import {
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
@@ -153,5 +158,35 @@ export class UsersService {
     const saved = await this.usersRepository.save(entity);
 
     return Array.isArray(saved.favoriteSymptomIds) ? [...saved.favoriteSymptomIds] : [];
+  }
+
+  /**
+   * Deletes the Syna user row (CASCADE clears related app data) and the Clerk identity.
+   */
+  async deleteCurrentAccount(
+    clerkUser: AuthenticatedClerkUser,
+  ): Promise<DeleteAccountResult> {
+    const entity = await this.usersRepository.findOne({
+      where: { clerkId: clerkUser.clerkId },
+    });
+
+    if (entity) {
+      await this.usersRepository.delete({ id: entity.id });
+    }
+
+    const { CLERK_SECRET_KEY } = parseClerkEnv();
+    const clerk = createClerkClient({ secretKey: CLERK_SECRET_KEY });
+
+    try {
+      await clerk.users.deleteUser(clerkUser.clerkId);
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete Clerk user ${clerkUser.clerkId} after Syna row removal`,
+        error instanceof Error ? error.stack : String(error),
+      );
+      throw error;
+    }
+
+    return { deleted: true };
   }
 }

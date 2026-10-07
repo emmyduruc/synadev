@@ -36,6 +36,9 @@ export const USERS_ME_ABSOLUTE = absolute(USERS_ME);
 /** PATCH — update bio profile (firstName, lastName, dateOfBirth, address?) */
 export const USERS_ME_UPDATE = USERS_ME;
 
+/** DELETE — delete Syna user data + Clerk identity */
+export const USERS_ME_DELETE = USERS_ME;
+
 /** PATCH — update preferred locale for emails / push */
 export const USERS_ME_LOCALE = '/users/me/locale';
 export const USERS_ME_LOCALE_ABSOLUTE = absolute(USERS_ME_LOCALE);

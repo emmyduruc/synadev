@@ -128,6 +128,7 @@ export const BUTTON_VARIANT = {
   outline: 'outline',
   ghost: 'ghost',
   danger: 'danger',
+  warning: 'warning',
   soft: 'soft',
 } as const satisfies Record<ButtonVariant, ButtonVariant>;
 

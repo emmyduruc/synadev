@@ -96,3 +96,12 @@ export const ApiErrorSchema = z.object({
 });
 
 export type ApiError = z.infer<typeof ApiErrorSchema>;
+
+/** Response for DELETE /users/me (account + Clerk identity removed). */
+export const DeleteAccountResultSchema = z
+  .object({
+    deleted: z.literal(true).describe('True when the account was deleted'),
+  })
+  .describe('Result of deleting the authenticated user account');
+
+export type DeleteAccountResult = z.infer<typeof DeleteAccountResultSchema>;

@@ -85,3 +85,7 @@ export const saveProfileSettings = async (
     JSON.stringify(data),
   );
 };
+
+export const clearProfileSettings = async (): Promise<void> => {
+  await SecureStore.deleteItemAsync(PROFILE_SETTINGS_STORAGE_KEY);
+};

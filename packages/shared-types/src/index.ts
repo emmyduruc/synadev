@@ -5,6 +5,7 @@ export {
   UpdateUserProfileSchema,
   ApiValidationIssueSchema,
   ApiErrorSchema,
+  DeleteAccountResultSchema,
 } from './schemas/user.schema';
 
 export type {
@@ -13,6 +14,7 @@ export type {
   UpdateUserProfile,
   ApiValidationIssue,
   ApiError,
+  DeleteAccountResult,
 } from './schemas/user.schema';
 
 export {

@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 
+import { ProfileAccountActions } from '@/components/profile/ProfileAccountActions';
 import { ProfileBodyEditForm } from '@/components/profile/ProfileBodyEditForm';
 import { ProfileHeartRiskEditForm } from '@/components/profile/ProfileHeartRiskEditForm';
 import { ProfileLifestyleEditForm } from '@/components/profile/ProfileLifestyleEditForm';
@@ -165,6 +166,7 @@ export const ProfileSettingsContent = () => {
           origin={data.personal.origin}
           onEditPress={() => openSection(PROFILE_SETTINGS_SECTION.personal)}
         />
+        <ProfileAccountActions />
       </Box>
 
       <ProfileSettingsEditSheet

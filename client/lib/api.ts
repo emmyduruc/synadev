@@ -5,6 +5,7 @@ import {
   CyclePhaseSnapshotSchema,
   ChatRequestSchema,
   ChatResponseSchema,
+  DeleteAccountResultSchema,
   HealthDailyMetricsSchema,
   HealthResponseSchema,
   MoodLogsSchema,
@@ -47,6 +48,7 @@ import type {
   CustomSymptom,
   CustomSymptoms,
   CyclePhaseSnapshotDto,
+  DeleteAccountResult,
   GetHealthDailyMetricsQuery,
   HealthDailyMetrics,
   HealthResponse,
@@ -144,6 +146,13 @@ export const updateCurrentUserProfile = (input: UpdateUserProfile): Promise<User
     body: input,
     bodySchema: UpdateUserProfileSchema,
     responseSchema: UserSchema,
+  });
+
+export const deleteCurrentUserAccount = (): Promise<DeleteAccountResult> =>
+  apiRequest({
+    url: USERS_ME,
+    method: 'DELETE',
+    responseSchema: DeleteAccountResultSchema,
   });
 
 export const updateCurrentUserHealthMetrics = (

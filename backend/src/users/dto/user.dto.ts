@@ -1,4 +1,5 @@
 import {
+  DeleteAccountResultSchema,
   UpdateUserHealthMetricsSchema,
   UpdateUserHealthRecordSchema,
   UpdateUserLocaleSchema,
@@ -20,3 +21,5 @@ export class UpdateUserHealthRecordDto extends createZodDto(
 export class UpdateUserLocaleDto extends createZodDto(UpdateUserLocaleSchema) {}
 
 export class UserDto extends createZodDto(UserSchema) {}
+
+export class DeleteAccountResultDto extends createZodDto(DeleteAccountResultSchema) {}

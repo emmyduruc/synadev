@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -13,6 +13,7 @@ import { ApiStandardResponses } from '../common/decorators/api-standard-response
 import { SWAGGER_TAGS } from '../swagger/swagger.constants';
 
 import {
+  DeleteAccountResultDto,
   UpdateUserHealthMetricsDto,
   UpdateUserHealthRecordDto,
   UpdateUserLocaleDto,
@@ -113,5 +114,22 @@ export class UsersController {
     @Body() dto: UpdateUserLocaleDto,
   ): Promise<UserDto> {
     return this.usersService.updateCurrentUserLocale(clerkUser, dto.locale);
+  }
+
+  @Delete('me')
+  @ApiOperation({
+    summary: 'Delete the current user account',
+    description:
+      'Removes the Syna user row and related data (CASCADE), then deletes the Clerk identity. Irreversible.',
+  })
+  @ApiOkResponse({
+    description: 'Account deleted',
+    type: DeleteAccountResultDto,
+  })
+  @ApiStandardResponses({ unauthorized: true })
+  deleteMe(
+    @CurrentClerkUser() clerkUser: AuthenticatedClerkUser,
+  ): Promise<DeleteAccountResultDto> {
+    return this.usersService.deleteCurrentAccount(clerkUser);
   }
 }
