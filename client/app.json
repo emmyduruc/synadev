@@ -24,7 +24,7 @@
       "package": "com.syna.app",
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "backgroundColor": "#A55972",
+        "backgroundColor": "#5B4A52",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -66,7 +66,7 @@
         {
           "image": "./assets/images/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#A55972"
+          "backgroundColor": "#5B4A52"
         }
       ]
     ],

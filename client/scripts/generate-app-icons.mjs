@@ -17,7 +17,7 @@ const fontPath = path.resolve(
 );
 
 /** Matches packages/design-tokens primary[500] + SplashScreen bg-primary-500 */
-const PRIMARY_500 = '#A55972';
+const PRIMARY_500 = '#5B4A52';
 
 const buildSvg = ({
   size,

@@ -6,19 +6,19 @@
  * Ovum palette tokens are category / wash colors for symptoms & UI accents.
  */
 export const colors = {
-  /** Dusty Rose Deep — CTA buttons, pattern accents */
+  /** Warm ink plum — CTA buttons, selected chips, calendar accents (= --ink-2 at 500) */
   primary: {
-    50: '#FAF4F6',
-    100: '#F4E8ED',
-    200: '#E8CED8',
-    300: '#D4A8B8',
-    400: '#BC8298',
-    500: '#A55972',
-    600: '#8F4D64',
-    700: '#794054',
-    800: '#633445',
-    900: '#4D2836',
-    950: '#361B26',
+    50: '#F4F1F2',
+    100: '#E8E3E5',
+    200: '#D1C7CB',
+    300: '#B3A4AA',
+    400: '#8A7880',
+    500: '#5B4A52',
+    600: '#4D3E45',
+    700: '#3F3339',
+    800: '#32282D',
+    900: '#251E22',
+    950: '#181416',
   },
   /** Soft chip / secondary surface */
   secondary: {
@@ -121,7 +121,7 @@ export const colors = {
     1: '#F4EBEB',
     2: '#DAB3B3',
     3: '#C48B8B',
-    4: '#A55972',
+    4: '#5B4A52',
   },
   apricot: {
     DEFAULT: '#F1D5B0',
