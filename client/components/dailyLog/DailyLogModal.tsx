@@ -1,14 +1,14 @@
-import type { ReactNode } from 'react';
-import { ScrollView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import type { ReactNode } from "react";
+import { ScrollView } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { DailyLogDatePicker } from './DailyLogDatePicker';
+import { DailyLogDatePicker } from "./DailyLogDatePicker";
 
-import { Box } from '@/components/ui/Box';
-import { Text } from '@/components/ui/Text';
-import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
-import { useTranslate } from '@/hooks/useTranslate';
-import { cn } from '@/lib/ui';
+import { Box } from "@/components/ui/Box";
+import { Text } from "@/components/ui/Text";
+import { TouchableOpacity } from "@/components/ui/TouchableOpacity";
+import { useTranslate } from "@/hooks/useTranslate";
+import { cn } from "@/lib/ui";
 
 export type DailyLogModalProps = {
   title: string;
@@ -62,7 +62,8 @@ export const DailyLogModal = ({
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
-        contentContainerStyle={{ paddingBottom: 24 }}>
+        contentContainerStyle={{ paddingBottom: 24 }}
+      >
         <Box paddingX="lg" paddingY="md" gap="lg">
           {children}
         </Box>
@@ -73,23 +74,29 @@ export const DailyLogModal = ({
         align="center"
         justify="between"
         className="border-t border-border bg-card px-2 py-3"
-        style={{ paddingBottom: safeAreaBottom + 12 }}>
+        style={{ paddingBottom: safeAreaBottom + 12 }}
+      >
         <TouchableOpacity
           accessibilityRole="button"
           disabled={isSaving}
           onPress={onCancel}
-          className="min-h-11 justify-center px-4 py-2">
+          className="min-h-11 justify-center px-4 py-2"
+        >
           <Text size="base" color="primary" weight="medium">
-            {t('daily_log_cancel_button')}
+            {t("daily_log_cancel_button")}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           accessibilityRole="button"
           disabled={!canSave}
           onPress={onSave}
-          className={cn('min-h-11 justify-center px-4 py-2', !canSave && 'opacity-40')}>
-          <Text size="base" color="primary" weight="bold">
-            {t('daily_log_save_button')}
+          className={cn(
+            "min-h-11 justify-center px-4 py-2",
+            !canSave && "opacity-40",
+          )}
+        >
+          <Text size="base" color="primary" weight="bold" family="sans">
+            {t("daily_log_save_button")}
           </Text>
         </TouchableOpacity>
       </Box>

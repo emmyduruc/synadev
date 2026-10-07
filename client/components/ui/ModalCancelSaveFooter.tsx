@@ -1,7 +1,7 @@
-import { Box } from '@/components/ui/Box';
-import { Text } from '@/components/ui/Text';
-import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
-import { useTranslate } from '@/hooks/useTranslate';
+import { Box } from "@/components/ui/Box";
+import { Text } from "@/components/ui/Text";
+import { TouchableOpacity } from "@/components/ui/TouchableOpacity";
+import { useTranslate } from "@/hooks/useTranslate";
 
 export type ModalCancelSaveFooterProps = {
   onCancel: () => void;
@@ -21,8 +21,8 @@ export const ModalCancelSaveFooter = ({
   onSave,
   isSaving = false,
   saveDisabled = false,
-  cancelLabelKey = 'calendar_cancel_button',
-  saveLabelKey = 'calendar_save_button',
+  cancelLabelKey = "calendar_cancel_button",
+  saveLabelKey = "calendar_save_button",
 }: ModalCancelSaveFooterProps) => {
   const { t } = useTranslate();
   const isPrimaryDisabled = isSaving || saveDisabled;
@@ -32,12 +32,14 @@ export const ModalCancelSaveFooter = ({
       direction="row"
       align="center"
       justify="between"
-      className="border-t border-border bg-card px-2 py-3">
+      className="border-t border-border bg-card px-2 py-3"
+    >
       <TouchableOpacity
         accessibilityRole="button"
         disabled={isSaving}
         onPress={onCancel}
-        className="min-h-11 justify-center px-4 py-2">
+        className="min-h-11 justify-center px-4 py-2"
+      >
         <Text size="base" color="primary" weight="medium">
           {t(cancelLabelKey)}
         </Text>
@@ -46,12 +48,15 @@ export const ModalCancelSaveFooter = ({
         accessibilityRole="button"
         disabled={isPrimaryDisabled}
         onPress={onSave}
-        className="min-h-11 justify-center px-4 py-2">
+        className="min-h-11 justify-center px-4 py-2"
+      >
         <Text
           size="base"
           color="primary"
           weight="bold"
-          className={isPrimaryDisabled ? 'opacity-40' : undefined}>
+          family="sans"
+          className={isPrimaryDisabled ? "opacity-40" : undefined}
+        >
           {t(saveLabelKey)}
         </Text>
       </TouchableOpacity>

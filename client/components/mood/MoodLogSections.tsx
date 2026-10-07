@@ -1,14 +1,14 @@
-import type { MoodId } from '@syna/shared-types';
+import type { MoodId } from "@syna/shared-types";
 
-import { DailyLogChip } from '@/components/dailyLog/DailyLogChip';
-import { DailyLogNoteField } from '@/components/dailyLog/DailyLogNoteField';
-import { DailyLogScale } from '@/components/dailyLog/DailyLogScale';
-import { Box } from '@/components/ui/Box';
-import { Text } from '@/components/ui/Text';
-import { useTranslate } from '@/hooks/useTranslate';
-import { MOOD_OPTIONS, MOOD_SECTION_SURFACE } from '@/lib/mood/moodCatalog';
-import type { MoodEntry } from '@/lib/mood/moodLogStorage';
-import { cn } from '@/lib/ui';
+import { DailyLogChip } from "@/components/dailyLog/DailyLogChip";
+import { DailyLogNoteField } from "@/components/dailyLog/DailyLogNoteField";
+import { DailyLogScale } from "@/components/dailyLog/DailyLogScale";
+import { Box } from "@/components/ui/Box";
+import { Text } from "@/components/ui/Text";
+import { useTranslate } from "@/hooks/useTranslate";
+import { MOOD_OPTIONS, MOOD_SECTION_SURFACE } from "@/lib/mood/moodCatalog";
+import type { MoodEntry } from "@/lib/mood/moodLogStorage";
+import { cn } from "@/lib/ui";
 
 export type MoodLogSectionsProps = {
   entry: MoodEntry;
@@ -28,13 +28,21 @@ export const MoodLogSections = ({
   onNoteChange,
 }: MoodLogSectionsProps) => {
   const { t } = useTranslate();
-  const feelingOptions = MOOD_OPTIONS.filter((option) => option.id !== entry.primaryMood);
+  const feelingOptions = MOOD_OPTIONS.filter(
+    (option) => option.id !== entry.primaryMood,
+  );
 
   return (
     <Box gap="lg">
-      <Box className={cn('rounded-3xl border p-4 shadow-sm', MOOD_SECTION_SURFACE.primary)} gap="sm">
-        <Text size="base" weight="bold">
-          {t('mood_primary_title')}
+      <Box
+        className={cn(
+          "rounded-3xl border p-4 shadow-sm",
+          MOOD_SECTION_SURFACE.primary,
+        )}
+        gap="sm"
+      >
+        <Text size="base" weight="bold" family="serif">
+          {t("mood_primary_title")}
         </Text>
         <Box direction="row" className="flex-wrap gap-2">
           {MOOD_OPTIONS.map((option) => (
@@ -52,10 +60,14 @@ export const MoodLogSections = ({
 
       {entry.primaryMood ? (
         <Box
-          className={cn('rounded-3xl border p-4 shadow-sm', MOOD_SECTION_SURFACE.feelings)}
-          gap="sm">
-          <Text size="base" weight="bold">
-            {t('mood_feelings_title')}
+          className={cn(
+            "rounded-3xl border p-4 shadow-sm",
+            MOOD_SECTION_SURFACE.feelings,
+          )}
+          gap="sm"
+        >
+          <Text size="base" weight="bold" family="serif">
+            {t("mood_feelings_title")}
           </Text>
           <Box direction="row" className="flex-wrap gap-2">
             {feelingOptions.map((option) => (
@@ -72,38 +84,56 @@ export const MoodLogSections = ({
         </Box>
       ) : null}
 
-      <Box className={cn('rounded-3xl border p-4 shadow-sm', MOOD_SECTION_SURFACE.energy)} gap="sm">
-        <Text size="base" weight="bold">
-          {t('mood_energy_title')}
+      <Box
+        className={cn(
+          "rounded-3xl border p-4 shadow-sm",
+          MOOD_SECTION_SURFACE.energy,
+        )}
+        gap="sm"
+      >
+        <Text size="base" weight="bold" family="serif">
+          {t("mood_energy_title")}
         </Text>
         <DailyLogScale
           value={entry.energy}
           onChange={onEnergyChange}
-          lowLabel={t('mood_energy_low')}
-          highLabel={t('mood_energy_high')}
+          lowLabel={t("mood_energy_low")}
+          highLabel={t("mood_energy_high")}
         />
       </Box>
 
-      <Box className={cn('rounded-3xl border p-4 shadow-sm', MOOD_SECTION_SURFACE.stress)} gap="sm">
-        <Text size="base" weight="bold">
-          {t('mood_stress_title')}
+      <Box
+        className={cn(
+          "rounded-3xl border p-4 shadow-sm",
+          MOOD_SECTION_SURFACE.stress,
+        )}
+        gap="sm"
+      >
+        <Text size="base" weight="bold" family="serif">
+          {t("mood_stress_title")}
         </Text>
         <DailyLogScale
           value={entry.stress}
           onChange={onStressChange}
-          lowLabel={t('mood_stress_low')}
-          highLabel={t('mood_stress_high')}
+          lowLabel={t("mood_stress_low")}
+          highLabel={t("mood_stress_high")}
         />
       </Box>
 
-      <Box className={cn('rounded-3xl border p-4 shadow-sm', MOOD_SECTION_SURFACE.note)} gap="sm">
-        <Text size="base" weight="bold">
-          {t('mood_note_title')}
+      <Box
+        className={cn(
+          "rounded-3xl border p-4 shadow-sm",
+          MOOD_SECTION_SURFACE.note,
+        )}
+        gap="sm"
+      >
+        <Text size="base" weight="bold" family="serif">
+          {t("mood_note_title")}
         </Text>
         <DailyLogNoteField
           value={entry.note}
           onChangeText={onNoteChange}
-          placeholder={t('mood_note_placeholder')}
+          placeholder={t("mood_note_placeholder")}
         />
       </Box>
     </Box>

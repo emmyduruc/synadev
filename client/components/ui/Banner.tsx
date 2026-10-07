@@ -119,6 +119,7 @@ export const Banner = ({
       <Box flex={1}>
         <Text
           weight="semibold"
+          family="serif"
           className={cn(bannerTextClasses[variant], bannerTitleSizeClasses[size])}>
           {title}
         </Text>

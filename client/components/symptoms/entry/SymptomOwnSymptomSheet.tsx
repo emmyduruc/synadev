@@ -110,7 +110,7 @@ export const SymptomOwnSymptomSheet = ({
                 autoCorrect
                 maxLength={80}
                 style={{
-                  fontFamily: FONT_FAMILY.regular,
+                  fontFamily: FONT_FAMILY.sans.regular,
                   fontSize: 16,
                   color: semanticColors.foreground,
                   padding: 0,

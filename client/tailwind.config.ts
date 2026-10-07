@@ -59,10 +59,16 @@ const config = {
     extend: {
       colors,
       fontFamily: {
-        sans: [FONT_FAMILY.regular],
-        'sans-medium': [FONT_FAMILY.medium],
-        'sans-semibold': [FONT_FAMILY.semibold],
-        'sans-bold': [FONT_FAMILY.bold],
+        /** Figtree — body, navigation, body numbers */
+        sans: [FONT_FAMILY.sans.regular],
+        'sans-medium': [FONT_FAMILY.sans.medium],
+        'sans-semibold': [FONT_FAMILY.sans.semibold],
+        'sans-bold': [FONT_FAMILY.sans.semibold],
+        /** Outfit — headings, titles, large display numbers */
+        serif: [FONT_FAMILY.serif.regular],
+        'serif-medium': [FONT_FAMILY.serif.medium],
+        'serif-semibold': [FONT_FAMILY.serif.semibold],
+        'serif-bold': [FONT_FAMILY.serif.semibold],
       },
       fontSize,
       spacing,

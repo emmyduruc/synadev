@@ -11,5 +11,5 @@ export const hiddenOtpInputStyle: TextStyle = {
   opacity: 0,
   width: 1,
   height: 1,
-  fontFamily: FONT_FAMILY.regular,
+  fontFamily: FONT_FAMILY.sans.regular,
 };

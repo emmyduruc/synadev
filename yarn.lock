@@ -1498,6 +1498,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@expo-google-fonts/figtree@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "@expo-google-fonts/figtree@npm:0.4.1"
+  checksum: 10c0/69678fafe3b0ab82380e038cc68bd39dfa6f6b5f3272e8093d503522b85123357377151747f1abf8192f1a84d15b17ec241293e85606d3f47df4dfcbdabc46d8
+  languageName: node
+  linkType: hard
+
 "@expo-google-fonts/material-symbols@npm:^0.4.1":
   version: 0.4.38
   resolution: "@expo-google-fonts/material-symbols@npm:0.4.38"
@@ -1505,10 +1512,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo-google-fonts/montserrat@npm:^0.4.2":
-  version: 0.4.2
-  resolution: "@expo-google-fonts/montserrat@npm:0.4.2"
-  checksum: 10c0/6b040a64adef7aa1595d013865c7efa7d9a8c6e20ebeeba338f5024492772b5ea7c1476a9a7911bda55a9c55c7a38112607c6a2b74e5079088fb6ac6baf083f9
+"@expo-google-fonts/outfit@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "@expo-google-fonts/outfit@npm:0.4.3"
+  checksum: 10c0/563b2e922343f3f73b8d4c05adf20035956e62581ae91bb3dfd39f53d50f121180ecff4a0be1cfa7cc42cfbd6ae1d3f440c1d7f0703d4e9ab9a0f7414d95c1ab
   languageName: node
   linkType: hard
 
@@ -5800,7 +5807,8 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.26.0"
     "@clerk/expo": "npm:^3.6.5"
-    "@expo-google-fonts/montserrat": "npm:^0.4.2"
+    "@expo-google-fonts/figtree": "npm:^0.4.1"
+    "@expo-google-fonts/outfit": "npm:^0.4.3"
     "@expo/config-plugins": "npm:^57.0.2"
     "@hookform/resolvers": "npm:^5.4.0"
     "@kingstinct/react-native-healthkit": "npm:^14.0.2"

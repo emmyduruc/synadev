@@ -1,11 +1,11 @@
-import type { SymptomId } from '@syna/shared-types';
+import type { SymptomId } from "@syna/shared-types";
 
-import { DailyLogChip } from '@/components/dailyLog/DailyLogChip';
-import { Box } from '@/components/ui/Box';
-import { Text } from '@/components/ui/Text';
-import { useTranslate } from '@/hooks/useTranslate';
-import type { SymptomCategory } from '@/lib/symptoms/symptomCatalog';
-import { cn } from '@/lib/ui';
+import { DailyLogChip } from "@/components/dailyLog/DailyLogChip";
+import { Box } from "@/components/ui/Box";
+import { Text } from "@/components/ui/Text";
+import { useTranslate } from "@/hooks/useTranslate";
+import type { SymptomCategory } from "@/lib/symptoms/symptomCatalog";
+import { cn } from "@/lib/ui";
 
 export type SymptomCategoryCardProps = {
   category: SymptomCategory;
@@ -32,9 +32,14 @@ export const SymptomCategoryCard = ({
   return (
     <Box
       gap="sm"
-      className={cn('rounded-3xl border p-4 shadow-sm', category.sectionClassName, className)}>
+      className={cn(
+        "rounded-3xl border p-4 shadow-sm",
+        category.sectionClassName,
+        className,
+      )}
+    >
       {showTitle ? (
-        <Text size="base" weight="bold">
+        <Text size="base" weight="bold" family="serif">
           {t(category.titleKey)}
         </Text>
       ) : null}

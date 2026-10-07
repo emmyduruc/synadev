@@ -50,6 +50,8 @@ export const OtpCodeInput = ({
               <Text
                 size="3xl"
                 weight="semibold"
+                family="serif"
+                tabularNums
                 align="center"
                 responsive={false}
                 className="min-h-10">

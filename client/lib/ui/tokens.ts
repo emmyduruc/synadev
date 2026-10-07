@@ -7,6 +7,7 @@ import type {
   ColorTone,
   FlexDirection,
   FlexValue,
+  FontFamilyTone,
   FontSize,
   FontWeight,
   InputSize,
@@ -18,12 +19,51 @@ import type {
 
 import { FONT_FAMILY } from '@/lib/fonts/constants';
 
+/** Figtree — body, navigation, body numbers. Bold maps to 600. */
 export const fontFamilyByWeight: Record<FontWeight, string> = {
-  normal: FONT_FAMILY.regular,
-  medium: FONT_FAMILY.medium,
-  semibold: FONT_FAMILY.semibold,
-  /** Design system uses semibold for emphasis; bold maps to the same face. */
-  bold: FONT_FAMILY.semibold,
+  normal: FONT_FAMILY.sans.regular,
+  medium: FONT_FAMILY.sans.medium,
+  semibold: FONT_FAMILY.sans.semibold,
+  bold: FONT_FAMILY.sans.semibold,
+};
+
+/** Outfit — headings, titles, large display numbers. Bold maps to 600. */
+export const fontFamilySerifByWeight: Record<FontWeight, string> = {
+  normal: FONT_FAMILY.serif.regular,
+  medium: FONT_FAMILY.serif.medium,
+  semibold: FONT_FAMILY.serif.semibold,
+  bold: FONT_FAMILY.serif.semibold,
+};
+
+export const resolveFontFamilyName = (
+  family: FontFamilyTone,
+  weight: FontWeight,
+): string =>
+  family === 'serif'
+    ? fontFamilySerifByWeight[weight]
+    : fontFamilyByWeight[weight];
+
+/**
+ * Large title sizes default to Outfit (serif).
+ * Body / nav sizes default to Figtree (sans).
+ */
+export const HEADING_FONT_SIZES: ReadonlySet<FontSize> = new Set([
+  'xl',
+  '2xl',
+  '3xl',
+  '4xl',
+  '5xl',
+]);
+
+export const resolveDefaultFontFamily = (
+  size: FontSize,
+  family?: FontFamilyTone,
+): FontFamilyTone => {
+  if (family) {
+    return family;
+  }
+
+  return HEADING_FONT_SIZES.has(size) ? 'serif' : 'sans';
 };
 
 export const spacingClasses: Record<Spacing, string> = {
@@ -106,8 +146,15 @@ export const fontWeightClasses: Record<FontWeight, string> = {
   normal: 'font-sans',
   medium: 'font-sans-medium',
   semibold: 'font-sans-semibold',
-  /** Matches fontFamilyByWeight: bold renders as semibold. */
+  /** Matches fontFamilyByWeight: bold renders as semibold (600). */
   bold: 'font-sans-semibold',
+};
+
+export const fontSerifWeightClasses: Record<FontWeight, string> = {
+  normal: 'font-serif',
+  medium: 'font-serif-medium',
+  semibold: 'font-serif-semibold',
+  bold: 'font-serif-semibold',
 };
 
 export const textAlignClasses: Record<TextAlign, string> = {

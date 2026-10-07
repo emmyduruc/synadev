@@ -23,6 +23,6 @@ export const DailyLogNoteField = ({
     textAlignVertical="top"
     maxFontSizeMultiplier={DEFAULT_MAX_FONT_SIZE_MULTIPLIER}
     className="min-h-24 rounded-2xl border border-white bg-card px-4 py-3 font-sans text-base text-foreground"
-    style={{ fontFamily: FONT_FAMILY.regular }}
+    style={{ fontFamily: FONT_FAMILY.sans.regular }}
   />
 );

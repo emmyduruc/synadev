@@ -16,7 +16,13 @@ export const CycleInsightsStatTile = ({
     <Text size="2xs" color="foreground-muted" align="center" numberOfLines={1}>
       {label}
     </Text>
-    <Text size="sm" weight="bold" align="center" numberOfLines={1}>
+    <Text
+      size="sm"
+      weight="bold"
+      family="sans"
+      tabularNums
+      align="center"
+      numberOfLines={1}>
       {value}
     </Text>
   </Box>

@@ -76,6 +76,8 @@ export const DailyLogDateWheel = ({
             <Text
               size="base"
               weight={isSelected || item.isToday ? 'bold' : 'medium'}
+              family="sans"
+              tabularNums
               color={isSelected ? 'white' : 'foreground'}
               responsive={false}>
               {item.date.getDate()}

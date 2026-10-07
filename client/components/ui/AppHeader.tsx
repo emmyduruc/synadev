@@ -29,7 +29,7 @@ export const AppHeader = ({
 
     <Box flex={1} align="center">
       {title ? (
-        <Text size="lg" weight="semibold" align="center">
+        <Text size="lg" weight="semibold" family="serif" align="center">
           {title}
         </Text>
       ) : null}

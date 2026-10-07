@@ -30,6 +30,7 @@ export const ScreenHero = ({
     <Text
       size="xl"
       weight={headlineWeight}
+      family="serif"
       align={align}
       responsive={false}
       className="leading-tight text-foreground"

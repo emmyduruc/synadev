@@ -70,6 +70,8 @@ export const DashboardWeekCalendarSection = ({
                 <Text
                   size="sm"
                   weight={day.isToday ? 'semibold' : 'medium'}
+                  family="sans"
+                  tabularNums
                   responsive={false}
                   className={day.isToday ? 'text-white' : undefined}
                 >

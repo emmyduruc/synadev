@@ -23,7 +23,7 @@ export const DoctorReportScoresBand = ({ scores }: DoctorReportScoresBandProps) 
             <Text size="2xs" className="text-black/60">
               {t(score.labelKey)}
             </Text>
-            <Text size="lg" weight="bold" className="text-black">
+            <Text size="lg" weight="bold" family="serif" tabularNums className="text-black">
               {score.value}
             </Text>
             {score.detailKey ? (

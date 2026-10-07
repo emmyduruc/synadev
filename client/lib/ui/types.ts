@@ -16,6 +16,9 @@ export type FontSize =
 
 export type FontWeight = 'normal' | 'medium' | 'semibold' | 'bold';
 
+/** sans = Figtree (body/nav); serif = Outfit (headings/display). */
+export type FontFamilyTone = 'sans' | 'serif';
+
 export type TextAlign = 'left' | 'center' | 'right' | 'justify';
 
 export type ColorTone =

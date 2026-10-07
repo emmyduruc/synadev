@@ -154,6 +154,8 @@ export const CycleInsightsHero = ({
           <Text
             size="5xl"
             weight="bold"
+            family="serif"
+            tabularNums
             align="center"
             color="primary"
             responsive={false}
@@ -163,7 +165,12 @@ export const CycleInsightsHero = ({
           <Text size="xs" color="foreground-muted" align="center" className="mt-1">
             {t('cycle_insights_of_cycle_length', { length: cycleLengthDays })}
           </Text>
-          <Text size="lg" weight="bold" align="center" className="mt-3 leading-tight">
+          <Text
+            size="lg"
+            weight="bold"
+            family="serif"
+            align="center"
+            className="mt-3 leading-tight">
             {statusTitle}
           </Text>
           {milestoneLabel ? (

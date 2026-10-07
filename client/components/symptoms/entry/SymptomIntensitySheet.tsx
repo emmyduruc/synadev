@@ -1,23 +1,30 @@
-import type { SymptomDayEntry, SymptomId, SymptomIntensity } from '@syna/shared-types';
-import { useEffect, useRef, useState } from 'react';
-import { Modal, Pressable, ScrollView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import type {
+  SymptomDayEntry,
+  SymptomId,
+  SymptomIntensity,
+} from "@syna/shared-types";
+import { useEffect, useRef, useState } from "react";
+import { Modal, Pressable, ScrollView } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { SymptomExtraOptionButtons } from '@/components/symptoms/entry/SymptomExtraOptionButtons';
-import { SymptomIntensityRange } from '@/components/symptoms/entry/SymptomIntensityRange';
-import { Box } from '@/components/ui/Box';
-import { StarIcon } from '@/components/ui/icons/StarIcon';
-import { Text } from '@/components/ui/Text';
-import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
-import { useTranslate } from '@/hooks/useTranslate';
+import { SymptomExtraOptionButtons } from "@/components/symptoms/entry/SymptomExtraOptionButtons";
+import { SymptomIntensityRange } from "@/components/symptoms/entry/SymptomIntensityRange";
+import { Box } from "@/components/ui/Box";
+import { StarIcon } from "@/components/ui/icons/StarIcon";
+import { Text } from "@/components/ui/Text";
+import { TouchableOpacity } from "@/components/ui/TouchableOpacity";
+import { useTranslate } from "@/hooks/useTranslate";
 import {
   DEFAULT_SYMPTOM_INTENSITY,
   SYMPTOM_INTENSITY_LABEL_KEYS,
-} from '@/lib/symptoms/symptomEntryConstants';
-import { createDayEntry, findSymptomOption } from '@/lib/symptoms/symptomEntryHelpers';
-import { getSymptomEntryIcon } from '@/lib/symptoms/symptomEntryIcons';
-import { getSymptomExtrasQuestions } from '@/lib/symptoms/symptomExtrasConfig';
-import { semanticColors } from '@/lib/ui';
+} from "@/lib/symptoms/symptomEntryConstants";
+import {
+  createDayEntry,
+  findSymptomOption,
+} from "@/lib/symptoms/symptomEntryHelpers";
+import { getSymptomEntryIcon } from "@/lib/symptoms/symptomEntryIcons";
+import { getSymptomExtrasQuestions } from "@/lib/symptoms/symptomExtrasConfig";
+import { semanticColors } from "@/lib/ui";
 
 export type SymptomIntensitySheetProps = {
   visible: boolean;
@@ -44,7 +51,9 @@ export const SymptomIntensitySheet = ({
 }: SymptomIntensitySheetProps) => {
   const { t } = useTranslate();
   const { bottom: safeAreaBottom } = useSafeAreaInsets();
-  const [intensity, setIntensity] = useState<SymptomIntensity>(DEFAULT_SYMPTOM_INTENSITY);
+  const [intensity, setIntensity] = useState<SymptomIntensity>(
+    DEFAULT_SYMPTOM_INTENSITY,
+  );
   const [extras, setExtras] = useState<Record<string, string>>({});
   const [hasSelection, setHasSelection] = useState(false);
   const seededForRef = useRef<SymptomId | null>(null);
@@ -112,7 +121,8 @@ export const SymptomIntensitySheet = ({
       transparent
       presentationStyle="overFullScreen"
       statusBarTranslucent
-      onRequestClose={onClose}>
+      onRequestClose={onClose}
+    >
       <Box className="flex-1 justify-end">
         <Pressable
           accessibilityRole="button"
@@ -123,7 +133,8 @@ export const SymptomIntensitySheet = ({
         <Box
           className="w-full max-h-[90%] rounded-t-3xl border border-border bg-background px-5 pt-4"
           style={{ paddingBottom: Math.max(safeAreaBottom, 16) + 12 }}
-          gap="md">
+          gap="md"
+        >
           <Box align="center" className="pb-1">
             <Box className="h-1 w-10 rounded-full bg-border" />
           </Box>
@@ -132,12 +143,13 @@ export const SymptomIntensitySheet = ({
             <Box
               align="center"
               justify="center"
-              className="h-12 w-12 rounded-2xl bg-lavender-light">
+              className="h-12 w-12 rounded-2xl bg-lavender-light"
+            >
               {getSymptomEntryIcon(symptomId)}
             </Box>
 
             <Box flex={1} gap="xs">
-              <Text size="base" weight="bold" numberOfLines={2}>
+              <Text size="base" weight="bold" numberOfLines={2} family="serif">
                 {title}
               </Text>
               <Text size="sm" color="foreground-muted">
@@ -147,9 +159,10 @@ export const SymptomIntensitySheet = ({
 
             <TouchableOpacity
               accessibilityRole="button"
-              accessibilityLabel={t('symptom_entry_favorite_toggle_label')}
+              accessibilityLabel={t("symptom_entry_favorite_toggle_label")}
               onPress={() => onToggleFavorite(symptomId)}
-              className="flex-row items-center gap-1.5 pl-2">
+              className="flex-row items-center gap-1.5 pl-2"
+            >
               <StarIcon
                 size={20}
                 filled={isFavorite}
@@ -160,7 +173,7 @@ export const SymptomIntensitySheet = ({
                 }
               />
               <Text size="sm" weight="medium">
-                {t('symptom_entry_favorite_button')}
+                {t("symptom_entry_favorite_button")}
               </Text>
             </TouchableOpacity>
           </Box>
@@ -170,35 +183,42 @@ export const SymptomIntensitySheet = ({
           <ScrollView
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
-            bounces={false}>
+            bounces={false}
+          >
             <Box gap="lg" className="pb-2">
-              <SymptomIntensityRange value={intensity} onChange={handleIntensityChange} />
+              <SymptomIntensityRange
+                value={intensity}
+                onChange={handleIntensityChange}
+              />
 
-                {questions.length > 0 ? (
-                  <Box gap="md">
-                    {questions.map((question) => (
-                      <Box key={question.key} gap="sm">
-                        <Text size="sm" weight="medium">
-                          {t(question.labelKey)}
-                        </Text>
-                        <SymptomExtraOptionButtons
-                          options={question.options}
-                          selectedValue={extras[question.key]}
-                          layout={question.layout}
-                          onSelect={(value) => handleExtraSelect(question.key, value)}
-                        />
-                      </Box>
-                    ))}
-                  </Box>
-                ) : null}
+              {questions.length > 0 ? (
+                <Box gap="md">
+                  {questions.map((question) => (
+                    <Box key={question.key} gap="sm">
+                      <Text size="sm" weight="medium">
+                        {t(question.labelKey)}
+                      </Text>
+                      <SymptomExtraOptionButtons
+                        options={question.options}
+                        selectedValue={extras[question.key]}
+                        layout={question.layout}
+                        onSelect={(value) =>
+                          handleExtraSelect(question.key, value)
+                        }
+                      />
+                    </Box>
+                  ))}
+                </Box>
+              ) : null}
 
               {hasSelection ? (
                 <TouchableOpacity
                   accessibilityRole="button"
                   onPress={handleRemove}
-                  className="items-start py-1">
+                  className="items-start py-1"
+                >
                   <Text size="sm" weight="medium" color="primary">
-                    {t('symptom_entry_remove_selection')}
+                    {t("symptom_entry_remove_selection")}
                   </Text>
                 </TouchableOpacity>
               ) : null}

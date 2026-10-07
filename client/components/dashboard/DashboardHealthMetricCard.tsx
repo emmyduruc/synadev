@@ -1,15 +1,18 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
-import { Box } from '@/components/ui/Box';
-import { Text } from '@/components/ui/Text';
-import { useTranslate } from '@/hooks/useTranslate';
-import { DASHBOARD_ICON_WELL, DASHBOARD_HEALTH_METRIC_SURFACE } from '@/lib/dashboard/surfaces';
+import { Box } from "@/components/ui/Box";
+import { Text } from "@/components/ui/Text";
+import { useTranslate } from "@/hooks/useTranslate";
+import {
+  DASHBOARD_ICON_WELL,
+  DASHBOARD_HEALTH_METRIC_SURFACE,
+} from "@/lib/dashboard/surfaces";
 import {
   DASHBOARD_HEALTH_METRIC,
   type DashboardHealthMetricDisplay,
   type HealthTrendDirection,
-} from '@/lib/health/healthMetricDisplay';
-import { cn } from '@/lib/ui';
+} from "@/lib/health/healthMetricDisplay";
+import { cn } from "@/lib/ui";
 
 export type DashboardHealthMetricCardProps = {
   metric: DashboardHealthMetricDisplay;
@@ -20,15 +23,15 @@ export type DashboardHealthMetricCardProps = {
 };
 
 const getTrendSymbol = (direction: HealthTrendDirection | null): string => {
-  if (direction === 'up') {
-    return '↑';
+  if (direction === "up") {
+    return "↑";
   }
 
-  if (direction === 'down') {
-    return '↓';
+  if (direction === "down") {
+    return "↓";
   }
 
-  return '•';
+  return "•";
 };
 
 export const DashboardHealthMetricCard = ({
@@ -45,15 +48,28 @@ export const DashboardHealthMetricCard = ({
       direction="row"
       align="center"
       gap="sm"
-      className={cn(surfaceClassName, 'w-[148px] shrink-0 px-3 py-2.5 shadow-none')}>
+      className={cn(
+        surfaceClassName,
+        "w-[148px] shrink-0 px-3 py-2.5 shadow-none",
+      )}
+    >
       <Box
         align="center"
         justify="center"
-        className={cn('h-9 w-9 shrink-0 rounded-full', iconBackgroundClassName)}>
+        className={cn("h-9 w-9 shrink-0 rounded-full", iconBackgroundClassName)}
+      >
         {icon}
       </Box>
       <Box flex={1} className="min-w-0">
-        <Text size="base" weight="bold" responsive={false} className="leading-tight" numberOfLines={1}>
+        <Text
+          size="base"
+          weight="bold"
+          responsive={false}
+          className="leading-tight"
+          family="sans"
+          tabularNums
+          numberOfLines={1}
+        >
           {metric.value}
         </Text>
         <Text
@@ -61,12 +77,19 @@ export const DashboardHealthMetricCard = ({
           color="foreground"
           responsive={false}
           className="mt-0.5 leading-tight"
-          numberOfLines={1}>
+          numberOfLines={1}
+        >
           {t(labelKey)}
         </Text>
         {metric.trendDirection ? (
-          <Text size="2xs" color="foreground" responsive={false} className="mt-0.5">
-            {getTrendSymbol(metric.trendDirection)} {t('dashboard_health_trend_label')}
+          <Text
+            size="2xs"
+            color="foreground"
+            responsive={false}
+            className="mt-0.5"
+          >
+            {getTrendSymbol(metric.trendDirection)}{" "}
+            {t("dashboard_health_trend_label")}
           </Text>
         ) : null}
       </Box>
@@ -76,22 +99,22 @@ export const DashboardHealthMetricCard = ({
 
 export const DASHBOARD_HEALTH_METRIC_CONFIG = {
   [DASHBOARD_HEALTH_METRIC.steps]: {
-    labelKey: 'health_metric_steps',
+    labelKey: "health_metric_steps",
     surfaceClassName: DASHBOARD_HEALTH_METRIC_SURFACE.steps,
     iconBackgroundClassName: DASHBOARD_ICON_WELL.steps,
   },
   [DASHBOARD_HEALTH_METRIC.activity]: {
-    labelKey: 'health_metric_exercise_minutes',
+    labelKey: "health_metric_exercise_minutes",
     surfaceClassName: DASHBOARD_HEALTH_METRIC_SURFACE.activity,
     iconBackgroundClassName: DASHBOARD_ICON_WELL.activity,
   },
   [DASHBOARD_HEALTH_METRIC.hrv]: {
-    labelKey: 'health_metric_hrv',
+    labelKey: "health_metric_hrv",
     surfaceClassName: DASHBOARD_HEALTH_METRIC_SURFACE.hrv,
     iconBackgroundClassName: DASHBOARD_ICON_WELL.hrv,
   },
   [DASHBOARD_HEALTH_METRIC.sleep]: {
-    labelKey: 'health_metric_sleep',
+    labelKey: "health_metric_sleep",
     surfaceClassName: DASHBOARD_HEALTH_METRIC_SURFACE.sleep,
     iconBackgroundClassName: DASHBOARD_ICON_WELL.sleep,
   },

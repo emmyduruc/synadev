@@ -70,7 +70,12 @@ export const ProfileSettingsSectionCard = ({
             <Text size="sm" color="foreground-muted" className="flex-1">
               {t(field.labelKey)}
             </Text>
-            <Text size="sm" weight="medium" className="shrink-0 text-right">
+            <Text
+              size="sm"
+              weight="medium"
+              family="sans"
+              tabularNums
+              className="shrink-0 text-right">
               {field.value}
             </Text>
           </Box>

@@ -25,7 +25,7 @@ export const PatternsClinicalStrip = ({
         </Text>
         {mrsLatest ? (
           <>
-            <Text size="lg" weight="bold" color="primary">
+            <Text size="lg" weight="bold" family="serif" tabularNums color="primary">
               {mrsLatest.total}
             </Text>
             <Text size="2xs" color="foreground" className="leading-snug">
@@ -48,7 +48,7 @@ export const PatternsClinicalStrip = ({
           {t('patterns_clinical_pam_label')}
         </Text>
         {pamLatest?.scaledScore !== null && pamLatest?.scaledScore !== undefined ? (
-          <Text size="lg" weight="bold" color="primary">
+          <Text size="lg" weight="bold" family="serif" tabularNums color="primary">
             {Math.round(pamLatest.scaledScore)}
           </Text>
         ) : (

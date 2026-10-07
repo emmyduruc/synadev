@@ -1,18 +1,18 @@
-import { View } from 'react-native';
+import { View } from "react-native";
 
-import { Box } from '@/components/ui/Box';
-import { Text } from '@/components/ui/Text';
-import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
-import { useTranslate } from '@/hooks/useTranslate';
+import { Box } from "@/components/ui/Box";
+import { Text } from "@/components/ui/Text";
+import { TouchableOpacity } from "@/components/ui/TouchableOpacity";
+import { useTranslate } from "@/hooks/useTranslate";
 import {
   REPORT_CONCERNS,
   type ReportConcernId,
-} from '@/lib/report/reportConcerns';
+} from "@/lib/report/reportConcerns";
 import {
   REPORT_DOCTOR_QUESTIONS,
   type ReportDoctorQuestionId,
-} from '@/lib/report/reportDoctorQuestions';
-import { semanticColors } from '@/lib/ui';
+} from "@/lib/report/reportDoctorQuestions";
+import { semanticColors } from "@/lib/ui";
 
 export type ReportQuestionsCardProps = {
   selectedQuestionIds?: readonly ReportDoctorQuestionId[];
@@ -27,7 +27,7 @@ export const ReportQuestionsCard = ({
   selectedQuestionIds = [],
   customQuestions = [],
   selectedConcernIds = [],
-  concernFreeText = '',
+  concernFreeText = "",
   onPressAddQuestions,
   onPressAddConcerns,
 }: ReportQuestionsCardProps) => {
@@ -41,21 +41,32 @@ export const ReportQuestionsCard = ({
   return (
     <Box className="overflow-hidden rounded-2xl border border-border bg-card">
       <Box className="px-4 py-4" gap="md">
-        <Text size="base" weight="bold" className="leading-tight">
-          {t('report_questions_heading')}
+        <Text
+          size="base"
+          weight="bold"
+          className="leading-tight"
+          family="serif"
+        >
+          {t("report_questions_heading")}
         </Text>
 
         {hasSelectedQuestions ? (
           <Box gap="sm">
             {selectedQuestionIds.map((questionId) => (
-              <Box key={questionId} className="rounded-xl bg-primary-50 px-3.5 py-3">
+              <Box
+                key={questionId}
+                className="rounded-xl bg-primary-50 px-3.5 py-3"
+              >
                 <Text size="sm" color="foreground" className="leading-relaxed">
                   {t(REPORT_DOCTOR_QUESTIONS[questionId].labelKey)}
                 </Text>
               </Box>
             ))}
             {customQuestions.map((question) => (
-              <Box key={question} className="rounded-xl bg-primary-50 px-3.5 py-3">
+              <Box
+                key={question}
+                className="rounded-xl bg-primary-50 px-3.5 py-3"
+              >
                 <Text size="sm" color="foreground" className="leading-relaxed">
                   {question}
                 </Text>
@@ -64,16 +75,17 @@ export const ReportQuestionsCard = ({
           </Box>
         ) : (
           <Text size="sm" color="foreground-muted" className="leading-relaxed">
-            {t('report_questions_empty')}
+            {t("report_questions_empty")}
           </Text>
         )}
 
         <TouchableOpacity
           accessibilityRole="button"
           onPress={onPressAddQuestions ?? (() => undefined)}
-          className="items-center py-1">
+          className="items-center py-1"
+        >
           <Text size="sm" weight="medium" color="foreground" align="center">
-            {t('report_questions_add')}
+            {t("report_questions_add")}
           </Text>
         </TouchableOpacity>
       </Box>
@@ -86,14 +98,22 @@ export const ReportQuestionsCard = ({
       />
 
       <Box className="px-4 py-4" gap="sm">
-        <Text size="base" weight="bold" className="leading-tight">
-          {t('report_concerns_heading')}
+        <Text
+          size="base"
+          weight="bold"
+          className="leading-tight"
+          family="serif"
+        >
+          {t("report_concerns_heading")}
         </Text>
 
         {hasSelectedConcerns ? (
           <Box gap="sm">
             {selectedConcernIds.map((concernId) => (
-              <Box key={concernId} className="rounded-xl bg-primary-50 px-3.5 py-3">
+              <Box
+                key={concernId}
+                className="rounded-xl bg-primary-50 px-3.5 py-3"
+              >
                 <Text size="sm" color="foreground" className="leading-relaxed">
                   {t(REPORT_CONCERNS[concernId].labelKey)}
                 </Text>
@@ -109,16 +129,17 @@ export const ReportQuestionsCard = ({
           </Box>
         ) : (
           <Text size="sm" color="foreground-muted" className="leading-relaxed">
-            {t('report_concerns_empty')}
+            {t("report_concerns_empty")}
           </Text>
         )}
 
         <TouchableOpacity
           accessibilityRole="button"
           onPress={onPressAddConcerns ?? (() => undefined)}
-          className="items-center py-1">
+          className="items-center py-1"
+        >
           <Text size="sm" weight="medium" color="foreground" align="center">
-            {t('report_concerns_add')}
+            {t("report_concerns_add")}
           </Text>
         </TouchableOpacity>
       </Box>

@@ -21,6 +21,6 @@ export const wheelPickerSelectionOverlayStyle: ViewStyle = {
 
 export const wheelPickerItemTextStyle: TextStyle = {
   color: semanticColors.foreground,
-  fontFamily: FONT_FAMILY.semibold,
+  fontFamily: FONT_FAMILY.sans.semibold,
   fontSize: 20,
 };

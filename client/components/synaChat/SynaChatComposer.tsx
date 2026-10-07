@@ -60,7 +60,7 @@ export const SynaChatComposer = ({
             'max-h-28 min-h-11 flex-1 px-3 py-2.5 font-sans text-base text-foreground',
           )}
           style={{
-            fontFamily: FONT_FAMILY.regular,
+            fontFamily: FONT_FAMILY.sans.regular,
             ...(Platform.OS === 'android'
               ? { includeFontPadding: false, textAlignVertical: 'center' }
               : null),

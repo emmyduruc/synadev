@@ -80,18 +80,18 @@ const androidSingleLineStyle: TextStyle = {
 
 const buildInputStyle = (multiline: boolean): TextStyle => {
   if (Platform.OS !== 'android') {
-    return { fontFamily: FONT_FAMILY.regular };
+    return { fontFamily: FONT_FAMILY.sans.regular };
   }
 
   if (multiline) {
     return {
-      fontFamily: FONT_FAMILY.regular,
+      fontFamily: FONT_FAMILY.sans.regular,
       includeFontPadding: false,
     };
   }
 
   return {
-    fontFamily: FONT_FAMILY.regular,
+    fontFamily: FONT_FAMILY.sans.regular,
     ...androidSingleLineStyle,
   };
 };

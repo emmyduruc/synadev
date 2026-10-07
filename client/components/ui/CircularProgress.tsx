@@ -51,7 +51,13 @@ export const CircularProgress = ({
         />
       </Svg>
       <Box className="absolute inset-0" align="center" justify="center">
-        <Text size="sm" weight="bold" color="foreground" responsive={false}>
+        <Text
+          size="sm"
+          weight="bold"
+          family="sans"
+          tabularNums
+          color="foreground"
+          responsive={false}>
           {`${normalizedPercent}%`}
         </Text>
       </Box>

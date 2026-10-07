@@ -5,23 +5,37 @@ import {
   cn,
   colorClasses,
   DEFAULT_MAX_FONT_SIZE_MULTIPLIER,
-  fontFamilyByWeight,
+  fontSerifWeightClasses,
   fontSizeClasses,
   fontWeightClasses,
   marginClasses,
   radiusClasses,
+  resolveDefaultFontFamily,
+  resolveFontFamilyName,
   spacingClasses,
   spacingXClasses,
   spacingYClasses,
   textAlignClasses,
   useResponsiveFontSize,
 } from '@/lib/ui';
-import type { ColorTone, FontSize, FontWeight, Radius, Spacing, TextAlign } from '@/lib/ui';
+import type {
+  ColorTone,
+  FontFamilyTone,
+  FontSize,
+  FontWeight,
+  Radius,
+  Spacing,
+  TextAlign,
+} from '@/lib/ui';
 
 export type TextProps = RNTextProps & {
   children: ReactNode;
   size?: FontSize;
   weight?: FontWeight;
+  /** sans = Figtree (body/nav); serif = Outfit (headings). Auto: xl+ → serif. */
+  family?: FontFamilyTone;
+  /** Align digits in columns (wearable values, calendar days, display scores). */
+  tabularNums?: boolean;
   color?: ColorTone;
   align?: TextAlign;
   padding?: Spacing;
@@ -37,6 +51,8 @@ export const Text = ({
   children,
   size = 'base',
   weight = 'normal',
+  family,
+  tabularNums = false,
   color = 'foreground',
   align = 'left',
   padding,
@@ -51,14 +67,20 @@ export const Text = ({
   ...props
 }: TextProps) => {
   const scaledFontSize = useResponsiveFontSize(size, responsive);
+  const resolvedFamily = resolveDefaultFontFamily(size, family);
+  const weightClass =
+    resolvedFamily === 'serif'
+      ? fontSerifWeightClasses[weight]
+      : fontWeightClasses[weight];
 
   return (
     <RNText
       className={cn(
         fontSizeClasses[size],
-        fontWeightClasses[weight],
+        weightClass,
         colorClasses[color],
         textAlignClasses[align],
+        tabularNums && 'tabular-nums',
         padding && spacingClasses[padding],
         paddingX && spacingXClasses[paddingX],
         paddingY && spacingYClasses[paddingY],
@@ -68,7 +90,10 @@ export const Text = ({
       )}
       style={[
         scaledFontSize ? { fontSize: scaledFontSize } : undefined,
-        { fontFamily: fontFamilyByWeight[weight] },
+        {
+          fontFamily: resolveFontFamilyName(resolvedFamily, weight),
+          ...(tabularNums ? { fontVariant: ['tabular-nums' as const] } : {}),
+        },
         style,
       ]}
       {...props}

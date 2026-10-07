@@ -1,33 +1,42 @@
-import type { SymptomId } from '@syna/shared-types';
-import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { SymptomId } from "@syna/shared-types";
+import { useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { DailyLogDatePicker } from '@/components/dailyLog/DailyLogDatePicker';
-import { DailyLogModal } from '@/components/dailyLog/DailyLogModal';
-import { useConfettiCelebration } from '@/components/gamification/ConfettiProvider';
-import { MascotLoadingGate } from '@/components/loading/MascotLoadingGate';
-import { RecordPeriodCycleGuide } from '@/components/period/RecordPeriodCycleGuide';
-import { SymptomCategoryAccordion } from '@/components/symptoms/SymptomCategoryAccordion';
-import { Box } from '@/components/ui/Box';
-import { Text } from '@/components/ui/Text';
-import { usePeriodDates } from '@/hooks/usePeriodDates';
-import { useSymptomLog } from '@/hooks/useSymptomLog';
-import { useTranslate } from '@/hooks/useTranslate';
-import { toDateKey } from '@/lib/date/dateKeys';
-import { CONFETTI_ACTION } from '@/lib/gamification/confettiActions';
-import { LOADING_VARIANT } from '@/lib/loading/loadingVariants';
-import type { SymptomLogMap } from '@/lib/symptoms/symptomLogStorage';
+import { DailyLogDatePicker } from "@/components/dailyLog/DailyLogDatePicker";
+import { DailyLogModal } from "@/components/dailyLog/DailyLogModal";
+import { useConfettiCelebration } from "@/components/gamification/ConfettiProvider";
+import { MascotLoadingGate } from "@/components/loading/MascotLoadingGate";
+import { RecordPeriodCycleGuide } from "@/components/period/RecordPeriodCycleGuide";
+import { SymptomCategoryAccordion } from "@/components/symptoms/SymptomCategoryAccordion";
+import { Box } from "@/components/ui/Box";
+import { Text } from "@/components/ui/Text";
+import { usePeriodDates } from "@/hooks/usePeriodDates";
+import { useSymptomLog } from "@/hooks/useSymptomLog";
+import { useTranslate } from "@/hooks/useTranslate";
+import { toDateKey } from "@/lib/date/dateKeys";
+import { CONFETTI_ACTION } from "@/lib/gamification/confettiActions";
+import { LOADING_VARIANT } from "@/lib/loading/loadingVariants";
+import type { SymptomLogMap } from "@/lib/symptoms/symptomLogStorage";
 
 /** Record Period modal — date wheel + cycle-critical symptoms; persists via API. */
 const RecordPeriodScreen = () => {
   const router = useRouter();
   const { t } = useTranslate();
   const { celebrate } = useConfettiCelebration();
-  const { dateKeys, isLoading: isPeriodLoading, persist: persistPeriodDates } = usePeriodDates();
-  const { logs: symptomLogs, isLoading: isSymptomLoading, persist: persistSymptoms } =
-    useSymptomLog();
+  const {
+    dateKeys,
+    isLoading: isPeriodLoading,
+    persist: persistPeriodDates,
+  } = usePeriodDates();
+  const {
+    logs: symptomLogs,
+    isLoading: isSymptomLoading,
+    persist: persistSymptoms,
+  } = useSymptomLog();
 
-  const [selectedDateKey, setSelectedDateKey] = useState(() => toDateKey(new Date()));
+  const [selectedDateKey, setSelectedDateKey] = useState(() =>
+    toDateKey(new Date()),
+  );
   const [draftSymptoms, setDraftSymptoms] = useState<SymptomLogMap>({});
   const [isSaving, setIsSaving] = useState(false);
   const [hasHydratedDraft, setHasHydratedDraft] = useState(false);
@@ -44,7 +53,10 @@ const RecordPeriodScreen = () => {
   }, [hasHydratedDraft, isPeriodLoading, isSymptomLoading, symptomLogs]);
 
   const selectedSymptomIds = useMemo(
-    () => new Set((draftSymptoms[selectedDateKey] ?? []).map((entry) => entry.symptomId)),
+    () =>
+      new Set(
+        (draftSymptoms[selectedDateKey] ?? []).map((entry) => entry.symptomId),
+      ),
     [draftSymptoms, selectedDateKey],
   );
 
@@ -52,7 +64,9 @@ const RecordPeriodScreen = () => {
     (symptomId: SymptomId) => {
       setDraftSymptoms((previous) => {
         const current = [...(previous[selectedDateKey] ?? [])];
-        const index = current.findIndex((entry) => entry.symptomId === symptomId);
+        const index = current.findIndex(
+          (entry) => entry.symptomId === symptomId,
+        );
 
         if (index >= 0) {
           current.splice(index, 1);
@@ -99,9 +113,10 @@ const RecordPeriodScreen = () => {
       enabled
       variant={LOADING_VARIANT.cycleCalendar}
       isReady={isDataReady}
-      className="flex-1">
+      className="flex-1"
+    >
       <DailyLogModal
-        title={t('record_period_screen_title')}
+        title={t("record_period_screen_title")}
         selectedDateKey={selectedDateKey}
         onChangeDate={setSelectedDateKey}
         onCancel={() => router.back()}
@@ -109,7 +124,8 @@ const RecordPeriodScreen = () => {
           void handleSave();
         }}
         isSaving={isSaving}
-        showDatePicker={false}>
+        showDatePicker={false}
+      >
         <RecordPeriodCycleGuide />
 
         <Box gap="sm">
@@ -120,11 +136,16 @@ const RecordPeriodScreen = () => {
         </Box>
 
         <Box gap="md">
-          <Text size="base" weight="bold" className="leading-tight mt-4">
-            {t('record_period_symptoms_heading')}
+          <Text
+            size="base"
+            weight="bold"
+            className="leading-tight mt-4"
+            family="serif"
+          >
+            {t("record_period_symptoms_heading")}
           </Text>
           <Text size="xs" color="foreground-muted" className="leading-relaxed">
-            {t('record_period_symptoms_hint')}
+            {t("record_period_symptoms_hint")}
           </Text>
           <SymptomCategoryAccordion
             selectedIds={selectedSymptomIds}

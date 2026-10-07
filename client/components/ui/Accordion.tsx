@@ -54,7 +54,12 @@ export const Accordion = ({ items, defaultExpandedId }: AccordionProps) => {
                 accessibilityState={{ expanded: isExpanded }}
                 accessibilityLabel={item.title}
                 onPress={() => handleToggle(item.id)}>
-                <Text size="sm" weight="bold" color="foreground" className="leading-tight">
+                <Text
+                  size="sm"
+                  weight="bold"
+                  family="serif"
+                  color="foreground"
+                  className="leading-tight">
                   {item.title}
                 </Text>
               </TouchableOpacity>
