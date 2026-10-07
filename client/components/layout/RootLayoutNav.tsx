@@ -28,25 +28,34 @@ export const RootLayoutNav = () => {
         <Stack.Screen name="login" />
         <Stack.Screen name="forgot-password" />
         <Stack.Screen name="(tabs)" />
+        {/* Card (not fullScreenModal): modal presentation made home open as a
+            swipeable sheet over connect-health after onboarding finished. */}
         <Stack.Screen
           name="onboarding/bio-data"
           options={{
-            presentation: 'fullScreenModal',
             gestureEnabled: false,
+            animation: 'fade',
           }}
         />
         <Stack.Screen
           name="onboarding/connect-health"
           options={{
-            presentation: 'fullScreenModal',
             gestureEnabled: false,
+            animation: 'fade',
           }}
         />
         <Stack.Screen
           name="onboarding/health-permissions"
           options={{
-            presentation: 'fullScreenModal',
             gestureEnabled: false,
+            animation: 'fade',
+          }}
+        />
+        <Stack.Screen
+          name="onboarding/notifications"
+          options={{
+            gestureEnabled: false,
+            animation: 'fade',
           }}
         />
         <Stack.Screen

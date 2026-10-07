@@ -13,10 +13,12 @@ const ICON_SIZE = 22;
 
 export const ConnectHealthOnboarding = () => {
   const { t } = useTranslate();
-  const { openHealthPermissions, continueWithoutHealthData } =
-    useConnectHealthOnboarding();
+  const {
+    openHealthPermissions,
+    // continueWithoutHealthData,
+  } = useConnectHealthOnboarding();
   const iconColor = semanticColors.foreground;
-  const softButtonStyle = { backgroundColor: semanticColors.report.dataBackground };
+  // const softButtonStyle = { backgroundColor: semanticColors.report.dataBackground };
 
   return (
     <AuthGradientLayout
@@ -26,6 +28,7 @@ export const ConnectHealthOnboarding = () => {
           <Button fullWidth size="lg" onPress={openHealthPermissions}>
             {t('connect_health_primary_button')}
           </Button>
+          {/* Skip disabled for now — health connect is part of required onboarding.
           <Button
             fullWidth
             size="lg"
@@ -37,6 +40,7 @@ export const ConnectHealthOnboarding = () => {
           >
             {t('connect_health_skip_button')}
           </Button>
+          */}
           <Text size="xs" color="foreground" align="center" className="mt-1">
             {t('connect_health_footer_note')}
           </Text>

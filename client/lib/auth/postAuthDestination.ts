@@ -2,6 +2,8 @@ import type { Href } from 'expo-router';
 
 import { getCurrentUser } from '@/lib/api';
 import { waitForAccessToken } from '@/lib/http/authToken';
+import { getHealthOnboardingCompleted } from '@/lib/onboarding/healthOnboardingStorage';
+import { getNotificationOnboardingCompleted } from '@/lib/onboarding/notificationOnboardingStorage';
 import {
   isBioDataComplete,
   loadBioDataForClerkUser,
@@ -36,9 +38,28 @@ const fetchCurrentUserWithRetry = async () => {
   throw lastError;
 };
 
+const resolveOnboardingHref = async (isBioComplete: boolean): Promise<Href> => {
+  if (!isBioComplete) {
+    return ROUTES.onboarding.bioData;
+  }
+
+  const healthDone = await getHealthOnboardingCompleted();
+
+  if (!healthDone) {
+    return ROUTES.onboarding.connectHealth;
+  }
+
+  const notificationsDone = await getNotificationOnboardingCompleted();
+
+  if (!notificationsDone) {
+    return ROUTES.onboarding.notifications;
+  }
+
+  return ROUTES.home;
+};
+
 /**
  * Fast local-only routing for returning users. No network.
- * Complete bio cache for this Clerk user → home; otherwise null (caller should network-resolve).
  */
 export const resolveCachedPostAuthDestination = async (
   clerkUserId: string | null | undefined,
@@ -49,18 +70,15 @@ export const resolveCachedPostAuthDestination = async (
 
   const cached = await loadBioDataForClerkUser(clerkUserId);
 
-  if (isBioDataComplete(cached)) {
-    return ROUTES.home;
+  if (!isBioDataComplete(cached)) {
+    return null;
   }
 
-  return null;
+  return resolveOnboardingHref(true);
 };
 
 /**
- * DB is the source of truth for post-auth routing.
- * Incomplete bio → onboarding (prefilling any fields already in DB).
- * Transient API/auth failures must not force onboarding for returning users
- * when this device already has a complete bio cache for the same Clerk user.
+ * Incomplete bio → bio. Then connect-health, then notifications, then home.
  */
 export const resolvePostAuthDestination = async (
   clerkUserId?: string | null,
@@ -76,24 +94,14 @@ export const resolvePostAuthDestination = async (
     const bioFromDb = mapUserToBioData(user);
     const ownerClerkId = user.clerkId || clerkUserId || '';
 
-    if (user.isBioComplete) {
-      await saveBioData(bioFromDb, ownerClerkId);
-      return ROUTES.home;
-    }
-
-    // Keep partial DB values so onboarding can prefill names / DOB already stored.
     await saveBioData(bioFromDb, ownerClerkId);
-    return ROUTES.onboarding.bioData;
+    return resolveOnboardingHref(user.isBioComplete);
   } catch {
     if (clerkUserId) {
       const cached = await loadBioDataForClerkUser(clerkUserId);
-
-      if (isBioDataComplete(cached)) {
-        return ROUTES.home;
-      }
+      return resolveOnboardingHref(isBioDataComplete(cached));
     }
 
-    // New accounts (or cleared caches) must start onboarding — never reuse another user's bio.
     return ROUTES.onboarding.bioData;
   }
 };

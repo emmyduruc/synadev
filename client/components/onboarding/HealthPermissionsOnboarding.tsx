@@ -13,15 +13,27 @@ import { semanticColors } from '@/lib/ui';
 
 export const HealthPermissionsOnboarding = () => {
   const { t } = useTranslate();
-  const { isConnecting, allowAccess } = useHealthPermissionsOnboarding();
+  const { isConnecting, isConnected, handlePrimaryAction } =
+    useHealthPermissionsOnboarding();
+
+  const primaryLabel = isConnected
+    ? t('health_permission_proceed_button')
+    : t('health_permission_allow_button');
 
   return (
     <AuthGradientLayout
       header={{ title: '', fallbackHref: ROUTES.onboarding.connectHealth }}
       footer={(
         <Box paddingX="lg">
-          <Button fullWidth size="lg" loading={isConnecting} onPress={allowAccess}>
-            {t('health_permission_allow_button')}
+          <Button
+            fullWidth
+            size="lg"
+            loading={isConnecting}
+            onPress={() => {
+              void handlePrimaryAction();
+            }}
+          >
+            {primaryLabel}
           </Button>
         </Box>
       )}
@@ -38,8 +50,21 @@ export const HealthPermissionsOnboarding = () => {
           {t('health_permission_brand')}
         </Text>
         <Text size="base" color="foreground" align="center" className="mt-3 px-2 leading-relaxed">
-          {t('health_permission_prompt')}
+          {isConnected
+            ? t('health_permission_connected_prompt')
+            : t('health_permission_prompt')}
         </Text>
+        {isConnected ? (
+          <Text
+            size="sm"
+            weight="semibold"
+            align="center"
+            className="mt-3 px-2"
+            style={{ color: semanticColors.report.bleeding }}
+          >
+            {t('health_permission_connected_badge')}
+          </Text>
+        ) : null}
       </Box>
 
       <Text size="sm" color="foreground" className="mb-2">

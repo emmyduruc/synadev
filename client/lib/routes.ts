@@ -9,6 +9,7 @@ export const ROUTES = {
     bioData: '/onboarding/bio-data',
     connectHealth: '/onboarding/connect-health',
     healthPermissions: '/onboarding/health-permissions',
+    notifications: '/onboarding/notifications',
   },
   assessment: {
     mrsIi: '/assessment/mrs-ii',

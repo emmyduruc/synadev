@@ -4,8 +4,9 @@ import { useEffect } from 'react';
 import { syncExpoPushRegistration } from '@/lib/notifications/syncExpoPushRegistration';
 
 /**
- * Syncs preferred locale (device language → backend) and registers Expo push
- * once the user is signed in. Locale sync runs even if push permission is denied.
+ * Syncs preferred locale after sign-in. Registers an Expo push token only when
+ * permission was already granted (e.g. returning user). Does not prompt.
+ * First-time permission is requested from notification onboarding.
  */
 export const useRegisterPushNotifications = () => {
   const { isLoaded, isSignedIn } = useAuth({ treatPendingAsSignedOut: false });
@@ -15,9 +16,8 @@ export const useRegisterPushNotifications = () => {
       return;
     }
 
-    void syncExpoPushRegistration().catch(() => {
+    void syncExpoPushRegistration({ requestPermission: false }).catch(() => {
       // Permission denied / simulator without push — non-blocking.
-      // Locale sync is attempted first inside syncExpoPushRegistration.
     });
   }, [isLoaded, isSignedIn]);
 };

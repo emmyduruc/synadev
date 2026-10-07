@@ -2,6 +2,8 @@ import type { SignInFutureResource, SignUpFutureResource } from '@clerk/shared/t
 import type { Href } from 'expo-router';
 
 import { resolvePostAuthDestination } from '@/lib/auth/postAuthDestination';
+import { clearHealthOnboardingCompleted } from '@/lib/onboarding/healthOnboardingStorage';
+import { clearNotificationOnboardingCompleted } from '@/lib/onboarding/notificationOnboardingStorage';
 import { ROUTES } from '@/lib/routes';
 import { toast } from '@/lib/sonner';
 
@@ -16,8 +18,8 @@ export type CompleteAuthSessionOptions = {
   successTitle: string;
   successDescription?: string;
   /**
-   * Sign-up only: always open post-auth onboarding (bio → connect health →
-   * permissions). Login still uses the DB / cache destination.
+   * Sign-up only: reset connect-health progress and open post-auth onboarding
+   * (bio → connect health → permissions). Login uses the normal destination.
    */
   requireOnboarding?: boolean;
 };
@@ -45,9 +47,13 @@ export const completeAuthSession = async (
         description: successDescription,
       });
 
-      // Navigate with our app routes directly. Clerk `decorateUrl` can remap to a
-      // dashboard after-sign-up URL and skip bio / connect-health onboarding.
       if (requireOnboarding) {
+        // New account must see bio → health → notifications, even if a previous
+        // install marked those steps complete on this device.
+        await Promise.all([
+          clearHealthOnboardingCompleted(),
+          clearNotificationOnboardingCompleted(),
+        ]);
         router.replace(ROUTES.onboarding.bioData);
         return;
       }

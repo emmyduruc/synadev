@@ -7,8 +7,8 @@ import type { BioData } from '@/lib/profile/bioDataStorage';
 import { ROUTES } from '@/lib/routes';
 
 /**
- * Post-register bio details. Only skip when the server confirms a complete bio.
- * Never trust a previous account's SecureStore cache on this device.
+ * Post-register bio details. When bio is already complete, continue to
+ * connect-health — never jump straight to home and skip that step.
  */
 const BioDataOnboardingScreen = () => {
   const router = useRouter();
@@ -16,7 +16,7 @@ const BioDataOnboardingScreen = () => {
 
   useEffect(() => {
     if (!isLoading && hasSyncedFromServer && isComplete) {
-      router.replace(ROUTES.home);
+      router.replace(ROUTES.onboarding.connectHealth);
     }
   }, [hasSyncedFromServer, isComplete, isLoading, router]);
 
