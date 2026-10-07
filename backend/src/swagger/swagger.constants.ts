@@ -12,6 +12,7 @@ export const SWAGGER_TAGS = {
   notifications: 'Notifications',
   uploads: 'Uploads',
   emails: 'Emails',
+  report: 'Report',
 } as const;
 
 export const SWAGGER_PATHS = {

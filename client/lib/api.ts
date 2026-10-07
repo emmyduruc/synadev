@@ -20,12 +20,14 @@ import {
   ReplacePeriodDaysSchema,
   ReplaceSymptomFavoritesSchema,
   ReplaceSymptomLogsSchema,
+  ReportPreferencesSchema,
   SubmitMrsIiAssessmentSchema,
   SubmitPam13AssessmentSchema,
   SubmitPhq2AssessmentSchema,
   SymptomCatalogSchema,
   SymptomFavoritesSchema,
   SymptomLogsSchema,
+  UpdateReportPreferencesSchema,
   UpdateUserHealthMetricsSchema,
   UpdateUserHealthRecordSchema,
   UpdateUserLocaleSchema,
@@ -57,12 +59,14 @@ import type {
   ReplacePeriodDays,
   ReplaceSymptomFavorites,
   ReplaceSymptomLogs,
+  ReportPreferences,
   SubmitMrsIiAssessment,
   SubmitPam13Assessment,
   SubmitPhq2Assessment,
   SymptomCatalog,
   SymptomFavorites,
   SymptomLogs,
+  UpdateReportPreferences,
   UpdateUserHealthMetrics,
   UpdateUserHealthRecord,
   UpdateUserLocale,
@@ -85,6 +89,7 @@ import {
   MOOD_LOGS,
   NOTIFICATIONS_PUSH_TOKEN,
   PERIOD_DAYS,
+  REPORT_PREFERENCES,
   SYMPTOM_CATALOG,
   SYMPTOM_CUSTOM,
   SYMPTOM_FAVORITES,
@@ -341,6 +346,24 @@ export const getLatestPhq2Assessment = (): Promise<Phq2Latest> =>
     url: ASSESSMENTS_PHQ_2_LATEST,
     method: 'GET',
     responseSchema: Phq2LatestSchema,
+  });
+
+export const getReportPreferences = (): Promise<ReportPreferences> =>
+  apiRequest({
+    url: REPORT_PREFERENCES,
+    method: 'GET',
+    responseSchema: ReportPreferencesSchema,
+  });
+
+export const putReportPreferences = (
+  input: UpdateReportPreferences,
+): Promise<ReportPreferences> =>
+  apiRequest({
+    url: REPORT_PREFERENCES,
+    method: 'PUT',
+    body: input,
+    bodySchema: UpdateReportPreferencesSchema,
+    responseSchema: ReportPreferencesSchema,
   });
 
 /** GPT-backed SYNA chat grounded in the authenticated user's health tools. */

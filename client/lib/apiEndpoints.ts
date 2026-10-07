@@ -102,6 +102,14 @@ export const ASSESSMENTS_PHQ_2_LATEST = '/assessments/phq-2/latest';
 export const ASSESSMENTS_PHQ_2_LATEST_ABSOLUTE = absolute(ASSESSMENTS_PHQ_2_LATEST);
 
 // =============================================================================
+// REPORT
+// =============================================================================
+
+/** GET/PUT — report-tab preferences (period, doctor questions, concerns) */
+export const REPORT_PREFERENCES = '/report/preferences';
+export const REPORT_PREFERENCES_ABSOLUTE = absolute(REPORT_PREFERENCES);
+
+// =============================================================================
 // CHAT
 // =============================================================================
 

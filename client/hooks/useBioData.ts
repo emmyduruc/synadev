@@ -1,4 +1,5 @@
 import type { UpdateUserProfile } from '@syna/shared-types';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 
 import { getCurrentUser, updateCurrentUserProfile } from '@/lib/api';
@@ -11,6 +12,7 @@ import {
   saveBioData,
 } from '@/lib/profile/bioDataStorage';
 import { mapUserToBioData } from '@/lib/profile/mapUserToBioData';
+import { queryKeys } from '@/lib/query/queryKeys';
 
 const toUpdatePayload = (bioData: BioData): UpdateUserProfile => ({
   firstName: bioData.firstName.trim(),
@@ -35,6 +37,7 @@ const isEmptyBioData = (bioData: BioData): boolean =>
  * Hydrates from cache first so home can paint without waiting on `/users/me`.
  */
 export const useBioData = () => {
+  const queryClient = useQueryClient();
   const [bioData, setBioData] = useState<BioData>(EMPTY_BIO_DATA);
   const [isLoading, setIsLoading] = useState(true);
   const [hasSyncedFromServer, setHasSyncedFromServer] = useState(false);
@@ -43,6 +46,7 @@ export const useBioData = () => {
   const refresh = useCallback(async () => {
     try {
       const user = await getCurrentUser();
+      queryClient.setQueryData(queryKeys.users.me(), user);
       const next = mapUserToBioData(user);
       await syncLocalCacheFromDb(next);
       setBioData(next);
@@ -54,7 +58,7 @@ export const useBioData = () => {
       setHasSyncedFromServer(true);
       setIsLoading(false);
     }
-  }, []);
+  }, [queryClient]);
 
   useEffect(() => {
     let isActive = true;
@@ -84,11 +88,12 @@ export const useBioData = () => {
 
   const persist = useCallback(async (nextBioData: BioData) => {
     const updatedUser = await updateCurrentUserProfile(toUpdatePayload(nextBioData));
+    queryClient.setQueryData(queryKeys.users.me(), updatedUser);
     const synced = mapUserToBioData(updatedUser);
     await syncLocalCacheFromDb(synced);
     setBioData(synced);
     setHasSyncedFromServer(true);
-  }, []);
+  }, [queryClient]);
 
   const percent = getBioDataCompletionPercent(bioData);
   const isComplete = isBioDataComplete(bioData);

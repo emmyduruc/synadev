@@ -1,55 +1,78 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { getPeriodDays, replacePeriodDays } from '@/lib/api';
 import {
   emitPeriodDatesChanged,
   subscribePeriodDatesChanged,
 } from '@/lib/period/periodDatesEvents';
+import { queryKeys } from '@/lib/query/queryKeys';
 
 export const usePeriodDates = () => {
-  const [dateKeys, setDateKeys] = useState<Set<string>>(new Set());
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: queryKeys.period.days(),
+    queryFn: async (): Promise<string[]> => {
+      const { dateKeys } = await getPeriodDays();
+      return dateKeys;
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: async (nextDateKeys: ReadonlySet<string>) => {
+      const sorted = [...new Set(nextDateKeys)].sort();
+      const { dateKeys: saved } = await replacePeriodDays({ dateKeys: sorted });
+      return saved;
+    },
+    onSuccess: (saved) => {
+      queryClient.setQueryData(queryKeys.period.days(), saved);
+      void queryClient.invalidateQueries({ queryKey: queryKeys.cycle.phase() });
+      emitPeriodDatesChanged();
+    },
+  });
+
+  const dateKeys = useMemo(
+    () => new Set(query.data ?? []),
+    [query.data],
+  );
+
+  const { refetch } = query;
 
   const refresh = useCallback(async () => {
-    setIsLoading(true);
-
-    try {
-      const { dateKeys: next } = await getPeriodDays();
-      setDateKeys(new Set(next));
-    } catch {
-      setDateKeys(new Set());
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    await refetch();
+  }, [refetch]);
 
   useFocusEffect(
     useCallback(() => {
-      void refresh();
-    }, [refresh]),
+      void refetch();
+    }, [refetch]),
   );
 
   useEffect(
     () =>
       subscribePeriodDatesChanged(() => {
-        void refresh();
+        void queryClient.invalidateQueries({ queryKey: queryKeys.period.days() });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.cycle.phase() });
       }),
-    [refresh],
+    [queryClient],
   );
 
-  const persist = useCallback(async (nextDateKeys: ReadonlySet<string>) => {
-    const sorted = [...new Set(nextDateKeys)].sort();
-    const { dateKeys: saved } = await replacePeriodDays({ dateKeys: sorted });
-    setDateKeys(new Set(saved));
-    emitPeriodDatesChanged();
-  }, []);
+  const setDateKeys = useCallback(
+    (next: Set<string> | ((previous: Set<string>) => Set<string>)) => {
+      const resolved = typeof next === 'function' ? next(dateKeys) : next;
+      queryClient.setQueryData(queryKeys.period.days(), [...resolved].sort());
+    },
+    [dateKeys, queryClient],
+  );
 
   return {
     dateKeys,
-    isLoading,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
     refresh,
-    persist,
+    persist: mutation.mutateAsync,
     setDateKeys,
   };
 };

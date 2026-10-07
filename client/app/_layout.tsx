@@ -11,6 +11,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ClerkAuthTokenBridge } from '@/components/auth/ClerkAuthTokenBridge';
 import { RootStartupGate } from '@/components/layout/RootStartupGate';
 import { PushNotificationsBridge } from '@/components/notifications/PushNotificationsBridge';
+import { QueryProvider } from '@/components/query/QueryProvider';
 import { useEasUpdates } from '@/hooks/useEasUpdates';
 import { getClerkPublishableKey } from '@/lib/clerk/env';
 import { useAppFonts } from '@/lib/fonts/useAppFonts';
@@ -41,12 +42,14 @@ const RootLayout = () => {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <ClerkAuthTokenBridge />
-      <PushNotificationsBridge />
-      <GestureHandlerRootView style={styles.root}>
-        <SafeAreaProvider>
-          <RootStartupGate fontsLoaded={loaded} />
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
+      <QueryProvider>
+        <PushNotificationsBridge />
+        <GestureHandlerRootView style={styles.root}>
+          <SafeAreaProvider>
+            <RootStartupGate fontsLoaded={loaded} />
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </QueryProvider>
     </ClerkProvider>
   );
 };

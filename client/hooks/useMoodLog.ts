@@ -1,5 +1,6 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { getMoodLogs, replaceMoodLogs } from '@/lib/api';
 import {
@@ -7,47 +8,58 @@ import {
   subscribeMoodLogsChanged,
 } from '@/lib/mood/moodLogsEvents';
 import type { MoodLogMap } from '@/lib/mood/moodLogStorage';
+import { queryKeys } from '@/lib/query/queryKeys';
 
 /**
- * Loads mood logs from the API.
- * Refetches on screen focus and whenever logs are saved elsewhere.
+ * Loads mood logs via TanStack Query (shared in-memory cache).
  */
 export const useMoodLog = () => {
-  const [logs, setLogs] = useState<MoodLogMap>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: queryKeys.mood.logs(),
+    queryFn: async (): Promise<MoodLogMap> => {
+      const { logs } = await getMoodLogs();
+      return logs;
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: async (nextLogs: MoodLogMap) => {
+      const { logs: saved } = await replaceMoodLogs({ logs: nextLogs });
+      return saved;
+    },
+    onSuccess: (saved) => {
+      queryClient.setQueryData(queryKeys.mood.logs(), saved);
+      emitMoodLogsChanged();
+    },
+  });
+
+  const { refetch } = query;
 
   const refresh = useCallback(async () => {
-    setIsLoading(true);
-
-    try {
-      const { logs: stored } = await getMoodLogs();
-      setLogs(stored);
-    } catch {
-      setLogs({});
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    await refetch();
+  }, [refetch]);
 
   useFocusEffect(
     useCallback(() => {
-      void refresh();
-    }, [refresh]),
+      void refetch();
+    }, [refetch]),
   );
 
   useEffect(
     () =>
       subscribeMoodLogsChanged(() => {
-        void refresh();
+        void queryClient.invalidateQueries({ queryKey: queryKeys.mood.logs() });
       }),
-    [refresh],
+    [queryClient],
   );
 
-  const persist = useCallback(async (nextLogs: MoodLogMap) => {
-    const { logs: saved } = await replaceMoodLogs({ logs: nextLogs });
-    setLogs(saved);
-    emitMoodLogsChanged();
-  }, []);
-
-  return { logs, isLoading, persist, refresh };
+  return {
+    logs: query.data ?? {},
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    persist: mutation.mutateAsync,
+    refresh,
+  };
 };

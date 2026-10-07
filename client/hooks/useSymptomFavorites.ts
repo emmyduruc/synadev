@@ -1,83 +1,69 @@
 import type { SymptomId } from '@syna/shared-types';
-import { useCallback, useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
 
 import { getSymptomFavorites, replaceSymptomFavorites } from '@/lib/api';
+import { queryKeys } from '@/lib/query/queryKeys';
 import {
   loadFavoriteSymptomIds,
   saveFavoriteSymptomIds,
 } from '@/lib/symptoms/symptomFavoritesStorage';
 
 export const useSymptomFavorites = () => {
-  const [favoriteIds, setFavoriteIds] = useState<SymptomId[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const load = async () => {
+  const query = useQuery({
+    queryKey: queryKeys.symptoms.favorites(),
+    queryFn: async (): Promise<SymptomId[]> => {
       try {
         const { symptomIds } = await getSymptomFavorites();
 
         if (symptomIds.length > 0) {
-          if (isMounted) {
-            setFavoriteIds(symptomIds);
-          }
-
           await saveFavoriteSymptomIds(symptomIds);
-          return;
+          return symptomIds;
         }
 
-        // One-time migrate device-local favorites to the API when the server list is empty.
         const localIds = await loadFavoriteSymptomIds();
 
         if (localIds.length > 0) {
           const { symptomIds: saved } = await replaceSymptomFavorites({
             symptomIds: localIds,
           });
-
-          if (isMounted) {
-            setFavoriteIds(saved);
-          }
-
-          return;
+          await saveFavoriteSymptomIds(saved);
+          return saved;
         }
 
-        if (isMounted) {
-          setFavoriteIds([]);
-        }
+        return [];
       } catch {
-        try {
-          const localIds = await loadFavoriteSymptomIds();
-
-          if (isMounted) {
-            setFavoriteIds(localIds);
-          }
-        } catch {
-          if (isMounted) {
-            setFavoriteIds([]);
-          }
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        return loadFavoriteSymptomIds();
       }
-    };
+    },
+  });
 
-    void load();
+  const mutation = useMutation({
+    mutationFn: async (nextIds: readonly SymptomId[]) => {
+      const { symptomIds: saved } = await replaceSymptomFavorites({
+        symptomIds: [...nextIds],
+      });
+      await saveFavoriteSymptomIds(saved);
+      return saved;
+    },
+    onSuccess: (saved) => {
+      queryClient.setQueryData(queryKeys.symptoms.favorites(), saved);
+    },
+  });
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const favoriteIds = useMemo(
+    () => query.data ?? [],
+    [query.data],
+  );
 
-  const persist = useCallback(async (nextIds: readonly SymptomId[]) => {
-    const { symptomIds: saved } = await replaceSymptomFavorites({
-      symptomIds: [...nextIds],
-    });
-    setFavoriteIds(saved);
-    await saveFavoriteSymptomIds(saved);
-  }, []);
+  const persist = useCallback(
+    async (nextIds: readonly SymptomId[]) => {
+      await mutation.mutateAsync(nextIds);
+    },
+    [mutation],
+  );
 
   const toggleFavorite = useCallback(
     async (symptomId: SymptomId) => {
@@ -95,5 +81,11 @@ export const useSymptomFavorites = () => {
     [favoriteIds],
   );
 
-  return { favoriteIds, isLoading, isFavorite, toggleFavorite, persist };
+  return {
+    favoriteIds,
+    isLoading: query.isLoading,
+    isFavorite,
+    toggleFavorite,
+    persist,
+  };
 };

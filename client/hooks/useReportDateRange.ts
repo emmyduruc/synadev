@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ReportPeriodPresetId as SharedReportPeriodPresetId } from '@syna/shared-types';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import {
@@ -6,9 +7,9 @@ import {
   clampReportDateRange,
   countInclusiveDays,
   defaultWindowDaysForTab,
-  resolveReportBounds,
   type ReportDateRange,
   type ReportDateRangeBounds,
+  resolveReportBounds,
 } from '@/lib/report/reportDateRange';
 import {
   REPORT_PERIOD_PRESET,
@@ -17,6 +18,12 @@ import {
   type ReportPeriodPresetId,
   type ReportPeriodPresetOptionId,
 } from '@/lib/report/reportPeriodPresets';
+
+export type ReportDateRangeSeed = {
+  periodPreset: SharedReportPeriodPresetId | null;
+  periodFromDate: string | null;
+  periodToDate: string | null;
+};
 
 export type UseReportDateRangeResult = {
   range: ReportDateRange;
@@ -30,9 +37,14 @@ export type UseReportDateRangeResult = {
   resetToDefault: () => void;
 };
 
-export const useReportDateRange = (isDoctorTab: boolean): UseReportDateRangeResult => {
+export const useReportDateRange = (
+  isDoctorTab: boolean,
+  seed?: ReportDateRangeSeed | null,
+  isSeedLoading = false,
+): UseReportDateRangeResult => {
   const { user, isLoading: isUserLoading } = useCurrentUser();
   const defaultWindowDays = defaultWindowDaysForTab(isDoctorTab);
+  const hasAppliedSeedRef = useRef(false);
 
   const bounds = useMemo(
     () => resolveReportBounds(user?.createdAt),
@@ -48,13 +60,70 @@ export const useReportDateRange = (isDoctorTab: boolean): UseReportDateRangeResu
   const [isCustom, setIsCustom] = useState(false);
 
   useEffect(() => {
-    if (isCustom) {
-      setRange((current) => clampReportDateRange(current, bounds));
+    if (isSeedLoading || hasAppliedSeedRef.current || !seed) {
       return;
     }
 
-    setRange(defaultRange);
-  }, [bounds, defaultRange, isCustom]);
+    hasAppliedSeedRef.current = true;
+
+    if (
+      seed.periodFromDate &&
+      seed.periodToDate &&
+      (seed.periodPreset === REPORT_PERIOD_PRESET.custom ||
+        seed.periodPreset === REPORT_PERIOD_PRESET.sinceStart)
+    ) {
+      setRange(
+        clampReportDateRange(
+          {
+            fromDateKey: seed.periodFromDate,
+            toDateKey: seed.periodToDate,
+          },
+          bounds,
+        ),
+      );
+      setIsCustom(true);
+      return;
+    }
+
+    if (
+      seed.periodPreset &&
+      seed.periodPreset !== REPORT_PERIOD_PRESET.custom
+    ) {
+      const next = clampReportDateRange(
+        buildRangeForPreset(seed.periodPreset, bounds),
+        bounds,
+      );
+      setRange(next);
+      setIsCustom(seed.periodPreset !== REPORT_PERIOD_PRESET.days28);
+      return;
+    }
+
+    if (seed.periodFromDate && seed.periodToDate) {
+      setRange(
+        clampReportDateRange(
+          {
+            fromDateKey: seed.periodFromDate,
+            toDateKey: seed.periodToDate,
+          },
+          bounds,
+        ),
+      );
+      setIsCustom(true);
+    }
+  }, [bounds, isSeedLoading, seed]);
+
+  useEffect(() => {
+    if (isCustom || !hasAppliedSeedRef.current) {
+      if (isCustom) {
+        setRange((current) => clampReportDateRange(current, bounds));
+      }
+      return;
+    }
+
+    if (!seed) {
+      setRange(defaultRange);
+    }
+  }, [bounds, defaultRange, isCustom, seed]);
 
   const applyRange = useCallback(
     (next: ReportDateRange) => {
@@ -88,7 +157,7 @@ export const useReportDateRange = (isDoctorTab: boolean): UseReportDateRangeResu
     bounds,
     windowDays: countInclusiveDays(range.fromDateKey, range.toDateKey),
     presetId,
-    isLoading: isUserLoading,
+    isLoading: isUserLoading || isSeedLoading,
     isCustom,
     applyRange,
     applyPreset,

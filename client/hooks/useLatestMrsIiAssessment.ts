@@ -1,35 +1,39 @@
-import type { MrsIiAssessmentSubmission } from '@syna/shared-types';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 
 import { getLatestMrsIiAssessment } from '@/lib/api';
+import { queryKeys } from '@/lib/query/queryKeys';
 
 export const useLatestMrsIiAssessment = () => {
-  const [submission, setSubmission] = useState<MrsIiAssessmentSubmission | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: queryKeys.assessments.mrsLatest(),
+    queryFn: async () => {
+      const latest = await getLatestMrsIiAssessment();
+      return latest.submission;
+    },
+  });
+
+  const { refetch } = query;
 
   const refresh = useCallback(async () => {
-    setIsLoading(true);
-
-    try {
-      const latest = await getLatestMrsIiAssessment();
-      setSubmission(latest.submission);
-    } catch {
-      setSubmission(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
+    await queryClient.invalidateQueries({
+      queryKey: queryKeys.assessments.mrsLatest(),
+    });
+  }, [queryClient]);
 
   useFocusEffect(
     useCallback(() => {
-      void refresh();
-    }, [refresh]),
+      void refetch();
+    }, [refetch]),
   );
 
-  return { submission, isLoading, refresh };
+  return {
+    submission: query.data ?? null,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    refresh,
+  };
 };

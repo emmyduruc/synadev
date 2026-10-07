@@ -1,30 +1,30 @@
 import type { Phq2AssessmentSubmission } from '@syna/shared-types';
-import { useCallback, useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 
 import { getLatestPhq2Assessment } from '@/lib/api';
+import { queryKeys } from '@/lib/query/queryKeys';
 
 export const useLatestPhq2Assessment = () => {
-  const [submission, setSubmission] = useState<Phq2AssessmentSubmission | null>(
-    null,
-  );
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: queryKeys.assessments.phqLatest(),
+    queryFn: async (): Promise<Phq2AssessmentSubmission | null> => {
+      const latest = await getLatestPhq2Assessment();
+      return latest.submission;
+    },
+  });
 
   const refresh = useCallback(async () => {
-    setIsLoading(true);
+    await queryClient.invalidateQueries({
+      queryKey: queryKeys.assessments.phqLatest(),
+    });
+  }, [queryClient]);
 
-    try {
-      const latest = await getLatestPhq2Assessment();
-      setSubmission(latest.submission);
-    } catch {
-      setSubmission(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
-
-  return { submission, isLoading, refresh };
+  return {
+    submission: query.data ?? null,
+    isLoading: query.isLoading,
+    refresh,
+  };
 };

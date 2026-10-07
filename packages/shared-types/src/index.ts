@@ -300,3 +300,25 @@ export type {
   ChatReplyStatus,
   ChatResponse,
 } from './schemas/chat.schema';
+
+export {
+  REPORT_DOCTOR_QUESTION_MAX_SELECTED,
+  REPORT_PERIOD_PRESET,
+  REPORT_PERIOD_PRESETS,
+  ReportPeriodPresetSchema,
+  REPORT_DOCTOR_QUESTION_IDS,
+  ReportDoctorQuestionIdSchema,
+  REPORT_CONCERN_IDS,
+  ReportConcernIdSchema,
+  ReportPreferencesSchema,
+  UpdateReportPreferencesSchema,
+  createEmptyReportPreferences,
+} from './schemas/report-preferences.schema';
+
+export type {
+  ReportPeriodPresetId,
+  ReportDoctorQuestionId,
+  ReportConcernId,
+  ReportPreferences,
+  UpdateReportPreferences,
+} from './schemas/report-preferences.schema';

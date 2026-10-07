@@ -5811,6 +5811,7 @@ __metadata:
     "@syna/eslint-config": "workspace:*"
     "@syna/shared-types": "workspace:*"
     "@syna/shared-utils": "workspace:*"
+    "@tanstack/react-query": "npm:^5.104.1"
     "@types/react": "npm:~19.2.2"
     axios: "npm:^1.18.1"
     clsx: "npm:^2.1.1"
@@ -5910,10 +5911,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@tanstack/query-core@npm:5.104.1":
+  version: 5.104.1
+  resolution: "@tanstack/query-core@npm:5.104.1"
+  checksum: 10c0/d42788e0c9ee4a389d7de21c5fe856acd50d24f72cc87b3c76e6852399ab9835801f415d0a9e10706d2a3a27937d42c5f1ac621ceeac21e6bcd60aa87984bdf4
+  languageName: node
+  linkType: hard
+
 "@tanstack/query-core@npm:^5.100.6":
   version: 5.101.2
   resolution: "@tanstack/query-core@npm:5.101.2"
   checksum: 10c0/c3288757bfd563ca35cee21bf6ed0edb2f4425a8c92f75d84dcb36a0580a59e48bd97fcdbbc7c8d8e95a4c40376edfc5772b14665b85d183079a0ba7e17793b2
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.104.1":
+  version: 5.104.1
+  resolution: "@tanstack/react-query@npm:5.104.1"
+  dependencies:
+    "@tanstack/query-core": "npm:5.104.1"
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 10c0/b5d431f983ff3dbd91c14eb2e3ec2dc0a429ab0b8b7dd6169a5b021eb450fffe1f2f1d0bef0726914b63d5b264b699d2ae1b4a2381bff85bb9c1c4c070407b74
   languageName: node
   linkType: hard
 

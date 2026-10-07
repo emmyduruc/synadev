@@ -1,55 +1,54 @@
-import type { UserHealthRecord } from '@syna/shared-types';
-import { useCallback, useEffect, useState } from 'react';
+import type { User, UserHealthRecord } from '@syna/shared-types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
 
 import { getCurrentUser, updateCurrentUserHealthRecord } from '@/lib/api';
 import { resolveHealthRecord } from '@/lib/healthRecord/healthRecordHelpers';
+import { queryKeys } from '@/lib/query/queryKeys';
 
 export const useHealthRecord = () => {
-  const [record, setRecord] = useState<UserHealthRecord>(createInitialRecord);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const queryClient = useQueryClient();
 
-  const refresh = useCallback(async () => {
-    setIsLoading(true);
+  const query = useQuery({
+    queryKey: queryKeys.users.me(),
+    queryFn: (): Promise<User> => getCurrentUser(),
+  });
 
-    try {
-      const user = await getCurrentUser();
-      setRecord(resolveHealthRecord(user.healthRecord));
-    } catch {
-      setRecord(resolveHealthRecord(null));
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const record = useMemo(
+    () => resolveHealthRecord(query.data?.healthRecord ?? null),
+    [query.data?.healthRecord],
+  );
 
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
-
-  const saveRecord = useCallback(async (next: UserHealthRecord) => {
-    setIsSaving(true);
-
-    try {
+  const mutation = useMutation({
+    mutationFn: async (next: UserHealthRecord) => {
       const payload: UserHealthRecord = {
         ...next,
         syncedAt: new Date().toISOString(),
       };
-      const user = await updateCurrentUserHealthRecord(payload);
-      const saved = resolveHealthRecord(user.healthRecord);
-      setRecord(saved);
-      return saved;
-    } finally {
-      setIsSaving(false);
-    }
-  }, []);
+      return updateCurrentUserHealthRecord(payload);
+    },
+    onSuccess: (user) => {
+      queryClient.setQueryData(queryKeys.users.me(), user);
+    },
+  });
+
+  const refresh = useCallback(async () => {
+    await query.refetch();
+  }, [query]);
+
+  const saveRecord = useCallback(
+    async (next: UserHealthRecord) => {
+      const user = await mutation.mutateAsync(next);
+      return resolveHealthRecord(user.healthRecord);
+    },
+    [mutation],
+  );
 
   return {
     record,
-    isLoading,
-    isSaving,
+    isLoading: query.isLoading,
+    isSaving: mutation.isPending,
     refresh,
     saveRecord,
   };
 };
-
-const createInitialRecord = (): UserHealthRecord => resolveHealthRecord(null);

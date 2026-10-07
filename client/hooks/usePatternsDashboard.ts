@@ -11,19 +11,22 @@ import {
   type PatternDailyMood,
   type PatternsComputation,
 } from '@syna/shared-utils';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
 
+import { useHealthDailyMetrics } from '@/hooks/useHealthDailyMetrics';
 import { useLatestMrsIiAssessment } from '@/hooks/useLatestMrsIiAssessment';
 import { useMoodLog } from '@/hooks/useMoodLog';
 import { usePeriodDates } from '@/hooks/usePeriodDates';
 import { useSymptomLog } from '@/hooks/useSymptomLog';
-import { getHealthDailyMetrics, getLatestPam13Assessment } from '@/lib/api';
+import { getLatestPam13Assessment } from '@/lib/api';
 import { addDaysToKey, toDateKey } from '@/lib/date/dateKeys';
 import { buildPatternChartSeries } from '@/lib/patterns/buildPatternChartSeries';
 import {
   PATTERN_CHART_FUTURE_DAYS,
   PATTERN_CHART_LOOKBACK_DAYS,
 } from '@/lib/patterns/patternChartConstants';
+import { queryKeys } from '@/lib/query/queryKeys';
 
 const CHALLENGING_MOOD_IDS = new Set([
   'irritable',
@@ -67,6 +70,7 @@ const toHealthDailyMap = (
 };
 
 export const usePatternsDashboard = () => {
+  const queryClient = useQueryClient();
   const todayKey = toDateKey(new Date());
   const patternFromKey = addDaysToKey(todayKey, -(PATTERN_WINDOW_DAYS - 1));
   const chartFromKey = addDaysToKey(todayKey, -(PATTERN_CHART_LOOKBACK_DAYS - 1));
@@ -77,41 +81,25 @@ export const usePatternsDashboard = () => {
   const { logs: moodLogs, isLoading: isMoodLoading } = useMoodLog();
   const { submission: mrsLatest, isLoading: isMrsLoading } = useLatestMrsIiAssessment();
 
-  const [pamLatest, setPamLatest] = useState<Pam13AssessmentSubmission | null>(null);
-  const [isPamLoading, setIsPamLoading] = useState(true);
-  const [healthRows, setHealthRows] = useState<HealthDailyMetricRow[]>([]);
-  const [isHealthLoading, setIsHealthLoading] = useState(true);
+  const { rows: healthRows, isLoading: isHealthLoading } = useHealthDailyMetrics({
+    query: { from: chartFromKey, to: todayKey },
+    refetchOnFocus: false,
+  });
 
-  const refreshHealthAndPam = useCallback(async () => {
-    setIsHealthLoading(true);
-    setIsPamLoading(true);
-
-    try {
-      const [healthResult, pamResult] = await Promise.all([
-        getHealthDailyMetrics({ from: chartFromKey, to: todayKey }),
-        getLatestPam13Assessment(),
-      ]);
-      setHealthRows(healthResult.rows);
-      setPamLatest(pamResult.submission);
-    } catch {
-      setHealthRows([]);
-      setPamLatest(null);
-    } finally {
-      setIsHealthLoading(false);
-      setIsPamLoading(false);
-    }
-  }, [chartFromKey, todayKey]);
-
-  useEffect(() => {
-    void refreshHealthAndPam();
-  }, [refreshHealthAndPam]);
+  const pamQuery = useQuery({
+    queryKey: queryKeys.assessments.pamLatest(),
+    queryFn: async (): Promise<Pam13AssessmentSubmission | null> => {
+      const latest = await getLatestPam13Assessment();
+      return latest.submission;
+    },
+  });
 
   const isLoading =
     isPeriodLoading ||
     isSymptomLoading ||
     isMoodLoading ||
     isMrsLoading ||
-    isPamLoading ||
+    pamQuery.isLoading ||
     isHealthLoading;
 
   const computation: PatternsComputation | null = useMemo(() => {
@@ -195,6 +183,13 @@ export const usePatternsDashboard = () => {
 
   const healthByDate = useMemo(() => toHealthDailyMap(healthRows), [healthRows]);
 
+  const refresh = useCallback(() => {
+    void queryClient.invalidateQueries({ queryKey: queryKeys.health.all });
+    void queryClient.invalidateQueries({
+      queryKey: queryKeys.assessments.pamLatest(),
+    });
+  }, [queryClient]);
+
   return {
     isLoading,
     computation,
@@ -207,9 +202,7 @@ export const usePatternsDashboard = () => {
       patternFrom: patternFromKey,
     },
     mrsLatest: mrsLatest as MrsIiAssessmentSubmission | null,
-    pamLatest,
-    refresh: () => {
-      void refreshHealthAndPam();
-    },
+    pamLatest: pamQuery.data ?? null,
+    refresh,
   };
 };

@@ -1,3 +1,4 @@
+import type { ReportDoctorQuestionId } from '@syna/shared-types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView } from 'react-native';
 
@@ -28,6 +29,7 @@ import { ReportTogetherCard } from '@/components/report/ReportTogetherCard';
 import { AppHeader, Box } from '@/components/ui';
 import { useCourseScreenData } from '@/hooks/useCourseScreenData';
 import { useReportDateRange } from '@/hooks/useReportDateRange';
+import { useReportPreferences } from '@/hooks/useReportPreferences';
 import { useTranslate } from '@/hooks/useTranslate';
 import { buildCourseDayDetail } from '@/lib/course/buildCourseDayDetail';
 import { buildCourseRowInsight } from '@/lib/course/buildCourseRowInsight';
@@ -43,9 +45,9 @@ import {
   formatReportPeriodRangeLabel,
 } from '@/lib/report/formatReportPeriod';
 import type { ReportConcernId } from '@/lib/report/reportConcerns';
-import type { ReportDoctorQuestionId } from '@/lib/report/reportDoctorQuestions';
 import {
   REPORT_PERIOD_PRESET,
+  buildRangeForPreset,
   type ReportPeriodPresetOptionId,
 } from '@/lib/report/reportPeriodPresets';
 
@@ -55,18 +57,18 @@ const ReportTabScreen = () => {
   const [isCustomRangeSheetOpen, setIsCustomRangeSheetOpen] = useState(false);
   const [isDoctorQuestionsSheetOpen, setIsDoctorQuestionsSheetOpen] = useState(false);
   const [isConcernsSheetOpen, setIsConcernsSheetOpen] = useState(false);
-  const [selectedDoctorQuestionIds, setSelectedDoctorQuestionIds] = useState<
-    ReportDoctorQuestionId[]
-  >([]);
-  const [customDoctorQuestions, setCustomDoctorQuestions] = useState<string[]>([]);
-  const [selectedConcernIds, setSelectedConcernIds] = useState<ReportConcernId[]>([]);
-  const [concernFreeText, setConcernFreeText] = useState('');
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
   const [selectedRowId, setSelectedRowId] = useState<CourseCooccurrenceRowId | null>(
     null,
   );
   const [periodNotice, setPeriodNotice] = useState<ReportPeriodNotice | null>(null);
   const noticeBaselineRef = useRef<number | null>(null);
+
+  const {
+    preferences,
+    isLoading: isPrefsLoading,
+    savePreferences,
+  } = useReportPreferences();
 
   const {
     range,
@@ -77,7 +79,15 @@ const ReportTabScreen = () => {
     applyRange,
     applyPreset,
     resetToDefault,
-  } = useReportDateRange(true);
+  } = useReportDateRange(
+    true,
+    {
+      periodPreset: preferences.periodPreset,
+      periodFromDate: preferences.periodFromDate,
+      periodToDate: preferences.periodToDate,
+    },
+    isPrefsLoading,
+  );
 
   const {
     cooccurrenceSummary,
@@ -86,6 +96,24 @@ const ReportTabScreen = () => {
     healthRows,
     isLoading: isCourseLoading,
   } = useCourseScreenData();
+
+  const selectedDoctorQuestionIds =
+    preferences.doctorQuestionIds as ReportDoctorQuestionId[];
+  const customDoctorQuestions = preferences.customDoctorQuestions;
+  const selectedConcernIds = preferences.concernIds as ReportConcernId[];
+  const concernFreeText = preferences.concernFreeText ?? '';
+
+  const persistPeriod = async (
+    nextRange: typeof range,
+    nextPresetId: typeof presetId,
+  ) => {
+    await savePreferences({
+      ...preferences,
+      periodPreset: nextPresetId,
+      periodFromDate: nextRange.fromDateKey,
+      periodToDate: nextRange.toDateKey,
+    });
+  };
 
   const documentedDays = useMemo(
     () =>
@@ -163,12 +191,20 @@ const ReportTabScreen = () => {
     noticeBaselineRef.current = documentedDays;
     applyPreset(nextPresetId);
     setIsPresetSheetOpen(false);
+    const nextRange = buildRangeForPreset(nextPresetId, bounds);
+    void savePreferences({
+      ...preferences,
+      periodPreset: nextPresetId,
+      periodFromDate: nextRange.fromDateKey,
+      periodToDate: nextRange.toDateKey,
+    });
   };
 
   const handleApplyCustomRange = (next: typeof range) => {
     noticeBaselineRef.current = documentedDays;
     applyRange(next);
     setIsCustomRangeSheetOpen(false);
+    void persistPeriod(next, REPORT_PERIOD_PRESET.custom);
   };
 
   const handlePressTile = (_row: CourseCooccurrenceRow, tile: CourseCooccurrenceTile) => {
@@ -207,7 +243,7 @@ const ReportTabScreen = () => {
     setSelectedRowId(row.id);
   };
 
-  const isReady = !isRangeLoading && !isCourseLoading;
+  const isReady = (!isRangeLoading && !isCourseLoading) || Boolean(symptomLogs);
 
   return (
     <SynaGradientBackground>
@@ -297,8 +333,14 @@ const ReportTabScreen = () => {
         customQuestions={customDoctorQuestions}
         onClose={() => setIsDoctorQuestionsSheetOpen(false)}
         onApply={(selection) => {
-          setSelectedDoctorQuestionIds([...selection.questionIds]);
-          setCustomDoctorQuestions([...selection.customQuestions]);
+          void savePreferences({
+            ...preferences,
+            doctorQuestionIds: [...selection.questionIds],
+            customDoctorQuestions: [...selection.customQuestions],
+            periodPreset: preferences.periodPreset ?? presetId,
+            periodFromDate: range.fromDateKey,
+            periodToDate: range.toDateKey,
+          });
           setIsDoctorQuestionsSheetOpen(false);
         }}
       />
@@ -309,8 +351,14 @@ const ReportTabScreen = () => {
         freeText={concernFreeText}
         onClose={() => setIsConcernsSheetOpen(false)}
         onApply={(selection) => {
-          setSelectedConcernIds([...selection.concernIds]);
-          setConcernFreeText(selection.freeText);
+          void savePreferences({
+            ...preferences,
+            concernIds: [...selection.concernIds],
+            concernFreeText: selection.freeText.trim() || null,
+            periodPreset: preferences.periodPreset ?? presetId,
+            periodFromDate: range.fromDateKey,
+            periodToDate: range.toDateKey,
+          });
           setIsConcernsSheetOpen(false);
         }}
       />
@@ -326,6 +374,12 @@ const ReportTabScreen = () => {
           resetToDefault();
           setIsCustomRangeSheetOpen(false);
           setPeriodNotice(null);
+          void savePreferences({
+            ...preferences,
+            periodPreset: REPORT_PERIOD_PRESET.days28,
+            periodFromDate: null,
+            periodToDate: null,
+          });
         }}
       />
 

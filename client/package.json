@@ -13,6 +13,7 @@
     "@syna/design-tokens": "workspace:*",
     "@syna/shared-types": "workspace:*",
     "@syna/shared-utils": "workspace:*",
+    "@tanstack/react-query": "^5.104.1",
     "axios": "^1.18.1",
     "clsx": "^2.1.1",
     "expo": "~57.0.11",

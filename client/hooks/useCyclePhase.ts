@@ -1,45 +1,47 @@
 import type { CyclePhaseSnapshotDto } from '@syna/shared-types';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { getCyclePhase } from '@/lib/api';
 import { subscribePeriodDatesChanged } from '@/lib/period/periodDatesEvents';
+import { queryKeys } from '@/lib/query/queryKeys';
 
 /**
- * Loads cycle phase from the API.
- * Refetches on screen focus and whenever period days are saved elsewhere
- * (calendar / record-period modals do not always blur the dashboard).
+ * Loads cycle phase via TanStack Query. Soft-refetches on focus / period changes.
  */
 export const useCyclePhase = () => {
-  const [snapshot, setSnapshot] = useState<CyclePhaseSnapshotDto | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: queryKeys.cycle.phase(),
+    queryFn: (): Promise<CyclePhaseSnapshotDto> => getCyclePhase(),
+  });
+
+  const { refetch } = query;
 
   const refresh = useCallback(async () => {
-    setIsLoading(true);
-
-    try {
-      const next = await getCyclePhase();
-      setSnapshot(next);
-    } catch {
-      setSnapshot(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    await refetch();
+  }, [refetch]);
 
   useFocusEffect(
     useCallback(() => {
-      void refresh();
-    }, [refresh]),
+      void refetch();
+    }, [refetch]),
   );
 
-  useEffect(() => subscribePeriodDatesChanged(() => {
-    void refresh();
-  }), [refresh]);
+  useEffect(
+    () =>
+      subscribePeriodDatesChanged(() => {
+        void queryClient.invalidateQueries({ queryKey: queryKeys.cycle.phase() });
+      }),
+    [queryClient],
+  );
 
   return {
-    snapshot,
-    isLoading,
+    snapshot: query.data ?? null,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
     refresh,
   };
 };

@@ -17,6 +17,7 @@ import { HealthDailyModule } from './health-daily/health-daily.module';
 import { MoodModule } from './mood/mood.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { PeriodModule } from './period/period.module';
+import { ReportModule } from './report/report.module';
 import { SymptomsModule } from './symptoms/symptoms.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { UsersModule } from './users/users.module';
@@ -37,6 +38,7 @@ import { UsersModule } from './users/users.module';
     SymptomsModule,
     AssessmentsModule,
     HealthDailyModule,
+    ReportModule,
     ChatModule,
     UploadsModule,
     EmailModule,
