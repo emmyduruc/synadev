@@ -5830,6 +5830,7 @@ __metadata:
     expo-build-properties: "npm:~57.0.10"
     expo-constants: "npm:~57.0.9"
     expo-dev-client: "npm:~57.0.10"
+    expo-file-system: "npm:~57.0.2"
     expo-font: "npm:~57.0.1"
     expo-linear-gradient: "npm:~57.0.1"
     expo-linking: "npm:~57.0.5"

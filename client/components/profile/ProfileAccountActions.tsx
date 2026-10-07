@@ -38,9 +38,9 @@ export const ProfileAccountActions = () => {
     setConfirmKind(null);
   };
 
-  const leaveToWelcome = async () => {
+  const leaveSignedOut = async (href: typeof ROUTES.welcome | typeof ROUTES.intro) => {
     await signOut();
-    router.replace(ROUTES.welcome);
+    router.replace(href);
   };
 
   const handleConfirm = async () => {
@@ -52,15 +52,16 @@ export const ProfileAccountActions = () => {
       if (confirmKind === CONFIRM_KIND.deleteAccount) {
         await deleteAccount();
         toast.success(t('profile_account_delete_success'));
-        await leaveToWelcome();
+        // Pre-auth intro (1/3) again — same as a fresh install — before signup.
+        await leaveSignedOut(ROUTES.intro);
         return;
       }
 
-      // Sign-out keeps SecureStore caches (bio, settings) so the same account
-      // can return without repeating onboarding. Delete account clears them.
+      // Sign-out keeps bio caches and intro completion so the same account
+      // returns to welcome, not the marketing stepper.
       setIsSigningOut(true);
       queryClient.clear();
-      await leaveToWelcome();
+      await leaveSignedOut(ROUTES.welcome);
     } catch {
       const errorKey =
         confirmKind === CONFIRM_KIND.deleteAccount

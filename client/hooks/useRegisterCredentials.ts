@@ -41,6 +41,7 @@ export const useRegisterCredentials = ({
             router,
             successTitle: t('register_success_title'),
             successDescription: t('register_success_description'),
+            requireOnboarding: true,
           });
           return;
         }

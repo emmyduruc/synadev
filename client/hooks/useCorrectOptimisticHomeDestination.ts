@@ -7,18 +7,16 @@ type UseCorrectOptimisticHomeDestinationParams = {
   isComplete: boolean;
   isLoading: boolean;
   hasSyncedFromServer: boolean;
-  wasCompleteOnHydrate: boolean;
 };
 
 /**
- * If cold start routed home from a complete SecureStore cache, but the server
- * later says bio is incomplete, send the user to onboarding.
+ * If the user lands on home without a complete bio (e.g. after delete + signup
+ * races), send them into post-auth onboarding (bio → connect health).
  */
 export const useCorrectOptimisticHomeDestination = ({
   isComplete,
   isLoading,
   hasSyncedFromServer,
-  wasCompleteOnHydrate,
 }: UseCorrectOptimisticHomeDestinationParams): void => {
   const router = useRouter();
   const hasCorrectedRef = useRef(false);
@@ -28,15 +26,9 @@ export const useCorrectOptimisticHomeDestination = ({
       return;
     }
 
-    if (wasCompleteOnHydrate && !isComplete) {
+    if (!isComplete) {
       hasCorrectedRef.current = true;
       router.replace(ROUTES.onboarding.bioData);
     }
-  }, [
-    hasSyncedFromServer,
-    isComplete,
-    isLoading,
-    router,
-    wasCompleteOnHydrate,
-  ]);
+  }, [hasSyncedFromServer, isComplete, isLoading, router]);
 };

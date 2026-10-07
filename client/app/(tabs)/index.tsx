@@ -59,15 +59,14 @@ const StartTabScreen = () => {
     isComplete: isBioComplete,
     isLoading: isBioLoading,
     hasSyncedFromServer,
-    wasCompleteOnHydrate,
     refresh: refreshBio,
   } = useBioData();
   useCorrectOptimisticHomeDestination({
     isComplete: isBioComplete,
     isLoading: isBioLoading,
     hasSyncedFromServer,
-    wasCompleteOnHydrate,
   });
+
   const openBioDataWizard = useOpenBioDataWizard();
   const {
     percent,
