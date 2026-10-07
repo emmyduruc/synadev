@@ -1,12 +1,7 @@
 import { getPrimaryCycleDayMarker, type CycleDayMarker } from '@syna/shared-utils';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  FlatList,
-  InteractionManager,
-  type ListRenderItemInfo,
-  View,
-} from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CalendarDaySummarySheet } from '@/components/calendar/CalendarDaySummarySheet';
@@ -26,10 +21,10 @@ import { usePeriodDates } from '@/hooks/usePeriodDates';
 import { useSymptomLog } from '@/hooks/useSymptomLog';
 import { useTranslate } from '@/hooks/useTranslate';
 import { buildCalendarDaySummary } from '@/lib/calendar/buildCalendarDaySummary';
+import { scheduleIdle } from '@/lib/calendar/scheduleIdle';
 import {
   buildYearMonths,
   CALENDAR_VIEW,
-  type CalendarMonth,
   type CalendarView,
 } from '@/lib/dashboard/calendarUtils';
 import { DASHBOARD_ICON_WELL } from '@/lib/dashboard/surfaces';
@@ -59,7 +54,7 @@ const CalendarScreen = () => {
   const currentMonthIndex = new Date().getMonth();
   const months = useMemo(() => buildYearMonths(currentYear), [currentYear]);
   const visibleMonths = useMemo(() => {
-    if (includeEarlierMonths) {
+    if (includeEarlierMonths || currentMonthIndex === 0) {
       return months;
     }
 
@@ -129,18 +124,14 @@ const CalendarScreen = () => {
   }, [dateKeys, isEditPeriodMode, isLoading]);
 
   useEffect(() => {
-    if (includeEarlierMonths || !showMonthGrid) {
+    if (includeEarlierMonths || !showMonthGrid || currentMonthIndex === 0) {
       return undefined;
     }
 
-    const task = InteractionManager.runAfterInteractions(() => {
+    return scheduleIdle(() => {
       setIncludeEarlierMonths(true);
     });
-
-    return () => {
-      task.cancel();
-    };
-  }, [includeEarlierMonths, showMonthGrid]);
+  }, [currentMonthIndex, includeEarlierMonths, showMonthGrid]);
 
   const handleToggleDate = useCallback((dateKey: string) => {
     setDraftDateKeys((previous) => toggleDateKey(previous, dateKey));
@@ -189,28 +180,6 @@ const CalendarScreen = () => {
     }
   }, [celebrate, draftDateKeys, isEditPeriodMode, isSaving, persist, router]);
 
-  const renderMonth = useCallback(
-    ({ item }: ListRenderItemInfo<CalendarMonth>) => (
-      <View className="px-6 pb-6">
-        <CalendarMonthView
-          months={[item]}
-          selectedDateKeys={isEditPeriodMode ? draftDateKeys : dateKeys}
-          markerByDateKey={isEditPeriodMode ? undefined : markerByDateKey}
-          onToggleDate={isEditPeriodMode ? handleToggleDate : undefined}
-          onPressDate={isEditPeriodMode ? undefined : handlePressDate}
-        />
-      </View>
-    ),
-    [
-      dateKeys,
-      draftDateKeys,
-      handlePressDate,
-      handleToggleDate,
-      isEditPeriodMode,
-      markerByDateKey,
-    ],
-  );
-
   const headerTitle = isEditPeriodMode
     ? t('calendar_edit_period_title')
     : t('calendar_screen_title');
@@ -255,21 +224,29 @@ const CalendarScreen = () => {
         ) : null}
 
         {showMonthGrid ? (
-          <FlatList
-            data={visibleMonths}
-            keyExtractor={(month) => `${month.year}-${month.monthIndex}`}
-            renderItem={renderMonth}
+          <ScrollView
+            className="flex-1"
             showsVerticalScrollIndicator={false}
-            initialNumToRender={4}
-            maxToRenderPerBatch={3}
-            windowSize={7}
             maintainVisibleContentPosition={{
               minIndexForVisible: 0,
             }}
             contentContainerStyle={{
               paddingBottom: isEditPeriodMode ? 16 : 32,
-            }}
-          />
+              paddingHorizontal: 24,
+              gap: 24,
+            }}>
+            {visibleMonths.map((month) => (
+              <View key={`${month.year}-${month.monthIndex}`}>
+                <CalendarMonthView
+                  months={[month]}
+                  selectedDateKeys={isEditPeriodMode ? draftDateKeys : dateKeys}
+                  markerByDateKey={isEditPeriodMode ? undefined : markerByDateKey}
+                  onToggleDate={isEditPeriodMode ? handleToggleDate : undefined}
+                  onPressDate={isEditPeriodMode ? undefined : handlePressDate}
+                />
+              </View>
+            ))}
+          </ScrollView>
         ) : null}
 
         {isEditPeriodMode ? (
