@@ -322,3 +322,44 @@ export type {
   ReportPreferences,
   UpdateReportPreferences,
 } from './schemas/report-preferences.schema';
+
+export {
+  AppointmentTimeSchema,
+  UserAppointmentSchema,
+  UpdateUserAppointmentSchema,
+  createEmptyUserAppointment,
+} from './schemas/appointment.schema';
+
+export type {
+  UserAppointment,
+  UpdateUserAppointment,
+} from './schemas/appointment.schema';
+
+export {
+  CLINICAL_PERSISTENT_COMPLAINT_IDS,
+  ClinicalPersistentComplaintIdSchema,
+  CLINICAL_GYNECOLOGICAL_HISTORY_IDS,
+  ClinicalGynecologicalHistoryIdSchema,
+  CLINICAL_GENERAL_CONDITION_IDS,
+  ClinicalGeneralConditionIdSchema,
+  CLINICAL_MEDICATION_TOPIC_IDS,
+  ClinicalMedicationTopicIdSchema,
+  CLINICAL_LIFESTYLE_TOPIC_IDS,
+  ClinicalLifestyleTopicIdSchema,
+  CLINICAL_FAMILY_HISTORY_IDS,
+  ClinicalFamilyHistoryIdSchema,
+  ClinicalProfileSchema,
+  UpdateClinicalProfileSchema,
+  createEmptyClinicalProfile,
+} from './schemas/clinical-profile.schema';
+
+export type {
+  ClinicalPersistentComplaintId,
+  ClinicalGynecologicalHistoryId,
+  ClinicalGeneralConditionId,
+  ClinicalMedicationTopicId,
+  ClinicalLifestyleTopicId,
+  ClinicalFamilyHistoryId,
+  ClinicalProfile,
+  UpdateClinicalProfile,
+} from './schemas/clinical-profile.schema';

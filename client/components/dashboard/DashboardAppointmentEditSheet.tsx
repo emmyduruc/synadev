@@ -1,3 +1,4 @@
+import type { UpdateUserAppointment, UserAppointment } from '@syna/shared-types';
 import { useEffect, useState } from 'react';
 import { Modal, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,17 +11,26 @@ import { Text } from '@/components/ui/Text';
 import { TextInput } from '@/components/ui/TextInput';
 import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import { useTranslate } from '@/hooks/useTranslate';
+import {
+  formatIsoDateToDisplay,
+  parseDisplayDateToIso,
+} from '@/lib/dashboard/appointmentDisplay';
+import { toast } from '@/lib/sonner';
 import { borderColorClasses, cn, radiusClasses, semanticColors } from '@/lib/ui';
 
 export type DashboardAppointmentEditSheetProps = {
   visible: boolean;
+  appointment: UserAppointment;
+  isSaving?: boolean;
   onClose: () => void;
-  onSave?: () => void;
-  onCancelAppointment?: () => void;
+  onSave: (next: UpdateUserAppointment) => void | Promise<void>;
+  onCancelAppointment: () => void | Promise<void>;
 };
 
 export const DashboardAppointmentEditSheet = ({
   visible,
+  appointment,
+  isSaving = false,
   onClose,
   onSave,
   onCancelAppointment,
@@ -37,19 +47,31 @@ export const DashboardAppointmentEditSheet = ({
       return;
     }
 
-    setDateValue('');
-    setDoctorValue('');
-    setTimeValue(null);
+    setDateValue(formatIsoDateToDisplay(appointment.appointmentDate));
+    setDoctorValue(appointment.doctorName ?? '');
+    setTimeValue(appointment.appointmentTime);
     setIsTimePickerVisible(false);
-  }, [visible]);
+  }, [appointment, visible]);
 
-  const handleSave = () => {
-    onSave?.();
+  const handleSave = async () => {
+    const trimmedDate = dateValue.trim();
+    const isoDate = trimmedDate.length > 0 ? parseDisplayDateToIso(trimmedDate) : null;
+
+    if (trimmedDate.length > 0 && !isoDate) {
+      toast.error(t('dashboard_appointment_edit_date_invalid'));
+      return;
+    }
+
+    await onSave({
+      appointmentDate: isoDate,
+      appointmentTime: timeValue,
+      doctorName: doctorValue.trim() || null,
+    });
     onClose();
   };
 
-  const handleCancelAppointment = () => {
-    onCancelAppointment?.();
+  const handleCancelAppointment = async () => {
+    await onCancelAppointment();
     onClose();
   };
 
@@ -143,13 +165,26 @@ export const DashboardAppointmentEditSheet = ({
           paddingX="lg"
           gap="sm"
           style={{ paddingBottom: safeAreaBottom + 16, paddingTop: 8 }}>
-          <Button fullWidth size="lg" onPress={handleSave}>
+          <Button
+            fullWidth
+            size="lg"
+            loading={isSaving}
+            onPress={() => {
+              void handleSave();
+            }}>
             {t('dashboard_appointment_edit_save')}
           </Button>
-          <Button fullWidth size="lg" variant="soft" onPress={handleCancelAppointment}>
+          <Button
+            fullWidth
+            size="lg"
+            variant="soft"
+            disabled={isSaving}
+            onPress={() => {
+              void handleCancelAppointment();
+            }}>
             {t('dashboard_appointment_edit_cancel_appointment')}
           </Button>
-          <Button fullWidth size="lg" variant="soft" onPress={onClose}>
+          <Button fullWidth size="lg" variant="soft" disabled={isSaving} onPress={onClose}>
             {t('dashboard_appointment_edit_back')}
           </Button>
         </Box>

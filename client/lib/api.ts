@@ -20,6 +20,7 @@ import {
   ReplacePeriodDaysSchema,
   ReplaceSymptomFavoritesSchema,
   ReplaceSymptomLogsSchema,
+  ClinicalProfileSchema,
   ReportPreferencesSchema,
   SubmitMrsIiAssessmentSchema,
   SubmitPam13AssessmentSchema,
@@ -27,17 +28,21 @@ import {
   SymptomCatalogSchema,
   SymptomFavoritesSchema,
   SymptomLogsSchema,
+  UpdateClinicalProfileSchema,
   UpdateReportPreferencesSchema,
+  UpdateUserAppointmentSchema,
   UpdateUserHealthMetricsSchema,
   UpdateUserHealthRecordSchema,
   UpdateUserLocaleSchema,
   UpdateUserProfileSchema,
   UpsertHealthDailyMetricsSchema,
+  UserAppointmentSchema,
   UserSchema,
 } from '@syna/shared-types';
 import type {
   ChatRequest,
   ChatResponse,
+  ClinicalProfile,
   CreateCustomSymptom,
   CustomSymptom,
   CustomSymptoms,
@@ -66,16 +71,20 @@ import type {
   SymptomCatalog,
   SymptomFavorites,
   SymptomLogs,
+  UpdateClinicalProfile,
   UpdateReportPreferences,
+  UpdateUserAppointment,
   UpdateUserHealthMetrics,
   UpdateUserHealthRecord,
   UpdateUserLocale,
   UpdateUserProfile,
   UpsertHealthDailyMetrics,
   User,
+  UserAppointment,
 } from '@syna/shared-types';
 
 import {
+  APPOINTMENTS_ME,
   ASSESSMENTS_MRS_II,
   ASSESSMENTS_MRS_II_LATEST,
   ASSESSMENTS_PAM_13,
@@ -83,6 +92,7 @@ import {
   ASSESSMENTS_PHQ_2,
   ASSESSMENTS_PHQ_2_LATEST,
   CHAT,
+  CLINICAL_PROFILE_ME,
   CYCLE_PHASE,
   HEALTH,
   HEALTH_DAILY,
@@ -364,6 +374,49 @@ export const putReportPreferences = (
     body: input,
     bodySchema: UpdateReportPreferencesSchema,
     responseSchema: ReportPreferencesSchema,
+  });
+
+export const getUserAppointment = (): Promise<UserAppointment> =>
+  apiRequest({
+    url: APPOINTMENTS_ME,
+    method: 'GET',
+    responseSchema: UserAppointmentSchema,
+  });
+
+export const putUserAppointment = (
+  input: UpdateUserAppointment,
+): Promise<UserAppointment> =>
+  apiRequest({
+    url: APPOINTMENTS_ME,
+    method: 'PUT',
+    body: input,
+    bodySchema: UpdateUserAppointmentSchema,
+    responseSchema: UserAppointmentSchema,
+  });
+
+export const deleteUserAppointment = (): Promise<UserAppointment> =>
+  apiRequest({
+    url: APPOINTMENTS_ME,
+    method: 'DELETE',
+    responseSchema: UserAppointmentSchema,
+  });
+
+export const getClinicalProfile = (): Promise<ClinicalProfile> =>
+  apiRequest({
+    url: CLINICAL_PROFILE_ME,
+    method: 'GET',
+    responseSchema: ClinicalProfileSchema,
+  });
+
+export const putClinicalProfile = (
+  input: UpdateClinicalProfile,
+): Promise<ClinicalProfile> =>
+  apiRequest({
+    url: CLINICAL_PROFILE_ME,
+    method: 'PUT',
+    body: input,
+    bodySchema: UpdateClinicalProfileSchema,
+    responseSchema: ClinicalProfileSchema,
   });
 
 /** GPT-backed SYNA chat grounded in the authenticated user's health tools. */

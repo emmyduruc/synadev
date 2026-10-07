@@ -35,4 +35,5 @@ export const ROUTES = {
     settings: '/profile-settings',
     dataSources: '/profile-data-sources',
   },
+  clinicalProfile: '/clinical-profile',
 } as const;

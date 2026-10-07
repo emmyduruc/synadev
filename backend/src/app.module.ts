@@ -6,8 +6,10 @@ import { ZodValidationPipe } from 'nestjs-zod';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AppointmentsModule } from './appointments/appointments.module';
 import { AssessmentsModule } from './assessments/assessments.module';
 import { ChatModule } from './chat/chat.module';
+import { ClinicalProfileModule } from './clinical-profile/clinical-profile.module';
 import { resolveEnvFilePaths } from './config/env-path';
 import { CycleModule } from './cycle/cycle.module';
 import { DatabaseModule } from './database/database.module';
@@ -39,6 +41,8 @@ import { UsersModule } from './users/users.module';
     AssessmentsModule,
     HealthDailyModule,
     ReportModule,
+    AppointmentsModule,
+    ClinicalProfileModule,
     ChatModule,
     UploadsModule,
     EmailModule,

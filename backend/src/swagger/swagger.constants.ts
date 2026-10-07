@@ -13,6 +13,8 @@ export const SWAGGER_TAGS = {
   uploads: 'Uploads',
   emails: 'Emails',
   report: 'Report',
+  appointments: 'Appointments',
+  clinicalProfile: 'ClinicalProfile',
 } as const;
 
 export const SWAGGER_PATHS = {

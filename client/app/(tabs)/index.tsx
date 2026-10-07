@@ -28,6 +28,7 @@ import { useDashboardSetupProgress } from '@/hooks/useDashboardSetupProgress';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
 import { useReportPreferences } from '@/hooks/useReportPreferences';
+import { useUserAppointment } from '@/hooks/useUserAppointment';
 import { DASHBOARD_SURFACE } from '@/lib/dashboard/surfaces';
 import { CONFETTI_ACTION } from '@/lib/gamification/confettiActions';
 // import { CALENDAR_MODE } from '@/lib/period/constants';
@@ -41,6 +42,12 @@ const StartTabScreen = () => {
   const [isDoctorQuestionsSheetOpen, setIsDoctorQuestionsSheetOpen] = useState(false);
   const [isConcernsSheetOpen, setIsConcernsSheetOpen] = useState(false);
   const { preferences, savePreferences } = useReportPreferences();
+  const {
+    appointment,
+    isSaving: isAppointmentSaving,
+    saveAppointment,
+    clearAppointment,
+  } = useUserAppointment();
   const selectedDoctorQuestionIds =
     preferences.doctorQuestionIds as ReportDoctorQuestionId[];
   const customDoctorQuestions = preferences.customDoctorQuestions;
@@ -177,6 +184,7 @@ const StartTabScreen = () => {
                 isLoading={isCycleLoading}
               />
               <DashboardAppointmentCard
+                appointment={appointment}
                 onPressChange={() => setIsAppointmentEditVisible(true)}
                 onPressAddQuestions={() => setIsDoctorQuestionsSheetOpen(true)}
                 onPressAddConcerns={() => setIsConcernsSheetOpen(true)}
@@ -185,6 +193,7 @@ const StartTabScreen = () => {
               <DashboardNextStepsCard
                 onPressFirstEntry={() => router.push(ROUTES.symptoms)}
                 onPressMrsIi={() => router.push(ROUTES.assessment.mrsIi)}
+                onPressCompleteProfile={() => router.push(ROUTES.clinicalProfile)}
               />
               <DashboardInsightsSection />
             </Box>
@@ -192,7 +201,15 @@ const StartTabScreen = () => {
 
           <DashboardAppointmentEditSheet
             visible={isAppointmentEditVisible}
+            appointment={appointment}
+            isSaving={isAppointmentSaving}
             onClose={() => setIsAppointmentEditVisible(false)}
+            onSave={async (next) => {
+              await saveAppointment(next);
+            }}
+            onCancelAppointment={async () => {
+              await clearAppointment();
+            }}
           />
 
           <ReportDoctorQuestionsSheet

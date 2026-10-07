@@ -113,6 +113,12 @@ export const RootLayoutNav = () => {
             presentation: 'fullScreenModal',
           }}
         />
+        <Stack.Screen
+          name="clinical-profile/index"
+          options={{
+            presentation: 'fullScreenModal',
+          }}
+        />
       </Stack>
       <Toaster
         position="top-center"

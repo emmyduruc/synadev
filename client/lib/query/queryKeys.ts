@@ -39,4 +39,12 @@ export const queryKeys = {
     all: ['report'] as const,
     preferences: () => [...queryKeys.report.all, 'preferences'] as const,
   },
+  appointments: {
+    all: ['appointments'] as const,
+    me: () => [...queryKeys.appointments.all, 'me'] as const,
+  },
+  clinicalProfile: {
+    all: ['clinicalProfile'] as const,
+    me: () => [...queryKeys.clinicalProfile.all, 'me'] as const,
+  },
 } as const;

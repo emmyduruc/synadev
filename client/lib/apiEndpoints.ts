@@ -109,6 +109,14 @@ export const ASSESSMENTS_PHQ_2_LATEST_ABSOLUTE = absolute(ASSESSMENTS_PHQ_2_LATE
 export const REPORT_PREFERENCES = '/report/preferences';
 export const REPORT_PREFERENCES_ABSOLUTE = absolute(REPORT_PREFERENCES);
 
+/** GET/PUT/DELETE — upcoming doctor appointment */
+export const APPOINTMENTS_ME = '/appointments/me';
+export const APPOINTMENTS_ME_ABSOLUTE = absolute(APPOINTMENTS_ME);
+
+/** GET/PUT — clinical deepening / complete-profile document */
+export const CLINICAL_PROFILE_ME = '/clinical-profile/me';
+export const CLINICAL_PROFILE_ME_ABSOLUTE = absolute(CLINICAL_PROFILE_ME);
+
 // =============================================================================
 // CHAT
 // =============================================================================
