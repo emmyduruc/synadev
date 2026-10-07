@@ -19,6 +19,7 @@ export type CalendarMonthViewProps = {
   markerByDateKey?: ReadonlyMap<string, CycleDayMarker | null>;
   onToggleDate?: (dateKey: string) => void;
   onPressDate?: (dateKey: string) => void;
+  showMonthHeader?: boolean;
   scrollTargetMonthIndex?: number;
   scrollTargetRef?: RefObject<View | null>;
   onScrollTargetReady?: () => void;
@@ -62,6 +63,7 @@ export const CalendarMonthView = ({
   markerByDateKey,
   onToggleDate,
   onPressDate,
+  showMonthHeader = true,
   scrollTargetMonthIndex,
   scrollTargetRef,
   onScrollTargetReady,
@@ -74,11 +76,11 @@ export const CalendarMonthView = ({
     <Box gap="lg">
       {months.map((month) => {
         const isScrollTarget = month.monthIndex === scrollTargetMonthIndex;
-        const monthHeader = (
+        const monthHeader = showMonthHeader ? (
           <Text size="xl" weight="bold" align="center">
             {t(month.labelKey)}
           </Text>
-        );
+        ) : null;
         const monthWeekdayHeader = (
           <Box direction="row" justify="between" className="px-1">
             {CALENDAR_WEEKDAY_HEADER_KEYS.map((weekdayKey) => (

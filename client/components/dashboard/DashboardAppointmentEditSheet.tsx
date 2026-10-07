@@ -3,19 +3,17 @@ import { useEffect, useState } from 'react';
 import { Modal, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { DashboardAppointmentDatePickerSheet } from '@/components/dashboard/DashboardAppointmentDatePickerSheet';
 import { DashboardAppointmentTimePickerSheet } from '@/components/dashboard/DashboardAppointmentTimePickerSheet';
 import { Box } from '@/components/ui/Box';
 import { Button } from '@/components/ui/Button';
+import { CalendarIcon } from '@/components/ui/icons/CalendarIcon';
 import { ClockIcon } from '@/components/ui/icons/ClockIcon';
 import { Text } from '@/components/ui/Text';
 import { TextInput } from '@/components/ui/TextInput';
 import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import { useTranslate } from '@/hooks/useTranslate';
-import {
-  formatIsoDateToDisplay,
-  parseDisplayDateToIso,
-} from '@/lib/dashboard/appointmentDisplay';
-import { toast } from '@/lib/sonner';
+import { formatIsoDateToDisplay } from '@/lib/dashboard/appointmentDisplay';
 import { borderColorClasses, cn, radiusClasses, semanticColors } from '@/lib/ui';
 
 export type DashboardAppointmentEditSheetProps = {
@@ -37,9 +35,10 @@ export const DashboardAppointmentEditSheet = ({
 }: DashboardAppointmentEditSheetProps) => {
   const { t } = useTranslate();
   const { top: safeAreaTop, bottom: safeAreaBottom } = useSafeAreaInsets();
-  const [dateValue, setDateValue] = useState('');
+  const [dateIso, setDateIso] = useState<string | null>(null);
   const [doctorValue, setDoctorValue] = useState('');
   const [timeValue, setTimeValue] = useState<string | null>(null);
+  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [isTimePickerVisible, setIsTimePickerVisible] = useState(false);
 
   useEffect(() => {
@@ -47,23 +46,16 @@ export const DashboardAppointmentEditSheet = ({
       return;
     }
 
-    setDateValue(formatIsoDateToDisplay(appointment.appointmentDate));
+    setDateIso(appointment.appointmentDate);
     setDoctorValue(appointment.doctorName ?? '');
     setTimeValue(appointment.appointmentTime);
+    setIsDatePickerVisible(false);
     setIsTimePickerVisible(false);
   }, [appointment, visible]);
 
   const handleSave = async () => {
-    const trimmedDate = dateValue.trim();
-    const isoDate = trimmedDate.length > 0 ? parseDisplayDateToIso(trimmedDate) : null;
-
-    if (trimmedDate.length > 0 && !isoDate) {
-      toast.error(t('dashboard_appointment_edit_date_invalid'));
-      return;
-    }
-
     await onSave({
-      appointmentDate: isoDate,
+      appointmentDate: dateIso,
       appointmentTime: timeValue,
       doctorName: doctorValue.trim() || null,
     });
@@ -74,6 +66,8 @@ export const DashboardAppointmentEditSheet = ({
     await onCancelAppointment();
     onClose();
   };
+
+  const dateDisplay = formatIsoDateToDisplay(dateIso);
 
   return (
     <Modal
@@ -108,15 +102,40 @@ export const DashboardAppointmentEditSheet = ({
             </Box>
 
             <Box gap="md">
-              <TextInput
-                label={t('dashboard_appointment_edit_date_label')}
-                value={dateValue}
-                onChangeText={setDateValue}
-                placeholder={t('dashboard_appointment_edit_date_placeholder')}
-                inputClassName="tabular-nums"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+              <Box className="w-full">
+                <Text size="sm" weight="medium" color="foreground" className="mb-1.5">
+                  {t('dashboard_appointment_edit_date_label')}
+                </Text>
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  accessibilityLabel={t('dashboard_appointment_edit_date_label')}
+                  onPress={() => setIsDatePickerVisible(true)}>
+                  <Box
+                    direction="row"
+                    align="center"
+                    className={cn(
+                      'w-full min-h-12 border bg-white/90 overflow-hidden',
+                      radiusClasses.xl,
+                      borderColorClasses['foreground-muted'],
+                    )}>
+                    <Box flex={1} className="px-4 py-3">
+                      {dateDisplay ? (
+                        <Text size="base" family="sans" tabularNums>
+                          {dateDisplay}
+                        </Text>
+                      ) : (
+                        <Text size="base" color="foreground-muted" family="sans" tabularNums>
+                          {t('dashboard_appointment_edit_date_placeholder')}
+                        </Text>
+                      )}
+                    </Box>
+                    <Box paddingX="sm">
+                      <CalendarIcon size={20} color={semanticColors.foregroundMuted} />
+                    </Box>
+                  </Box>
+                </TouchableOpacity>
+              </Box>
+
               <TextInput
                 label={t('dashboard_appointment_edit_doctor_label')}
                 value={doctorValue}
@@ -189,6 +208,16 @@ export const DashboardAppointmentEditSheet = ({
           </Button>
         </Box>
       </Box>
+
+      <DashboardAppointmentDatePickerSheet
+        visible={isDatePickerVisible}
+        value={dateIso}
+        onClose={() => setIsDatePickerVisible(false)}
+        onConfirm={(nextDate) => {
+          setDateIso(nextDate);
+          setIsDatePickerVisible(false);
+        }}
+      />
 
       <DashboardAppointmentTimePickerSheet
         visible={isTimePickerVisible}
