@@ -1,11 +1,12 @@
 import type { CustomSymptom, SymptomDayEntry, SymptomId } from '@syna/shared-types';
 import { isSymptomCategoryId } from '@syna/shared-types';
-import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useConfettiCelebration } from '@/components/gamification/ConfettiProvider';
+import { MascotLoadingGate } from '@/components/loading/MascotLoadingGate';
 import { SymptomEntryBottomBar } from '@/components/symptoms/entry/SymptomEntryBottomBar';
 import { SymptomEntryCategoryList } from '@/components/symptoms/entry/SymptomEntryCategoryList';
 import { SymptomEntryDateStrip } from '@/components/symptoms/entry/SymptomEntryDateStrip';
@@ -31,8 +32,9 @@ import { usePeriodDates } from '@/hooks/usePeriodDates';
 import { useSymptomFavorites } from '@/hooks/useSymptomFavorites';
 import { useSymptomLog } from '@/hooks/useSymptomLog';
 import { useTranslate } from '@/hooks/useTranslate';
-import { toDateKey } from '@/lib/date/dateKeys';
+import { isDateKey, toDateKey } from '@/lib/date/dateKeys';
 import { CONFETTI_ACTION } from '@/lib/gamification/confettiActions';
+import { LOADING_VARIANT } from '@/lib/loading/loadingVariants';
 import {
   DEFAULT_MOOD_SCALE_VALUE,
   EMPTY_MOOD_ENTRY,
@@ -40,6 +42,7 @@ import {
   type MoodEntry,
   type MoodLogMap,
 } from '@/lib/mood/moodLogStorage';
+import { toast } from '@/lib/sonner';
 import {
   DEFAULT_SYMPTOM_INTENSITY,
   SYMPTOM_ENTRY_FILTER,
@@ -56,8 +59,19 @@ import {
 } from '@/lib/symptoms/symptomEntryHelpers';
 import type { SymptomLogMap } from '@/lib/symptoms/symptomLogStorage';
 
+const resolveInitialDateKey = (dateKeyParam: string | string[] | undefined): string => {
+  const candidate = Array.isArray(dateKeyParam) ? dateKeyParam[0] : dateKeyParam;
+
+  if (candidate && isDateKey(candidate)) {
+    return candidate;
+  }
+
+  return toDateKey(new Date());
+};
+
 const SymptomsScreen = () => {
   const router = useRouter();
+  const { dateKey: dateKeyParam } = useLocalSearchParams<{ dateKey?: string }>();
   const { t } = useTranslate();
   const { celebrate } = useConfettiCelebration();
   const { top: safeAreaTop, bottom: safeAreaBottom } = useSafeAreaInsets();
@@ -71,8 +85,9 @@ const SymptomsScreen = () => {
   const { favoriteIds, toggleFavorite, isFavorite } = useSymptomFavorites();
   const { customSymptoms, addCustomSymptom } = useCustomSymptoms();
 
-  const [selectedDateKey, setSelectedDateKey] = useState(() => toDateKey(new Date()));
-  const [draft, setDraft] = useState<SymptomLogMap>({});
+  const [selectedDateKey, setSelectedDateKey] = useState(() =>
+    resolveInitialDateKey(dateKeyParam),
+  );  const [draft, setDraft] = useState<SymptomLogMap>({});
   const [moodDraft, setMoodDraft] = useState<MoodLogMap>({});
   const [activeTab, setActiveTab] = useState<SymptomEntryTabId>(SYMPTOM_ENTRY_TAB.symptoms);
   const [activeFilter, setActiveFilter] = useState<SymptomEntryFilterId>(
@@ -83,27 +98,19 @@ const SymptomsScreen = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isSavingPeriod, setIsSavingPeriod] = useState(false);
   const [noneTodayKeys, setNoneTodayKeys] = useState<Record<string, boolean>>({});
-  const hasInitialised = useRef(false);
-  const hasMoodInitialised = useRef(false);
+  const [hasHydratedDraft, setHasHydratedDraft] = useState(false);
+
+  const isDataReady = !isLoading && !isMoodLoading && hasHydratedDraft;
 
   useEffect(() => {
-    if (isLoading || hasInitialised.current) {
+    if (isLoading || isMoodLoading || hasHydratedDraft) {
       return;
     }
 
-    hasInitialised.current = true;
     setDraft({ ...logs });
-  }, [isLoading, logs]);
-
-  useEffect(() => {
-    if (isMoodLoading || hasMoodInitialised.current) {
-      return;
-    }
-
-    hasMoodInitialised.current = true;
     setMoodDraft({ ...moodLogs });
-  }, [isMoodLoading, moodLogs]);
-
+    setHasHydratedDraft(true);
+  }, [hasHydratedDraft, isLoading, isMoodLoading, logs, moodLogs]);
   const dayEntries = draft[selectedDateKey];
   const selectedCount = dayEntries?.length ?? 0;
   const isNoneToday = Boolean(noneTodayKeys[selectedDateKey]) && selectedCount === 0;
@@ -213,14 +220,20 @@ const SymptomsScreen = () => {
         }
       }
 
-      await Promise.all([persist(draft), persistMoodLogs(nextMoodLogs)]);
+      const [savedSymptoms, savedMood] = await Promise.all([
+        persist(draft),
+        persistMoodLogs(nextMoodLogs),
+      ]);
+      setDraft({ ...savedSymptoms });
+      setMoodDraft({ ...savedMood });
       celebrate(CONFETTI_ACTION.symptomsLogged);
-      router.back();
+      toast.success(t('symptom_entry_save_success'));
+    } catch {
+      toast.error(t('symptom_entry_save_error'));
     } finally {
       setIsSaving(false);
     }
-  }, [celebrate, draft, isSaving, moodDraft, persist, persistMoodLogs, router]);
-
+  }, [celebrate, draft, isSaving, moodDraft, persist, persistMoodLogs, t]);
   const handleMoodEntryChange = useCallback(
     (next: MoodEntry) => {
       const normalized: MoodEntry = isMoodEntryEmpty(next)
@@ -269,11 +282,13 @@ const SymptomsScreen = () => {
         }
 
         await persistPeriodDates(nextPeriodDates);
+      } catch {
+        toast.error(t('symptom_entry_period_save_error'));
       } finally {
         setIsSavingPeriod(false);
       }
     },
-    [isSavingPeriod, periodDateKeys, persistPeriodDates, selectedDateKey],
+    [isSavingPeriod, periodDateKeys, persistPeriodDates, selectedDateKey, t],
   );
 
   const handleOwnSymptomCreated = useCallback(
@@ -285,137 +300,142 @@ const SymptomsScreen = () => {
   );
 
   return (
-    <Box flex={1} fullWidth background="background">
-      <Box style={{ paddingTop: safeAreaTop }}>
-        <SymptomEntryHeader onBack={() => router.back()} />
-      </Box>
+    <MascotLoadingGate
+      enabled
+      variant={LOADING_VARIANT.symptoms}
+      isReady={isDataReady}>
+      <Box flex={1} fullWidth background="background">
+        <Box style={{ paddingTop: safeAreaTop }}>
+          <SymptomEntryHeader onBack={() => router.back()} />
+        </Box>
 
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingBottom: 24 }}>
-        <Box paddingX="lg" gap="md">
-          <SymptomEntryTodayBanner />
-          <SymptomEntryDateStrip
-            selectedDateKey={selectedDateKey}
-            onChangeDate={setSelectedDateKey}
-          />
-          <SymptomEntryTabs activeTab={activeTab} onChangeTab={setActiveTab} />
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingBottom: 24 }}>
+          <Box paddingX="lg" gap="md">
+            <SymptomEntryTodayBanner />
+            <SymptomEntryDateStrip
+              selectedDateKey={selectedDateKey}
+              onChangeDate={setSelectedDateKey}
+            />
+            <SymptomEntryTabs activeTab={activeTab} onChangeTab={setActiveTab} />
 
-          {activeTab === SYMPTOM_ENTRY_TAB.symptoms ? (
-            <>
-              <Box gap="xs">
-                <Text size="xl" weight="bold" className="leading-tight">
-                  {t('symptom_entry_prompt_title')}
-                </Text>
-                <Text size="xs" color="foreground-muted" className="leading-relaxed">
-                  {t('symptom_entry_prompt_hint')}
-                </Text>
-              </Box>
+            {activeTab === SYMPTOM_ENTRY_TAB.symptoms ? (
+              <>
+                <Box gap="xs">
+                  <Text size="xl" weight="bold" className="leading-tight">
+                    {t('symptom_entry_prompt_title')}
+                  </Text>
+                  <Text size="xs" color="foreground-muted" className="leading-relaxed">
+                    {t('symptom_entry_prompt_hint')}
+                  </Text>
+                </Box>
 
-              <SymptomEntryFilterChips
-                activeFilter={activeFilter}
-                onChangeFilter={setActiveFilter}
-              />
+                <SymptomEntryFilterChips
+                  activeFilter={activeFilter}
+                  onChangeFilter={setActiveFilter}
+                />
 
-              {activeFilter === SYMPTOM_ENTRY_FILTER.favorites ? (
-                <SymptomEntryFavoritesSection
-                  favoriteIds={favoriteIds}
+                {activeFilter === SYMPTOM_ENTRY_FILTER.favorites ? (
+                  <SymptomEntryFavoritesSection
+                    favoriteIds={favoriteIds}
+                    dayEntries={dayEntries}
+                    customLabelById={customLabelById}
+                    onPressSymptom={handleOpenSymptom}
+                    onToggleFavorite={handleToggleFavorite}
+                    onSelectFavorites={() => {
+                      setActiveFilter(SYMPTOM_ENTRY_FILTER.vasomotor);
+                    }}
+                  />
+                ) : null}
+
+                {isSymptomCategoryId(activeFilter) ? (
+                  <SymptomEntryCategoryList
+                    categoryId={activeFilter}
+                    dayEntries={dayEntries}
+                    favoriteIds={favoriteIds}
+                    customSymptoms={customSymptoms}
+                    onPressSymptom={handleOpenSymptom}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
+                ) : null}
+
+                <SymptomEntryOftenWithYouSection
+                  symptomIds={oftenIds}
                   dayEntries={dayEntries}
+                  favoriteIds={favoriteIds}
                   customLabelById={customLabelById}
                   onPressSymptom={handleOpenSymptom}
                   onToggleFavorite={handleToggleFavorite}
-                  onSelectFavorites={() => {
-                    setActiveFilter(SYMPTOM_ENTRY_FILTER.vasomotor);
-                  }}
                 />
-              ) : null}
 
-              {isSymptomCategoryId(activeFilter) ? (
-                <SymptomEntryCategoryList
-                  categoryId={activeFilter}
+                <SymptomEntryPersistentSection
                   dayEntries={dayEntries}
                   favoriteIds={favoriteIds}
-                  customSymptoms={customSymptoms}
                   onPressSymptom={handleOpenSymptom}
                   onToggleFavorite={handleToggleFavorite}
+                  onTogglePreset={handleTogglePersistentPreset}
                 />
-              ) : null}
 
-              <SymptomEntryOftenWithYouSection
-                symptomIds={oftenIds}
-                dayEntries={dayEntries}
-                favoriteIds={favoriteIds}
-                customLabelById={customLabelById}
-                onPressSymptom={handleOpenSymptom}
-                onToggleFavorite={handleToggleFavorite}
+                <SymptomEntryOwnSymptomButton onPress={() => setIsOwnSheetVisible(true)} />
+
+                <SymptomEntryNoneTodayCard
+                  isSelected={isNoneToday}
+                  onPress={handleNoneToday}
+                />
+
+                <SymptomEntryNoticeBox />
+              </>
+            ) : null}
+
+            {activeTab === SYMPTOM_ENTRY_TAB.period ? (
+              <SymptomEntryPeriodTab
+                isBleeding={periodDateKeys.has(selectedDateKey)}
+                isSaving={isSavingPeriod}
+                onChangeBleeding={(isBleeding) => {
+                  void handlePeriodBleedingChange(isBleeding);
+                }}
               />
+            ) : null}
 
-              <SymptomEntryPersistentSection
-                dayEntries={dayEntries}
-                favoriteIds={favoriteIds}
-                onPressSymptom={handleOpenSymptom}
-                onToggleFavorite={handleToggleFavorite}
-                onTogglePreset={handleTogglePersistentPreset}
-              />
+            {activeTab === SYMPTOM_ENTRY_TAB.mood ? (
+              <SymptomEntryMoodTab entry={moodEntry} onChange={handleMoodEntryChange} />
+            ) : null}
+          </Box>
+        </ScrollView>
 
-              <SymptomEntryOwnSymptomButton onPress={() => setIsOwnSheetVisible(true)} />
-
-              <SymptomEntryNoneTodayCard
-                isSelected={isNoneToday}
-                onPress={handleNoneToday}
-              />
-
-              <SymptomEntryNoticeBox />
-            </>
-          ) : null}
-
-          {activeTab === SYMPTOM_ENTRY_TAB.period ? (
-            <SymptomEntryPeriodTab
-              isBleeding={periodDateKeys.has(selectedDateKey)}
-              isSaving={isSavingPeriod}
-              onChangeBleeding={(isBleeding) => {
-                void handlePeriodBleedingChange(isBleeding);
-              }}
-            />
-          ) : null}
-
-          {activeTab === SYMPTOM_ENTRY_TAB.mood ? (
-            <SymptomEntryMoodTab entry={moodEntry} onChange={handleMoodEntryChange} />
-          ) : null}
+        <Box style={{ paddingBottom: safeAreaBottom }}>
+          <SymptomEntryBottomBar
+            selectedCount={selectedCount}
+            isSaving={isSaving}
+            onReady={() => {
+              void handleReady();
+            }}
+          />
         </Box>
-      </ScrollView>
 
-      <Box style={{ paddingBottom: safeAreaBottom }}>
-        <SymptomEntryBottomBar
-          selectedCount={selectedCount}
-          isSaving={isSaving}
-          onReady={() => {
-            void handleReady();
-          }}
+        <SymptomIntensitySheet
+          visible={sheetSymptomId !== null}
+          symptomId={sheetSymptomId}
+          initialEntry={sheetEntry}
+          isFavorite={sheetSymptomId ? isFavorite(sheetSymptomId) : false}
+          customLabel={sheetCustomLabel}
+          onClose={() => setSheetSymptomId(null)}
+          onSave={handleSaveEntry}
+          onRemove={handleRemoveEntry}
+          onToggleFavorite={handleToggleFavorite}
+        />
+
+        <SymptomOwnSymptomSheet
+          visible={isOwnSheetVisible}
+          onClose={() => setIsOwnSheetVisible(false)}
+          onSubmit={addCustomSymptom}
+          onCreated={handleOwnSymptomCreated}
         />
       </Box>
-
-      <SymptomIntensitySheet
-        visible={sheetSymptomId !== null}
-        symptomId={sheetSymptomId}
-        initialEntry={sheetEntry}
-        isFavorite={sheetSymptomId ? isFavorite(sheetSymptomId) : false}
-        customLabel={sheetCustomLabel}
-        onClose={() => setSheetSymptomId(null)}
-        onSave={handleSaveEntry}
-        onRemove={handleRemoveEntry}
-        onToggleFavorite={handleToggleFavorite}
-      />
-
-      <SymptomOwnSymptomSheet
-        visible={isOwnSheetVisible}
-        onClose={() => setIsOwnSheetVisible(false)}
-        onSubmit={addCustomSymptom}
-        onCreated={handleOwnSymptomCreated}
-      />
-    </Box>
+    </MascotLoadingGate>
   );
 };
 

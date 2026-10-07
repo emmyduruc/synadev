@@ -18,6 +18,7 @@ export type CalendarMonthViewProps = {
   selectedDateKeys?: ReadonlySet<string>;
   markerByDateKey?: ReadonlyMap<string, CycleDayMarker | null>;
   onToggleDate?: (dateKey: string) => void;
+  onPressDate?: (dateKey: string) => void;
   scrollTargetMonthIndex?: number;
   scrollTargetRef?: RefObject<View | null>;
   onScrollTargetReady?: () => void;
@@ -60,12 +61,14 @@ export const CalendarMonthView = ({
   selectedDateKeys,
   markerByDateKey,
   onToggleDate,
+  onPressDate,
   scrollTargetMonthIndex,
   scrollTargetRef,
   onScrollTargetReady,
 }: CalendarMonthViewProps) => {
   const { t } = useTranslate();
   const isSelectable = Boolean(onToggleDate);
+  const isPressable = Boolean(onPressDate) && !isSelectable;
 
   return (
     <Box gap="lg">
@@ -144,9 +147,15 @@ export const CalendarMonthView = ({
                       onPress={() => onToggleDate?.(dateKey)}>
                       {dayCircle}
                     </TouchableOpacity>
-                  ) : (
-                    dayCircle
-                  )}
+                  ) : null}
+                  {isPressable ? (
+                    <TouchableOpacity
+                      accessibilityRole="button"
+                      onPress={() => onPressDate?.(dateKey)}>
+                      {dayCircle}
+                    </TouchableOpacity>
+                  ) : null}
+                  {!isSelectable && !isPressable ? dayCircle : null}
                 </Box>
               );
             })}

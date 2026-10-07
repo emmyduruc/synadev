@@ -10,10 +10,16 @@ import {
 import type { MoodLogMap } from '@/lib/mood/moodLogStorage';
 import { queryKeys } from '@/lib/query/queryKeys';
 
+export type UseMoodLogOptions = {
+  enabled?: boolean;
+  refetchOnFocus?: boolean;
+};
+
 /**
  * Loads mood logs via TanStack Query (shared in-memory cache).
  */
-export const useMoodLog = () => {
+export const useMoodLog = (options: UseMoodLogOptions = {}) => {
+  const { enabled = true, refetchOnFocus = true } = options;
   const queryClient = useQueryClient();
 
   const query = useQuery({
@@ -22,6 +28,8 @@ export const useMoodLog = () => {
       const { logs } = await getMoodLogs();
       return logs;
     },
+    enabled,
+    placeholderData: (previous) => previous,
   });
 
   const mutation = useMutation({
@@ -43,8 +51,12 @@ export const useMoodLog = () => {
 
   useFocusEffect(
     useCallback(() => {
+      if (!enabled || !refetchOnFocus) {
+        return;
+      }
+
       void refetch();
-    }, [refetch]),
+    }, [enabled, refetch, refetchOnFocus]),
   );
 
   useEffect(
