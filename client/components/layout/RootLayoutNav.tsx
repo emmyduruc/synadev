@@ -1,9 +1,13 @@
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { SlideInUp, SlideOutUp } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Toaster } from '@/lib/sonner';
 import { COLOR_SCHEME } from '@/lib/ui';
+
+/** Extra gap below the status bar / notch once safe-area top is applied. */
+const TOAST_TOP_GAP = 8;
 
 const stackScreenOptions = {
   headerShown: false,
@@ -12,6 +16,7 @@ const stackScreenOptions = {
 
 export const RootLayoutNav = () => {
   const colorScheme = useColorScheme();
+  const { top: safeAreaTop } = useSafeAreaInsets();
 
   return (
     <ThemeProvider value={colorScheme === COLOR_SCHEME.dark ? DarkTheme : DefaultTheme}>
@@ -125,7 +130,9 @@ export const RootLayoutNav = () => {
         swipeToDismissDirection="up"
         closeButton
         richColors
-        offset={16}
+        // sonner-native treats `offset` as the full top inset (it replaces safe area).
+        // Always include the device safe-area top so toasts clear the status bar / notch.
+        offset={safeAreaTop + TOAST_TOP_GAP}
         animation={{
           enter: SlideInUp.duration(280),
           exit: SlideOutUp.duration(220),
