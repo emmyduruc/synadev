@@ -9,6 +9,9 @@ import { useCallback } from 'react';
 import { getClinicalProfile, putClinicalProfile } from '@/lib/api';
 import { queryKeys } from '@/lib/query/queryKeys';
 
+/** Stable empty fallback — never recreate per render (avoids effect loops). */
+const EMPTY_CLINICAL_PROFILE = createEmptyClinicalProfile();
+
 export const useClinicalProfile = () => {
   const queryClient = useQueryClient();
 
@@ -42,7 +45,7 @@ export const useClinicalProfile = () => {
     },
   });
 
-  const profile = query.data ?? createEmptyClinicalProfile();
+  const profile = query.data ?? EMPTY_CLINICAL_PROFILE;
 
   const saveProfile = useCallback(
     async (next: UpdateClinicalProfile) => mutation.mutateAsync(next),
@@ -51,7 +54,9 @@ export const useClinicalProfile = () => {
 
   return {
     profile,
+    dataUpdatedAt: query.dataUpdatedAt,
     isLoading: query.isLoading,
+    isError: query.isError,
     isSaving: mutation.isPending,
     saveProfile,
     refetch: query.refetch,

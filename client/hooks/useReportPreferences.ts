@@ -9,6 +9,9 @@ import { useCallback } from 'react';
 import { getReportPreferences, putReportPreferences } from '@/lib/api';
 import { queryKeys } from '@/lib/query/queryKeys';
 
+/** Stable empty fallback — never recreate per render. */
+const EMPTY_REPORT_PREFERENCES = createEmptyReportPreferences();
+
 export const useReportPreferences = () => {
   const queryClient = useQueryClient();
 
@@ -37,7 +40,7 @@ export const useReportPreferences = () => {
     },
   });
 
-  const preferences = query.data ?? createEmptyReportPreferences();
+  const preferences = query.data ?? EMPTY_REPORT_PREFERENCES;
 
   const savePreferences = useCallback(
     async (next: UpdateReportPreferences) => {

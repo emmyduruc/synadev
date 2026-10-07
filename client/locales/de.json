@@ -1097,6 +1097,8 @@
   "clinical_profile_notice_body": "SYNA stellt keine Diagnosen, gibt keine prognostischen oder therapeutischen Empfehlungen und ist nicht dazu bestimmt, Krankheiten zu diagnostizieren, zu behandeln, zu verhüten oder zu lindern. Alle Ausgaben sind ausschließlich informationeller Natur.",
   "clinical_profile_save": "Speichern",
   "clinical_profile_loading": "Profil wird geladen…",
+  "clinical_profile_load_error": "Profil konnte nicht geladen werden. Bitte versuche es erneut.",
+  "clinical_profile_retry": "Erneut versuchen",
   "clinical_profile_save_success": "Profil gespeichert",
   "clinical_profile_save_error": "Profil konnte nicht gespeichert werden. Bitte versuche es erneut.",
   "dashboard_next_steps_title": "Deine nächsten Schritte",

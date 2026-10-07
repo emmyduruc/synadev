@@ -13,6 +13,9 @@ import {
 } from '@/lib/api';
 import { queryKeys } from '@/lib/query/queryKeys';
 
+/** Stable empty fallback — never recreate per render. */
+const EMPTY_USER_APPOINTMENT = createEmptyUserAppointment();
+
 export const useUserAppointment = () => {
   const queryClient = useQueryClient();
 
@@ -48,7 +51,7 @@ export const useUserAppointment = () => {
     },
   });
 
-  const appointment = query.data ?? createEmptyUserAppointment();
+  const appointment = query.data ?? EMPTY_USER_APPOINTMENT;
 
   const saveAppointment = useCallback(
     async (next: UpdateUserAppointment) => saveMutation.mutateAsync(next),

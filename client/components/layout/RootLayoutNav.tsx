@@ -125,6 +125,7 @@ export const RootLayoutNav = () => {
         swipeToDismissDirection="up"
         closeButton
         richColors
+        offset={16}
         animation={{
           enter: SlideInUp.duration(280),
           exit: SlideOutUp.duration(220),
@@ -132,6 +133,9 @@ export const RootLayoutNav = () => {
         toastOptions={{
           style: {
             borderRadius: 12,
+          },
+          titleStyle: {
+            flexShrink: 1,
           },
         }}
       />
