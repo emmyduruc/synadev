@@ -6,12 +6,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CalendarDaySummarySheet } from '@/components/calendar/CalendarDaySummarySheet';
 import { CalendarEditPeriodFooter } from '@/components/calendar/CalendarEditPeriodFooter';
+import { CalendarLegendSheet } from '@/components/calendar/CalendarLegendSheet';
 import { CalendarMonthView } from '@/components/calendar/CalendarMonthView';
 import { CalendarViewToggle } from '@/components/calendar/CalendarViewToggle';
 import { CalendarYearPlaceholder } from '@/components/calendar/CalendarYearPlaceholder';
 import { useConfettiCelebration } from '@/components/gamification/ConfettiProvider';
 import { Box } from '@/components/ui/Box';
 import { CloseIcon } from '@/components/ui/icons/CloseIcon';
+import { InfoIcon } from '@/components/ui/icons/InfoIcon';
 import { Text } from '@/components/ui/Text';
 import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import { useCycleCalendarMarkers } from '@/hooks/useCycleCalendarMarkers';
@@ -46,6 +48,7 @@ const CalendarScreen = () => {
   const [selectedSummaryDateKey, setSelectedSummaryDateKey] = useState<string | null>(
     null,
   );
+  const [isLegendOpen, setIsLegendOpen] = useState(false);
   const [includeEarlierMonths, setIncludeEarlierMonths] = useState(false);
 
   const isEditPeriodMode = mode === CALENDAR_MODE.editPeriod;
@@ -145,11 +148,19 @@ const CalendarScreen = () => {
     setSelectedSummaryDateKey(null);
   }, []);
 
+  const handleOpenLegend = useCallback(() => {
+    setIsLegendOpen(true);
+  }, []);
+
+  const handleCloseLegend = useCallback(() => {
+    setIsLegendOpen(false);
+  }, []);
+
   const handleEditSummary = useCallback(
     (dateKey: string) => {
       setSelectedSummaryDateKey(null);
       router.push({
-        pathname: ROUTES.symptoms,
+        pathname: ROUTES.recordPeriod,
         params: { dateKey },
       });
     },
@@ -203,7 +214,18 @@ const CalendarScreen = () => {
           <Text size="lg" weight="bold">
             {headerTitle}
           </Text>
-          <Box className="h-11 w-11" />
+          {!isEditPeriodMode ? (
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={t('calendar_legend_info_accessibility_label')}
+              hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+              onPress={handleOpenLegend}
+              className={cn('h-11 w-11', DASHBOARD_ICON_WELL.gem)}>
+              <InfoIcon size={22} />
+            </TouchableOpacity>
+          ) : (
+            <Box className="h-11 w-11" />
+          )}
         </Box>
 
         {!isEditPeriodMode ? (
@@ -265,12 +287,15 @@ const CalendarScreen = () => {
       </Box>
 
       {!isEditPeriodMode ? (
-        <CalendarDaySummarySheet
-          summary={selectedDaySummary}
-          visible={selectedDaySummary !== null}
-          onClose={handleCloseSummary}
-          onEdit={handleEditSummary}
-        />
+        <>
+          <CalendarDaySummarySheet
+            summary={selectedDaySummary}
+            visible={selectedDaySummary !== null}
+            onClose={handleCloseSummary}
+            onEdit={handleEditSummary}
+          />
+          <CalendarLegendSheet visible={isLegendOpen} onClose={handleCloseLegend} />
+        </>
       ) : null}
     </Box>
   );

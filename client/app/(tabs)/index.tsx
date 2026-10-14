@@ -300,7 +300,7 @@ const StartTabScreen = () => {
             onEdit={(dateKey) => {
               closeDaySummary();
               router.push({
-                pathname: ROUTES.symptoms,
+                pathname: ROUTES.recordPeriod,
                 params: { dateKey },
               });
             }}

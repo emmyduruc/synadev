@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DailyLogModal } from '@/components/dailyLog/DailyLogModal';
@@ -10,7 +10,7 @@ import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
 import { usePeriodDates } from '@/hooks/usePeriodDates';
 import { useTranslate } from '@/hooks/useTranslate';
-import { toDateKey } from '@/lib/date/dateKeys';
+import { isDateKey, toDateKey } from '@/lib/date/dateKeys';
 import { CONFETTI_ACTION } from '@/lib/gamification/confettiActions';
 import { LOADING_VARIANT } from '@/lib/loading/loadingVariants';
 import {
@@ -22,9 +22,20 @@ import {
   periodDayToDetails,
 } from '@/lib/period/periodBleedingMappers';
 
+const resolveInitialDateKey = (dateKeyParam: string | string[] | undefined): string => {
+  const candidate = Array.isArray(dateKeyParam) ? dateKeyParam[0] : dateKeyParam;
+
+  if (candidate && isDateKey(candidate)) {
+    return candidate;
+  }
+
+  return toDateKey(new Date());
+};
+
 /** Record Period: rectangular date strip + bleeding details form. */
 const RecordPeriodScreen = () => {
   const router = useRouter();
+  const { dateKey: dateKeyParam } = useLocalSearchParams<{ dateKey?: string }>();
   const { t } = useTranslate();
   const { celebrate } = useConfettiCelebration();
   const {
@@ -35,7 +46,7 @@ const RecordPeriodScreen = () => {
   } = usePeriodDates();
 
   const [selectedDateKey, setSelectedDateKey] = useState(() =>
-    toDateKey(new Date()),
+    resolveInitialDateKey(dateKeyParam),
   );
   const [isBleeding, setIsBleeding] = useState<boolean | null>(null);
   const [details, setDetails] = useState<PeriodBleedingDetails>(

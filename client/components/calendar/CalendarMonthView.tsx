@@ -1,4 +1,4 @@
-import { CYCLE_DAY_MARKER, type CycleDayMarker } from '@syna/shared-utils';
+import type { CycleDayMarker } from '@syna/shared-utils';
 import type { RefObject } from 'react';
 import { View } from 'react-native';
 
@@ -8,6 +8,7 @@ import { CheckIcon } from '@/components/ui/icons/CheckIcon';
 import { Text } from '@/components/ui/Text';
 import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
 import { useTranslate } from '@/hooks/useTranslate';
+import { resolveCalendarMarkerCircleClass } from '@/lib/calendar/calendarMarkerVisuals';
 import type { CalendarMonth } from '@/lib/dashboard/calendarUtils';
 import { CALENDAR_WEEKDAY_HEADER_KEYS } from '@/lib/dashboard/calendarUtils';
 import { toDateKey } from '@/lib/period/periodStorage';
@@ -23,38 +24,6 @@ export type CalendarMonthViewProps = {
   scrollTargetMonthIndex?: number;
   scrollTargetRef?: RefObject<View | null>;
   onScrollTargetReady?: () => void;
-};
-
-const circleClassForMarker = (
-  isSelected: boolean,
-  isToday: boolean,
-  marker: CycleDayMarker | null,
-): string => {
-  if (isSelected) {
-    return 'bg-primary-500';
-  }
-
-  if (marker === CYCLE_DAY_MARKER.period) {
-    return 'border-2 border-primary-500 bg-primary-500/15';
-  }
-
-  if (marker === CYCLE_DAY_MARKER.predictedPeriod) {
-    return 'border-2 border-dusty-rose bg-dusty-rose-light';
-  }
-
-  if (marker === CYCLE_DAY_MARKER.ovulation) {
-    return 'border-2 border-lavender bg-lavender-light';
-  }
-
-  if (marker === CYCLE_DAY_MARKER.fertile) {
-    return 'border-2 border-sage-mist bg-sage-mist-light';
-  }
-
-  if (isToday) {
-    return 'bg-primary-500/15';
-  }
-
-  return 'border border-foreground-muted/30';
 };
 
 export const CalendarMonthView = ({
@@ -110,7 +79,7 @@ export const CalendarMonthView = ({
                     justify="center"
                     className={cn(
                       'mt-1 h-9 w-9 rounded-full',
-                      circleClassForMarker(isSelected, day.isToday, marker),
+                      resolveCalendarMarkerCircleClass(isSelected, day.isToday, marker),
                       !day.isCurrentMonth && 'opacity-35',
                     )}>
                     {isSelected ? (
