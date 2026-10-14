@@ -1,97 +1,82 @@
-import type { SymptomId } from "@syna/shared-types";
-import { useRouter } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DailyLogDatePicker } from "@/components/dailyLog/DailyLogDatePicker";
-import { DailyLogModal } from "@/components/dailyLog/DailyLogModal";
-import { useConfettiCelebration } from "@/components/gamification/ConfettiProvider";
-import { MascotLoadingGate } from "@/components/loading/MascotLoadingGate";
-import { RecordPeriodCycleGuide } from "@/components/period/RecordPeriodCycleGuide";
-import { SymptomCategoryAccordion } from "@/components/symptoms/SymptomCategoryAccordion";
-import { Box } from "@/components/ui/Box";
-import { Text } from "@/components/ui/Text";
-import { usePeriodDates } from "@/hooks/usePeriodDates";
-import { useSymptomLog } from "@/hooks/useSymptomLog";
-import { useTranslate } from "@/hooks/useTranslate";
-import { toDateKey } from "@/lib/date/dateKeys";
-import { CONFETTI_ACTION } from "@/lib/gamification/confettiActions";
-import { LOADING_VARIANT } from "@/lib/loading/loadingVariants";
-import type { SymptomLogMap } from "@/lib/symptoms/symptomLogStorage";
+import { DailyLogModal } from '@/components/dailyLog/DailyLogModal';
+import { useConfettiCelebration } from '@/components/gamification/ConfettiProvider';
+import { MascotLoadingGate } from '@/components/loading/MascotLoadingGate';
+import { PeriodBleedingForm } from '@/components/period/PeriodBleedingForm';
+import { SymptomEntryDateStrip } from '@/components/symptoms/entry/SymptomEntryDateStrip';
+import { Box } from '@/components/ui/Box';
+import { usePeriodDates } from '@/hooks/usePeriodDates';
+import { useTranslate } from '@/hooks/useTranslate';
+import { toDateKey } from '@/lib/date/dateKeys';
+import { CONFETTI_ACTION } from '@/lib/gamification/confettiActions';
+import { LOADING_VARIANT } from '@/lib/loading/loadingVariants';
+import {
+  EMPTY_PERIOD_BLEEDING_DETAILS,
+  type PeriodBleedingDetails,
+} from '@/lib/period/periodBleedingConstants';
+import {
+  detailsToPeriodDay,
+  periodDayToDetails,
+} from '@/lib/period/periodBleedingMappers';
 
-/** Record Period modal — date wheel + cycle-critical symptoms; persists via API. */
+/** Record Period: rectangular date strip + bleeding details form. */
 const RecordPeriodScreen = () => {
   const router = useRouter();
   const { t } = useTranslate();
   const { celebrate } = useConfettiCelebration();
   const {
     dateKeys,
+    days,
     isLoading: isPeriodLoading,
-    persist: persistPeriodDates,
+    persistDays,
   } = usePeriodDates();
-  const {
-    logs: symptomLogs,
-    isLoading: isSymptomLoading,
-    persist: persistSymptoms,
-  } = useSymptomLog();
 
   const [selectedDateKey, setSelectedDateKey] = useState(() =>
     toDateKey(new Date()),
   );
-  const [draftSymptoms, setDraftSymptoms] = useState<SymptomLogMap>({});
+  const [isBleeding, setIsBleeding] = useState<boolean | null>(null);
+  const [details, setDetails] = useState<PeriodBleedingDetails>(
+    EMPTY_PERIOD_BLEEDING_DETAILS,
+  );
   const [isSaving, setIsSaving] = useState(false);
-  const [hasHydratedDraft, setHasHydratedDraft] = useState(false);
 
-  const isDataReady = !isPeriodLoading && !isSymptomLoading && hasHydratedDraft;
+  const isDataReady = !isPeriodLoading;
 
   useEffect(() => {
-    if (isPeriodLoading || isSymptomLoading || hasHydratedDraft) {
+    if (isPeriodLoading) {
       return;
     }
 
-    setDraftSymptoms({ ...symptomLogs });
-    setHasHydratedDraft(true);
-  }, [hasHydratedDraft, isPeriodLoading, isSymptomLoading, symptomLogs]);
+    const existing = days.find((day) => day.dateKey === selectedDateKey);
+    setIsBleeding(dateKeys.has(selectedDateKey) ? true : null);
+    setDetails(periodDayToDetails(existing));
+    // Rehydrate only when the selected day (or first load) changes, not on
+    // background refetches that would wipe in-progress edits.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- date-scoped hydrate
+  }, [isPeriodLoading, selectedDateKey]);
 
-  const selectedSymptomIds = useMemo(
-    () =>
-      new Set(
-        (draftSymptoms[selectedDateKey] ?? []).map((entry) => entry.symptomId),
-      ),
-    [draftSymptoms, selectedDateKey],
-  );
+  const canSave = isBleeding === true;
 
-  const handleToggleSymptom = useCallback(
-    (symptomId: SymptomId) => {
-      setDraftSymptoms((previous) => {
-        const current = [...(previous[selectedDateKey] ?? [])];
-        const index = current.findIndex(
-          (entry) => entry.symptomId === symptomId,
-        );
-
-        if (index >= 0) {
-          current.splice(index, 1);
-        } else {
-          current.push({ symptomId, intensity: 2 });
-        }
-
-        return { ...previous, [selectedDateKey]: current };
-      });
-    },
-    [selectedDateKey],
-  );
+  const handleChangeDate = useCallback((dateKey: string) => {
+    setSelectedDateKey(dateKey);
+  }, []);
 
   const handleSave = useCallback(async () => {
-    if (isSaving) {
+    if (isSaving || isBleeding !== true) {
       return;
     }
 
     setIsSaving(true);
 
     try {
-      const nextPeriodDates = new Set(dateKeys);
-      nextPeriodDates.add(selectedDateKey);
-      await persistPeriodDates(nextPeriodDates);
-      await persistSymptoms(draftSymptoms);
+      const nextDays = [
+        ...days.filter((day) => day.dateKey !== selectedDateKey),
+        detailsToPeriodDay(selectedDateKey, details),
+      ].sort((a, b) => a.dateKey.localeCompare(b.dateKey));
+
+      await persistDays(nextDays);
       celebrate(CONFETTI_ACTION.periodLogged);
       router.back();
     } finally {
@@ -99,57 +84,55 @@ const RecordPeriodScreen = () => {
     }
   }, [
     celebrate,
-    dateKeys,
-    draftSymptoms,
+    days,
+    details,
+    isBleeding,
     isSaving,
-    persistPeriodDates,
-    persistSymptoms,
+    persistDays,
     router,
     selectedDateKey,
   ]);
+
+  const handleBleedingChange = useCallback((next: boolean) => {
+    setIsBleeding(next);
+
+    if (!next) {
+      setDetails(EMPTY_PERIOD_BLEEDING_DETAILS);
+    }
+  }, []);
+
+  const title = useMemo(() => t('record_period_screen_title'), [t]);
 
   return (
     <MascotLoadingGate
       enabled
       variant={LOADING_VARIANT.cycleCalendar}
       isReady={isDataReady}
-      className="flex-1"
-    >
+      className="flex-1">
       <DailyLogModal
-        title={t("record_period_screen_title")}
+        title={title}
         selectedDateKey={selectedDateKey}
-        onChangeDate={setSelectedDateKey}
+        onChangeDate={handleChangeDate}
         onCancel={() => router.back()}
         onSave={() => {
           void handleSave();
         }}
         isSaving={isSaving}
-        showDatePicker={false}
-      >
-        <RecordPeriodCycleGuide />
-
-        <Box gap="sm">
-          <DailyLogDatePicker
+        isSaveDisabled={!canSave}
+        showDatePicker={false}>
+        <Box gap="lg">
+          <SymptomEntryDateStrip
             selectedDateKey={selectedDateKey}
-            onChangeDate={setSelectedDateKey}
+            onChangeDate={handleChangeDate}
           />
-        </Box>
 
-        <Box gap="md">
-          <Text
-            size="base"
-            weight="bold"
-            className="leading-tight mt-4"
-            family="serif"
-          >
-            {t("record_period_symptoms_heading")}
-          </Text>
-          <Text size="xs" color="foreground-muted" className="leading-relaxed">
-            {t("record_period_symptoms_hint")}
-          </Text>
-          <SymptomCategoryAccordion
-            selectedIds={selectedSymptomIds}
-            onToggle={handleToggleSymptom}
+          <PeriodBleedingForm
+            dateKey={selectedDateKey}
+            isBleeding={isBleeding}
+            details={details}
+            disabled={isSaving}
+            onChangeBleeding={handleBleedingChange}
+            onChangeDetails={setDetails}
           />
         </Box>
       </DailyLogModal>

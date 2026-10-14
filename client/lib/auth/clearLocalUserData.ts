@@ -1,4 +1,5 @@
 import { saveRememberedLoginEmail } from '@/lib/auth/rememberedLoginEmailStorage';
+import { clearHomeWelcomeModalDismissed } from '@/lib/dashboard/homeWelcomeModalStorage';
 import { clearDeepeningEntries } from '@/lib/deepening/deepeningStorage';
 import { clearHealthConnectionSummary } from '@/lib/health/healthConnectionSummary';
 import { clearIntroCompleted } from '@/lib/intro/introStorage';
@@ -35,6 +36,7 @@ export const clearLocalUserData = async (): Promise<void> => {
     clearMrsIiBannerStorage(),
     clearPatientActivationMeasureBannerStorage(),
     clearProfileCompletionBannerDismissed(),
+    clearHomeWelcomeModalDismissed(),
     clearIntroCompleted(),
     saveRememberedLoginEmail(''),
   ]);

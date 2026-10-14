@@ -11,7 +11,7 @@ import {
   isAtLeastMinAge,
   parseIsoDate,
 } from '@/lib/profile/bioDataValidation';
-import { birthYearFromIsoDate } from '@/lib/profile/birthYear';
+import { formatBirthDate } from '@/lib/profile/formatBirthDate';
 import { borderColorClasses, cn, radiusClasses } from '@/lib/ui';
 
 export type BioBirthDateFieldProps = {
@@ -19,7 +19,7 @@ export type BioBirthDateFieldProps = {
 };
 
 export const BioBirthDateField = ({ control }: BioBirthDateFieldProps) => {
-  const { t } = useTranslate();
+  const { t, language } = useTranslate();
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [draftDate, setDraftDate] = useState(getMaxBirthDateIso());
   const [isDraftValid, setIsDraftValid] = useState(true);
@@ -41,18 +41,18 @@ export const BioBirthDateField = ({ control }: BioBirthDateFieldProps) => {
       control={control}
       name="dateOfBirth"
       render={({ field: { value, onChange }, fieldState: { error } }) => {
-        const displayYear = birthYearFromIsoDate(value);
-        const hasValue = Boolean(displayYear);
+        const displayDate = formatBirthDate(value, language);
+        const hasValue = Boolean(displayDate);
 
         return (
           <>
             <Box className="w-full">
               <Text size="sm" weight="medium" color="foreground" className="mb-1.5">
-                {t('bio_details_year_of_birth_label')}
+                {t('bio_details_date_of_birth_label')}
               </Text>
               <TouchableOpacity
                 accessibilityRole="button"
-                accessibilityLabel={t('bio_details_year_of_birth_label')}
+                accessibilityLabel={t('bio_details_date_of_birth_label')}
                 onPress={() => openPicker(value)}
                 className={cn(
                   'w-full border bg-white/90 px-4 py-3.5',
@@ -61,7 +61,7 @@ export const BioBirthDateField = ({ control }: BioBirthDateFieldProps) => {
                 )}
               >
                 <Text size="base" color={hasValue ? 'foreground' : 'foreground-muted'}>
-                  {hasValue ? displayYear : t('bio_details_year_of_birth_placeholder')}
+                  {hasValue ? displayDate : t('bio_details_date_of_birth_placeholder')}
                 </Text>
               </TouchableOpacity>
               {error?.message ? (
@@ -73,7 +73,7 @@ export const BioBirthDateField = ({ control }: BioBirthDateFieldProps) => {
 
             <ProfileSettingsEditSheet
               visible={isPickerOpen}
-              title={t('bio_details_year_of_birth_label')}
+              title={t('bio_details_date_of_birth_label')}
               onCancel={closePicker}
               saveDisabled={!isDraftValid}
               onSave={() => {

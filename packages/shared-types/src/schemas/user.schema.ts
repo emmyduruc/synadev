@@ -7,6 +7,33 @@ import { AppLocaleSchema } from './locale.schema';
 
 export { IsoDateSchema } from './iso-date.schema';
 
+const MAX_DATE_OF_BIRTH_AGE_YEARS = 120;
+
+const isRealCalendarDate = (value: string): boolean => {
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+
+  return (
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day
+  );
+};
+
+/** Full birth date: a real calendar day, not in the future, within a human lifespan. */
+const DateOfBirthSchema = IsoDateSchema.refine(isRealCalendarDate, {
+  message: 'Date of birth must be a real calendar date',
+}).refine(
+  (value) => {
+    // One day of slack so a client ahead of UTC is never rejected.
+    const latest = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const earliestYear = new Date().getUTCFullYear() - MAX_DATE_OF_BIRTH_AGE_YEARS;
+
+    return value <= latest && Number(value.slice(0, 4)) >= earliestYear;
+  },
+  { message: 'Date of birth is out of range' },
+);
+
 export const HealthResponseSchema = z.object({
   status: z.literal('ok').describe('Health check status indicator'),
   timestamp: z.string().datetime().describe('ISO 8601 timestamp of the health check'),
@@ -62,7 +89,7 @@ export const UpdateUserProfileSchema = z.object({
     .min(1, 'Last name is required')
     .max(100, 'Last name is too long')
     .describe('Family name'),
-  dateOfBirth: IsoDateSchema.describe('Date of birth (YYYY-MM-DD)'),
+  dateOfBirth: DateOfBirthSchema.describe('Date of birth (YYYY-MM-DD)'),
   address: z
     .string()
     .trim()

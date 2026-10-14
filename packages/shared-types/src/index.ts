@@ -70,11 +70,29 @@ export type {
 } from './schemas/health-daily.schema';
 
 export {
+  PERIOD_BLEEDING_TYPE,
+  PERIOD_BLEEDING_TYPES,
+  PERIOD_OBSERVATION,
+  PERIOD_OBSERVATIONS,
+  PERIOD_STRENGTH,
+  PERIOD_STRENGTHS,
+  PeriodBleedingTypeSchema,
+  PeriodDaySchema,
   PeriodDaysSchema,
+  PeriodObservationSchema,
+  PeriodStrengthSchema,
   ReplacePeriodDaysSchema,
+  createEmptyPeriodDay,
 } from './schemas/period.schema';
 
-export type { PeriodDays, ReplacePeriodDays } from './schemas/period.schema';
+export type {
+  PeriodBleedingType,
+  PeriodDay,
+  PeriodDays,
+  PeriodObservation,
+  PeriodStrength,
+  ReplacePeriodDays,
+} from './schemas/period.schema';
 
 export {
   APP_LOCALE,

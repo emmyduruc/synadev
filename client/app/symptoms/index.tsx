@@ -42,6 +42,11 @@ import {
   type MoodEntry,
   type MoodLogMap,
 } from '@/lib/mood/moodLogStorage';
+import {
+  EMPTY_PERIOD_BLEEDING_DETAILS,
+  type PeriodBleedingDetails,
+} from '@/lib/period/periodBleedingConstants';
+import { periodDayToDetails, detailsToPeriodDay } from '@/lib/period/periodBleedingMappers';
 import { toast } from '@/lib/sonner';
 import {
   DEFAULT_SYMPTOM_INTENSITY,
@@ -81,14 +86,24 @@ const SymptomsScreen = () => {
     isLoading: isMoodLoading,
     persist: persistMoodLogs,
   } = useMoodLog();
-  const { dateKeys: periodDateKeys, persist: persistPeriodDates } = usePeriodDates();
+  const {
+    dateKeys: periodDateKeys,
+    days: periodDays,
+    isLoading: isPeriodLoading,
+    persist: persistPeriodDates,
+    persistDays: persistPeriodDays,
+  } = usePeriodDates();
   const { favoriteIds, toggleFavorite, isFavorite } = useSymptomFavorites();
   const { customSymptoms, addCustomSymptom } = useCustomSymptoms();
 
   const [selectedDateKey, setSelectedDateKey] = useState(() =>
     resolveInitialDateKey(dateKeyParam),
-  );  const [draft, setDraft] = useState<SymptomLogMap>({});
+  );
+  const [draft, setDraft] = useState<SymptomLogMap>({});
   const [moodDraft, setMoodDraft] = useState<MoodLogMap>({});
+  const [periodDetailsDraft, setPeriodDetailsDraft] = useState<
+    Record<string, PeriodBleedingDetails>
+  >({});
   const [activeTab, setActiveTab] = useState<SymptomEntryTabId>(SYMPTOM_ENTRY_TAB.symptoms);
   const [activeFilter, setActiveFilter] = useState<SymptomEntryFilterId>(
     SYMPTOM_ENTRY_FILTER.favorites,
@@ -100,17 +115,32 @@ const SymptomsScreen = () => {
   const [noneTodayKeys, setNoneTodayKeys] = useState<Record<string, boolean>>({});
   const [hasHydratedDraft, setHasHydratedDraft] = useState(false);
 
-  const isDataReady = !isLoading && !isMoodLoading && hasHydratedDraft;
+  const isDataReady =
+    !isLoading && !isMoodLoading && !isPeriodLoading && hasHydratedDraft;
 
   useEffect(() => {
-    if (isLoading || isMoodLoading || hasHydratedDraft) {
+    if (isLoading || isMoodLoading || isPeriodLoading || hasHydratedDraft) {
       return;
+    }
+
+    const nextPeriodDetails: Record<string, PeriodBleedingDetails> = {};
+    for (const day of periodDays) {
+      nextPeriodDetails[day.dateKey] = periodDayToDetails(day);
     }
 
     setDraft({ ...logs });
     setMoodDraft({ ...moodLogs });
+    setPeriodDetailsDraft(nextPeriodDetails);
     setHasHydratedDraft(true);
-  }, [hasHydratedDraft, isLoading, isMoodLoading, logs, moodLogs]);
+  }, [
+    hasHydratedDraft,
+    isLoading,
+    isMoodLoading,
+    isPeriodLoading,
+    logs,
+    moodLogs,
+    periodDays,
+  ]);
   const dayEntries = draft[selectedDateKey];
   const selectedCount = dayEntries?.length ?? 0;
   const isNoneToday = Boolean(noneTodayKeys[selectedDateKey]) && selectedCount === 0;
@@ -220,12 +250,27 @@ const SymptomsScreen = () => {
         }
       }
 
-      const [savedSymptoms, savedMood] = await Promise.all([
+      const nextPeriodDays = [...periodDateKeys].map((dateKey) =>
+        detailsToPeriodDay(
+          dateKey,
+          periodDetailsDraft[dateKey] ?? EMPTY_PERIOD_BLEEDING_DETAILS,
+        ),
+      );
+
+      const [savedSymptoms, savedMood, savedPeriodDays] = await Promise.all([
         persist(draft),
         persistMoodLogs(nextMoodLogs),
+        persistPeriodDays(nextPeriodDays),
       ]);
       setDraft({ ...savedSymptoms });
       setMoodDraft({ ...savedMood });
+
+      const nextPeriodDetails: Record<string, PeriodBleedingDetails> = {};
+      for (const day of savedPeriodDays) {
+        nextPeriodDetails[day.dateKey] = periodDayToDetails(day);
+      }
+      setPeriodDetailsDraft(nextPeriodDetails);
+
       celebrate(CONFETTI_ACTION.symptomsLogged);
       toast.success(t('symptom_entry_save_success'));
     } catch {
@@ -233,7 +278,18 @@ const SymptomsScreen = () => {
     } finally {
       setIsSaving(false);
     }
-  }, [celebrate, draft, isSaving, moodDraft, persist, persistMoodLogs, t]);
+  }, [
+    celebrate,
+    draft,
+    isSaving,
+    moodDraft,
+    periodDateKeys,
+    periodDetailsDraft,
+    persist,
+    persistMoodLogs,
+    persistPeriodDays,
+    t,
+  ]);
   const handleMoodEntryChange = useCallback(
     (next: MoodEntry) => {
       const normalized: MoodEntry = isMoodEntryEmpty(next)
@@ -277,8 +333,18 @@ const SymptomsScreen = () => {
 
         if (isBleeding) {
           nextPeriodDates.add(selectedDateKey);
+          setPeriodDetailsDraft((previous) => ({
+            ...previous,
+            [selectedDateKey]:
+              previous[selectedDateKey] ?? EMPTY_PERIOD_BLEEDING_DETAILS,
+          }));
         } else {
           nextPeriodDates.delete(selectedDateKey);
+          setPeriodDetailsDraft((previous) => {
+            const next = { ...previous };
+            delete next[selectedDateKey];
+            return next;
+          });
         }
 
         await persistPeriodDates(nextPeriodDates);
@@ -289,6 +355,16 @@ const SymptomsScreen = () => {
       }
     },
     [isSavingPeriod, periodDateKeys, persistPeriodDates, selectedDateKey, t],
+  );
+
+  const handlePeriodDetailsChange = useCallback(
+    (details: PeriodBleedingDetails) => {
+      setPeriodDetailsDraft((previous) => ({
+        ...previous,
+        [selectedDateKey]: details,
+      }));
+    },
+    [selectedDateKey],
   );
 
   const handleOwnSymptomCreated = useCallback(
@@ -392,11 +468,17 @@ const SymptomsScreen = () => {
 
             {activeTab === SYMPTOM_ENTRY_TAB.period ? (
               <SymptomEntryPeriodTab
+                dateKey={selectedDateKey}
                 isBleeding={periodDateKeys.has(selectedDateKey)}
+                details={
+                  periodDetailsDraft[selectedDateKey] ??
+                  EMPTY_PERIOD_BLEEDING_DETAILS
+                }
                 isSaving={isSavingPeriod}
                 onChangeBleeding={(isBleeding) => {
                   void handlePeriodBleedingChange(isBleeding);
                 }}
+                onChangeDetails={handlePeriodDetailsChange}
               />
             ) : null}
 

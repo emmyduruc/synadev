@@ -22,7 +22,13 @@ const toIsoDateString = (value: string | Date | null): string | null => {
     return value.slice(0, 10);
   }
 
-  return value.toISOString().slice(0, 10);
+  // pg parses `date` columns as local midnight; toISOString() would shift the
+  // day back in any timezone ahead of UTC.
+  const year = value.getFullYear();
+  const month = String(value.getMonth() + 1).padStart(2, '0');
+  const day = String(value.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
 };
 
 export const isUserBioComplete = (user: {

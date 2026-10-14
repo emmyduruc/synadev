@@ -61,7 +61,7 @@ export const useBioDetailsForm = ({
       createBioDetailsSchema({
         firstNameRequired: t('bio_details_first_name_required'),
         lastNameRequired: t('bio_details_last_name_required'),
-        dateRequired: t('bio_details_year_required'),
+        dateRequired: t('bio_details_date_of_birth_required'),
         dateAge: t('wizard_bio_age_requirement_error'),
       }),
     [t],

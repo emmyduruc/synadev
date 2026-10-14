@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { PeriodDays, ReplacePeriodDays } from '@syna/shared-types';
+import type { PeriodDay, PeriodDays, ReplacePeriodDays } from '@syna/shared-types';
+import { createEmptyPeriodDay } from '@syna/shared-types';
 import { DataSource, Repository } from 'typeorm';
 
 import type { AuthenticatedClerkUser } from '../auth/auth.types';
@@ -15,6 +16,47 @@ const toDateKey = (value: string | Date): string => {
   }
 
   return value.toISOString().slice(0, 10);
+};
+
+const toPeriodDay = (row: PeriodDayEntity): PeriodDay => ({
+  dateKey: toDateKey(row.logDate),
+  isFirstDay: row.isFirstDay ?? null,
+  bleedingType: row.bleedingType ?? null,
+  strength: row.strength ?? null,
+  observations: row.observations ?? [],
+  notes: row.notes ?? null,
+});
+
+const resolveNextDays = (
+  input: ReplacePeriodDays,
+  existingByDate: Map<string, PeriodDay>,
+): PeriodDay[] => {
+  if (input.days !== undefined) {
+    const byDate = new Map<string, PeriodDay>();
+
+    for (const day of input.days) {
+      byDate.set(day.dateKey, {
+        ...createEmptyPeriodDay(day.dateKey),
+        ...day,
+        observations: day.observations ?? [],
+      });
+    }
+
+    return [...byDate.values()].sort((a, b) =>
+      a.dateKey.localeCompare(b.dateKey),
+    );
+  }
+
+  if (input.dateKeys === undefined) {
+    throw new BadRequestException('Provide days or dateKeys');
+  }
+
+  const dateKeys = [...new Set(input.dateKeys)].sort();
+
+  return dateKeys.map((dateKey) => {
+    const existing = existingByDate.get(dateKey);
+    return existing ?? createEmptyPeriodDay(dateKey);
+  });
 };
 
 @Injectable()
@@ -34,8 +76,11 @@ export class PeriodService {
       order: { logDate: 'ASC' },
     });
 
+    const days = rows.map(toPeriodDay);
+
     return {
-      dateKeys: rows.map((row) => toDateKey(row.logDate)),
+      dateKeys: days.map((day) => day.dateKey),
+      days,
     };
   }
 
@@ -44,23 +89,40 @@ export class PeriodService {
     input: ReplacePeriodDays,
   ): Promise<PeriodDays> {
     const userId = await this.usersService.resolveUserId(clerkUser);
-    const uniqueSorted = [...new Set(input.dateKeys)].sort();
+    const existingRows = await this.periodDaysRepository.find({
+      where: { userId },
+    });
+    const existingByDate = new Map(
+      existingRows.map((row) => [toDateKey(row.logDate), toPeriodDay(row)]),
+    );
+    const nextDays = resolveNextDays(input, existingByDate);
 
     await this.dataSource.transaction(async (manager) => {
       await manager.delete(PeriodDayEntity, { userId });
 
-      if (uniqueSorted.length === 0) {
+      if (nextDays.length === 0) {
         return;
       }
 
-      const rows = uniqueSorted.map((logDate) =>
-        manager.create(PeriodDayEntity, { userId, logDate }),
+      const rows = nextDays.map((day) =>
+        manager.create(PeriodDayEntity, {
+          userId,
+          logDate: day.dateKey,
+          isFirstDay: day.isFirstDay,
+          bleedingType: day.bleedingType,
+          strength: day.strength,
+          observations: day.observations,
+          notes: day.notes,
+        }),
       );
       await manager.save(rows);
     });
 
     await this.cycleService.syncUserPhase(userId);
 
-    return { dateKeys: uniqueSorted };
+    return {
+      dateKeys: nextDays.map((day) => day.dateKey),
+      days: nextDays,
+    };
   }
 }

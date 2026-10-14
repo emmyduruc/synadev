@@ -1,3 +1,5 @@
+import type { PeriodDay, PeriodDays } from '@syna/shared-types';
+import { createEmptyPeriodDay } from '@syna/shared-types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -9,22 +11,47 @@ import {
 } from '@/lib/period/periodDatesEvents';
 import { queryKeys } from '@/lib/query/queryKeys';
 
+const toCachePayload = (payload: PeriodDays): PeriodDays => ({
+  dateKeys: [...payload.dateKeys].sort(),
+  days: [...payload.days].sort((a, b) => a.dateKey.localeCompare(b.dateKey)),
+});
+
+const mergeDateKeysWithDays = (
+  nextDateKeys: ReadonlySet<string>,
+  currentDays: readonly PeriodDay[],
+): PeriodDay[] => {
+  const byDate = new Map(currentDays.map((day) => [day.dateKey, day]));
+
+  return [...nextDateKeys]
+    .sort()
+    .map((dateKey) => byDate.get(dateKey) ?? createEmptyPeriodDay(dateKey));
+};
+
 export const usePeriodDates = () => {
   const queryClient = useQueryClient();
 
   const query = useQuery({
     queryKey: queryKeys.period.days(),
-    queryFn: async (): Promise<string[]> => {
-      const { dateKeys } = await getPeriodDays();
-      return dateKeys;
+    queryFn: async (): Promise<PeriodDays> => {
+      const payload = await getPeriodDays();
+      return toCachePayload(payload);
     },
   });
 
   const mutation = useMutation({
-    mutationFn: async (nextDateKeys: ReadonlySet<string>) => {
-      const sorted = [...new Set(nextDateKeys)].sort();
-      const { dateKeys: saved } = await replacePeriodDays({ dateKeys: sorted });
-      return saved;
+    mutationFn: async (
+      input:
+        | { days: readonly PeriodDay[] }
+        | { dateKeys: ReadonlySet<string> },
+    ) => {
+      if ('days' in input) {
+        return toCachePayload(
+          await replacePeriodDays({ days: [...input.days] }),
+        );
+      }
+
+      const sorted = [...new Set(input.dateKeys)].sort();
+      return toCachePayload(await replacePeriodDays({ dateKeys: sorted }));
     },
     onSuccess: (saved) => {
       queryClient.setQueryData(queryKeys.period.days(), saved);
@@ -33,9 +60,19 @@ export const usePeriodDates = () => {
     },
   });
 
+  const days = useMemo(() => query.data?.days ?? [], [query.data?.days]);
+
+  const daysByDate = useMemo(() => {
+    const map = new Map<string, PeriodDay>();
+    for (const day of days) {
+      map.set(day.dateKey, day);
+    }
+    return map;
+  }, [days]);
+
   const dateKeys = useMemo(
-    () => new Set(query.data ?? []),
-    [query.data],
+    () => new Set(query.data?.dateKeys ?? days.map((day) => day.dateKey)),
+    [days, query.data?.dateKeys],
   );
 
   const { refetch } = query;
@@ -62,17 +99,43 @@ export const usePeriodDates = () => {
   const setDateKeys = useCallback(
     (next: Set<string> | ((previous: Set<string>) => Set<string>)) => {
       const resolved = typeof next === 'function' ? next(dateKeys) : next;
-      queryClient.setQueryData(queryKeys.period.days(), [...resolved].sort());
+      const nextDays = mergeDateKeysWithDays(resolved, days);
+      queryClient.setQueryData(
+        queryKeys.period.days(),
+        toCachePayload({
+          dateKeys: [...resolved].sort(),
+          days: nextDays,
+        }),
+      );
     },
-    [dateKeys, queryClient],
+    [dateKeys, days, queryClient],
+  );
+
+  const persist = useCallback(
+    async (nextDateKeys: ReadonlySet<string>) => {
+      const saved = await mutation.mutateAsync({ dateKeys: nextDateKeys });
+      return new Set(saved.dateKeys);
+    },
+    [mutation],
+  );
+
+  const persistDays = useCallback(
+    async (nextDays: readonly PeriodDay[]) => {
+      const saved = await mutation.mutateAsync({ days: nextDays });
+      return saved.days;
+    },
+    [mutation],
   );
 
   return {
     dateKeys,
+    days,
+    daysByDate,
     isLoading: query.isLoading,
     isFetching: query.isFetching,
     refresh,
-    persist: mutation.mutateAsync,
+    persist,
+    persistDays,
     setDateKeys,
   };
 };

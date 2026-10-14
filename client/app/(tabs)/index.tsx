@@ -14,6 +14,7 @@ import { DashboardInsightsSection } from '@/components/dashboard/DashboardInsigh
 import { DashboardNextStepsCard } from '@/components/dashboard/DashboardNextStepsCard';
 import { DashboardSetupProgress } from '@/components/dashboard/DashboardSetupProgress';
 import { DashboardWeekCalendarSection } from '@/components/dashboard/DashboardWeekCalendarSection';
+import { HomeWelcomeModal } from '@/components/dashboard/HomeWelcomeModal';
 import { useConfettiCelebration } from '@/components/gamification/ConfettiProvider';
 import { SAFE_AREA_EDGES, SafeAreaScreen } from '@/components/layout/SafeAreaScreen';
 import { SynaGradientBackground } from '@/components/layout/SynaGradientBackground';
@@ -25,6 +26,7 @@ import { useBioData } from '@/hooks/useBioData';
 import { useCorrectOptimisticHomeDestination } from '@/hooks/useCorrectOptimisticHomeDestination';
 import { useCycleCalendarMarkers } from '@/hooks/useCycleCalendarMarkers';
 import { useDashboardSetupProgress } from '@/hooks/useDashboardSetupProgress';
+import { useHomeWelcomeModal } from '@/hooks/useHomeWelcomeModal';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
 import { useReportPreferences } from '@/hooks/useReportPreferences';
@@ -111,6 +113,19 @@ const StartTabScreen = () => {
 
   const showProfileBanner = !isProfileBannerLoading && isProfileBannerVisible;
   const showSetupProgress = !isSetupLoading && !isFullyComplete;
+  const {
+    isVisible: isHomeWelcomeVisible,
+    dismiss: dismissHomeWelcome,
+  } = useHomeWelcomeModal();
+
+  const handleDismissHomeWelcome = () => {
+    void dismissHomeWelcome();
+  };
+
+  const handleSelectComplaints = () => {
+    void dismissHomeWelcome();
+    router.push(ROUTES.symptoms);
+  };
 
   return (
     <SynaGradientBackground>
@@ -240,6 +255,13 @@ const StartTabScreen = () => {
               });
               setIsConcernsSheetOpen(false);
             }}
+          />
+
+          <HomeWelcomeModal
+            visible={isHomeWelcomeVisible}
+            onClose={handleDismissHomeWelcome}
+            onSelectComplaints={handleSelectComplaints}
+            onSelectLater={handleDismissHomeWelcome}
           />
 
           {showProfileBanner ? (
