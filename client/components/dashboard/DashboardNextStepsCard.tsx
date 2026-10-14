@@ -7,6 +7,8 @@ export type DashboardNextStepsCardProps = {
   onPressFirstEntry?: () => void;
   onPressMrsIi?: () => void;
   onPressCompleteProfile?: () => void;
+  /** Hide MRS-II once the questionnaire is completed. */
+  showMrsIi?: boolean;
 };
 
 const noop = () => undefined;
@@ -15,6 +17,7 @@ export const DashboardNextStepsCard = ({
   onPressFirstEntry = noop,
   onPressMrsIi = noop,
   onPressCompleteProfile = noop,
+  showMrsIi = true,
 }: DashboardNextStepsCardProps) => {
   const { t } = useTranslate();
 
@@ -29,11 +32,13 @@ export const DashboardNextStepsCard = ({
         subtitle={t('dashboard_next_steps_first_entry_body')}
         onPress={onPressFirstEntry}
       />
-      <DashboardListRow
-        title={t('dashboard_next_steps_mrs_title')}
-        subtitle={t('dashboard_next_steps_mrs_body')}
-        onPress={onPressMrsIi}
-      />
+      {showMrsIi ? (
+        <DashboardListRow
+          title={t('dashboard_next_steps_mrs_title')}
+          subtitle={t('dashboard_next_steps_mrs_body')}
+          onPress={onPressMrsIi}
+        />
+      ) : null}
       <DashboardListRow
         title={t('dashboard_next_steps_profile_title')}
         subtitle={t('dashboard_next_steps_profile_body')}

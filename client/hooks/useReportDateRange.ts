@@ -37,6 +37,9 @@ export type UseReportDateRangeResult = {
   resetToDefault: () => void;
 };
 
+const rangesEqual = (a: ReportDateRange, b: ReportDateRange): boolean =>
+  a.fromDateKey === b.fromDateKey && a.toDateKey === b.toDateKey;
+
 export const useReportDateRange = (
   isDoctorTab: boolean,
   seed?: ReportDateRangeSeed | null,
@@ -45,6 +48,11 @@ export const useReportDateRange = (
   const { user, isLoading: isUserLoading } = useCurrentUser();
   const defaultWindowDays = defaultWindowDaysForTab(isDoctorTab);
   const hasAppliedSeedRef = useRef(false);
+
+  const seedPreset = seed?.periodPreset ?? null;
+  const seedFromDate = seed?.periodFromDate ?? null;
+  const seedToDate = seed?.periodToDate ?? null;
+  const hasSeed = Boolean(seed);
 
   const bounds = useMemo(
     () => resolveReportBounds(user?.createdAt),
@@ -60,23 +68,23 @@ export const useReportDateRange = (
   const [isCustom, setIsCustom] = useState(false);
 
   useEffect(() => {
-    if (isSeedLoading || hasAppliedSeedRef.current || !seed) {
+    if (isSeedLoading || hasAppliedSeedRef.current || !hasSeed) {
       return;
     }
 
     hasAppliedSeedRef.current = true;
 
     if (
-      seed.periodFromDate &&
-      seed.periodToDate &&
-      (seed.periodPreset === REPORT_PERIOD_PRESET.custom ||
-        seed.periodPreset === REPORT_PERIOD_PRESET.sinceStart)
+      seedFromDate &&
+      seedToDate &&
+      (seedPreset === REPORT_PERIOD_PRESET.custom ||
+        seedPreset === REPORT_PERIOD_PRESET.sinceStart)
     ) {
       setRange(
         clampReportDateRange(
           {
-            fromDateKey: seed.periodFromDate,
-            toDateKey: seed.periodToDate,
+            fromDateKey: seedFromDate,
+            toDateKey: seedToDate,
           },
           bounds,
         ),
@@ -85,45 +93,56 @@ export const useReportDateRange = (
       return;
     }
 
-    if (
-      seed.periodPreset &&
-      seed.periodPreset !== REPORT_PERIOD_PRESET.custom
-    ) {
+    if (seedPreset && seedPreset !== REPORT_PERIOD_PRESET.custom) {
       const next = clampReportDateRange(
-        buildRangeForPreset(seed.periodPreset, bounds),
+        buildRangeForPreset(seedPreset, bounds),
         bounds,
       );
       setRange(next);
-      setIsCustom(seed.periodPreset !== REPORT_PERIOD_PRESET.days28);
+      setIsCustom(seedPreset !== REPORT_PERIOD_PRESET.days28);
       return;
     }
 
-    if (seed.periodFromDate && seed.periodToDate) {
+    if (seedFromDate && seedToDate) {
       setRange(
         clampReportDateRange(
           {
-            fromDateKey: seed.periodFromDate,
-            toDateKey: seed.periodToDate,
+            fromDateKey: seedFromDate,
+            toDateKey: seedToDate,
           },
           bounds,
         ),
       );
       setIsCustom(true);
     }
-  }, [bounds, isSeedLoading, seed]);
+  }, [
+    bounds,
+    hasSeed,
+    isSeedLoading,
+    seedFromDate,
+    seedPreset,
+    seedToDate,
+  ]);
 
   useEffect(() => {
-    if (isCustom || !hasAppliedSeedRef.current) {
-      if (isCustom) {
-        setRange((current) => clampReportDateRange(current, bounds));
-      }
+    if (isCustom) {
+      setRange((current) => {
+        const next = clampReportDateRange(current, bounds);
+        return rangesEqual(current, next) ? current : next;
+      });
       return;
     }
 
-    if (!seed) {
-      setRange(defaultRange);
+    if (!hasAppliedSeedRef.current) {
+      return;
     }
-  }, [bounds, defaultRange, isCustom, seed]);
+
+    if (!hasSeed) {
+      setRange((current) =>
+        rangesEqual(current, defaultRange) ? current : defaultRange,
+      );
+    }
+  }, [bounds, defaultRange, hasSeed, isCustom]);
 
   const applyRange = useCallback(
     (next: ReportDateRange) => {

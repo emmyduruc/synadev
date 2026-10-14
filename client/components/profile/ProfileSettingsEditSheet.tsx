@@ -65,7 +65,7 @@ export const ProfileSettingsEditSheet = ({
           </Box>
         </ScrollView>
 
-        <Box style={{ paddingBottom: safeAreaBottom }}>
+        <Box className="z-10" style={{ paddingBottom: safeAreaBottom }}>
           <ModalCancelSaveFooter
             onCancel={onCancel}
             onSave={onSave}

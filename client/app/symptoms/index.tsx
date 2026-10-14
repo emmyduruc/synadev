@@ -49,20 +49,30 @@ import {
 import { periodDayToDetails, detailsToPeriodDay } from '@/lib/period/periodBleedingMappers';
 import { toast } from '@/lib/sonner';
 import {
-  DEFAULT_SYMPTOM_INTENSITY,
   SYMPTOM_ENTRY_FILTER,
   SYMPTOM_ENTRY_TAB,
   type SymptomEntryFilterId,
   type SymptomEntryTabId,
 } from '@/lib/symptoms/symptomEntryConstants';
 import {
-  createDayEntry,
   findDayEntry,
   getOftenWithYouSymptomIds,
   removeDayEntry,
   upsertDayEntry,
 } from '@/lib/symptoms/symptomEntryHelpers';
 import type { SymptomLogMap } from '@/lib/symptoms/symptomLogStorage';
+
+const resolveTabDateHintKey = (tab: SymptomEntryTabId): string => {
+  if (tab === SYMPTOM_ENTRY_TAB.period) {
+    return 'symptom_entry_tab_hint_period';
+  }
+
+  if (tab === SYMPTOM_ENTRY_TAB.mood) {
+    return 'symptom_entry_tab_hint_mood';
+  }
+
+  return 'symptom_entry_tab_hint_symptoms';
+};
 
 const resolveInitialDateKey = (dateKeyParam: string | string[] | undefined): string => {
   const candidate = Array.isArray(dateKeyParam) ? dateKeyParam[0] : dateKeyParam;
@@ -87,10 +97,8 @@ const SymptomsScreen = () => {
     persist: persistMoodLogs,
   } = useMoodLog();
   const {
-    dateKeys: periodDateKeys,
     days: periodDays,
     isLoading: isPeriodLoading,
-    persist: persistPeriodDates,
     persistDays: persistPeriodDays,
   } = usePeriodDates();
   const { favoriteIds, toggleFavorite, isFavorite } = useSymptomFavorites();
@@ -101,6 +109,9 @@ const SymptomsScreen = () => {
   );
   const [draft, setDraft] = useState<SymptomLogMap>({});
   const [moodDraft, setMoodDraft] = useState<MoodLogMap>({});
+  const [periodBleedingDraft, setPeriodBleedingDraft] = useState<Set<string>>(
+    () => new Set(),
+  );
   const [periodDetailsDraft, setPeriodDetailsDraft] = useState<
     Record<string, PeriodBleedingDetails>
   >({});
@@ -111,7 +122,6 @@ const SymptomsScreen = () => {
   const [sheetSymptomId, setSheetSymptomId] = useState<SymptomId | null>(null);
   const [isOwnSheetVisible, setIsOwnSheetVisible] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isSavingPeriod, setIsSavingPeriod] = useState(false);
   const [noneTodayKeys, setNoneTodayKeys] = useState<Record<string, boolean>>({});
   const [hasHydratedDraft, setHasHydratedDraft] = useState(false);
 
@@ -130,6 +140,7 @@ const SymptomsScreen = () => {
 
     setDraft({ ...logs });
     setMoodDraft({ ...moodLogs });
+    setPeriodBleedingDraft(new Set(periodDays.map((day) => day.dateKey)));
     setPeriodDetailsDraft(nextPeriodDetails);
     setHasHydratedDraft(true);
   }, [
@@ -213,7 +224,10 @@ const SymptomsScreen = () => {
   const handleTogglePersistentPreset = useCallback(
     (symptomId: SymptomId, shouldSelect: boolean) => {
       if (shouldSelect) {
-        handleSaveEntry(createDayEntry(symptomId, DEFAULT_SYMPTOM_INTENSITY));
+        setNoneTodayKeys((previous) => ({
+          ...previous,
+          [selectedDateKey]: false,
+        }));
         setSheetSymptomId(symptomId);
 
         return;
@@ -221,7 +235,7 @@ const SymptomsScreen = () => {
 
       handleRemoveEntry(symptomId);
     },
-    [handleRemoveEntry, handleSaveEntry],
+    [handleRemoveEntry, selectedDateKey],
   );
 
   const handleNoneToday = useCallback(() => {
@@ -250,7 +264,7 @@ const SymptomsScreen = () => {
         }
       }
 
-      const nextPeriodDays = [...periodDateKeys].map((dateKey) =>
+      const nextPeriodDays = [...periodBleedingDraft].map((dateKey) =>
         detailsToPeriodDay(
           dateKey,
           periodDetailsDraft[dateKey] ?? EMPTY_PERIOD_BLEEDING_DETAILS,
@@ -264,6 +278,7 @@ const SymptomsScreen = () => {
       ]);
       setDraft({ ...savedSymptoms });
       setMoodDraft({ ...savedMood });
+      setPeriodBleedingDraft(new Set(savedPeriodDays.map((day) => day.dateKey)));
 
       const nextPeriodDetails: Record<string, PeriodBleedingDetails> = {};
       for (const day of savedPeriodDays) {
@@ -283,7 +298,7 @@ const SymptomsScreen = () => {
     draft,
     isSaving,
     moodDraft,
-    periodDateKeys,
+    periodBleedingDraft,
     periodDetailsDraft,
     persist,
     persistMoodLogs,
@@ -315,46 +330,35 @@ const SymptomsScreen = () => {
   );
 
   const handlePeriodBleedingChange = useCallback(
-    async (isBleeding: boolean) => {
-      if (isSavingPeriod) {
-        return;
-      }
-
-      const currentlyBleeding = periodDateKeys.has(selectedDateKey);
-
-      if (isBleeding === currentlyBleeding) {
-        return;
-      }
-
-      setIsSavingPeriod(true);
-
-      try {
-        const nextPeriodDates = new Set(periodDateKeys);
+    (isBleeding: boolean) => {
+      setPeriodBleedingDraft((previous) => {
+        const next = new Set(previous);
 
         if (isBleeding) {
-          nextPeriodDates.add(selectedDateKey);
-          setPeriodDetailsDraft((previous) => ({
-            ...previous,
-            [selectedDateKey]:
-              previous[selectedDateKey] ?? EMPTY_PERIOD_BLEEDING_DETAILS,
-          }));
+          next.add(selectedDateKey);
         } else {
-          nextPeriodDates.delete(selectedDateKey);
-          setPeriodDetailsDraft((previous) => {
-            const next = { ...previous };
-            delete next[selectedDateKey];
-            return next;
-          });
+          next.delete(selectedDateKey);
         }
 
-        await persistPeriodDates(nextPeriodDates);
-      } catch {
-        toast.error(t('symptom_entry_period_save_error'));
-      } finally {
-        setIsSavingPeriod(false);
+        return next;
+      });
+
+      if (isBleeding) {
+        setPeriodDetailsDraft((previous) => ({
+          ...previous,
+          [selectedDateKey]:
+            previous[selectedDateKey] ?? EMPTY_PERIOD_BLEEDING_DETAILS,
+        }));
+        return;
       }
+
+      setPeriodDetailsDraft((previous) => {
+        const next = { ...previous };
+        delete next[selectedDateKey];
+        return next;
+      });
     },
-    [isSavingPeriod, periodDateKeys, persistPeriodDates, selectedDateKey, t],
+    [selectedDateKey],
   );
 
   const handlePeriodDetailsChange = useCallback(
@@ -367,13 +371,13 @@ const SymptomsScreen = () => {
     [selectedDateKey],
   );
 
-  const handleOwnSymptomCreated = useCallback(
-    (symptom: CustomSymptom) => {
-      handleSaveEntry(createDayEntry(symptom.id, DEFAULT_SYMPTOM_INTENSITY));
-      setSheetSymptomId(symptom.id);
-    },
-    [handleSaveEntry],
-  );
+  const handleOwnSymptomCreated = useCallback((symptom: CustomSymptom) => {
+    setNoneTodayKeys((previous) => ({
+      ...previous,
+      [selectedDateKey]: false,
+    }));
+    setSheetSymptomId(symptom.id);
+  }, [selectedDateKey]);
 
   return (
     <MascotLoadingGate
@@ -391,21 +395,21 @@ const SymptomsScreen = () => {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ paddingBottom: 24 }}>
           <Box paddingX="lg" gap="md">
-            <SymptomEntryTodayBanner />
+            <SymptomEntryTodayBanner selectedDateKey={selectedDateKey} />
             <SymptomEntryDateStrip
               selectedDateKey={selectedDateKey}
               onChangeDate={setSelectedDateKey}
             />
             <SymptomEntryTabs activeTab={activeTab} onChangeTab={setActiveTab} />
+            <Text size="xs" color="foreground-muted" className="leading-relaxed">
+              {t(resolveTabDateHintKey(activeTab))}
+            </Text>
 
             {activeTab === SYMPTOM_ENTRY_TAB.symptoms ? (
               <>
                 <Box gap="xs">
                   <Text size="xl" weight="bold" className="leading-tight">
                     {t('symptom_entry_prompt_title')}
-                  </Text>
-                  <Text size="xs" color="foreground-muted" className="leading-relaxed">
-                    {t('symptom_entry_prompt_hint')}
                   </Text>
                 </Box>
 
@@ -469,15 +473,13 @@ const SymptomsScreen = () => {
             {activeTab === SYMPTOM_ENTRY_TAB.period ? (
               <SymptomEntryPeriodTab
                 dateKey={selectedDateKey}
-                isBleeding={periodDateKeys.has(selectedDateKey)}
+                isBleeding={periodBleedingDraft.has(selectedDateKey)}
                 details={
                   periodDetailsDraft[selectedDateKey] ??
                   EMPTY_PERIOD_BLEEDING_DETAILS
                 }
-                isSaving={isSavingPeriod}
-                onChangeBleeding={(isBleeding) => {
-                  void handlePeriodBleedingChange(isBleeding);
-                }}
+                isSaving={false}
+                onChangeBleeding={handlePeriodBleedingChange}
                 onChangeDetails={handlePeriodDetailsChange}
               />
             ) : null}

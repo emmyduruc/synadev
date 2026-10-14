@@ -7,6 +7,7 @@ import { MascotLoadingGate } from '@/components/loading/MascotLoadingGate';
 import { PeriodBleedingForm } from '@/components/period/PeriodBleedingForm';
 import { SymptomEntryDateStrip } from '@/components/symptoms/entry/SymptomEntryDateStrip';
 import { Box } from '@/components/ui/Box';
+import { Text } from '@/components/ui/Text';
 import { usePeriodDates } from '@/hooks/usePeriodDates';
 import { useTranslate } from '@/hooks/useTranslate';
 import { toDateKey } from '@/lib/date/dateKeys';
@@ -121,10 +122,15 @@ const RecordPeriodScreen = () => {
         isSaveDisabled={!canSave}
         showDatePicker={false}>
         <Box gap="lg">
-          <SymptomEntryDateStrip
-            selectedDateKey={selectedDateKey}
-            onChangeDate={handleChangeDate}
-          />
+          <Box gap="sm">
+            <SymptomEntryDateStrip
+              selectedDateKey={selectedDateKey}
+              onChangeDate={handleChangeDate}
+            />
+            <Text size="xs" color="foreground-muted" className="leading-relaxed">
+              {t('symptom_entry_tab_hint_period')}
+            </Text>
+          </Box>
 
           <PeriodBleedingForm
             dateKey={selectedDateKey}

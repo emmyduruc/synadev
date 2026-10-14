@@ -13,6 +13,7 @@ export const ROUTES = {
   },
   assessment: {
     mrsIi: '/assessment/mrs-ii',
+    mrsIiResults: '/assessment/mrs-ii-results',
     patientActivationMeasure: '/assessment/patient-activation-measure',
     phq2: '/assessment/phq-2',
   },

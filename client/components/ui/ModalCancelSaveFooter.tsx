@@ -32,12 +32,13 @@ export const ModalCancelSaveFooter = ({
       direction="row"
       align="center"
       justify="between"
-      className="border-t border-border bg-card px-2 py-3"
+      className="z-10 border-t border-border bg-card px-2 py-3"
     >
       <TouchableOpacity
         accessibilityRole="button"
         disabled={isSaving}
         onPress={onCancel}
+        hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
         className="min-h-11 justify-center px-4 py-2"
       >
         <Text size="base" color="primary" weight="medium">
@@ -48,6 +49,7 @@ export const ModalCancelSaveFooter = ({
         accessibilityRole="button"
         disabled={isPrimaryDisabled}
         onPress={onSave}
+        hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
         className="min-h-11 justify-center px-4 py-2"
       >
         <Text

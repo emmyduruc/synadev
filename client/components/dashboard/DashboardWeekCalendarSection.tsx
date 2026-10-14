@@ -16,12 +16,15 @@ import { cn, semanticColors } from '@/lib/ui';
 
 export type DashboardWeekCalendarSectionProps = {
   onOpenCalendar: () => void;
+  /** Opens the day summary sheet (symptoms, period, mood, health). */
+  onPressDate?: (dateKey: string) => void;
   embedded?: boolean;
   getPrimaryMarker?: (dateKey: string) => CycleDayMarker | null;
 };
 
 export const DashboardWeekCalendarSection = ({
   onOpenCalendar,
+  onPressDate,
   embedded = false,
   getPrimaryMarker,
 }: DashboardWeekCalendarSectionProps) => {
@@ -48,15 +51,13 @@ export const DashboardWeekCalendarSection = ({
           const weekdayKey = CALENDAR_WEEKDAY_HEADER_KEYS[index];
           const dateKey = toDateKey(day.date);
           const marker = getPrimaryMarker?.(dateKey) ?? null;
-
-          return (
-            <Box key={dateKey} align="center" className="min-w-[36px]">
+          const dayContent = (
+            <>
               <Text
                 size="xs"
                 color="foreground"
                 responsive={false}
-                className={day.isToday ? undefined : 'opacity-70'}
-              >
+                className={day.isToday ? undefined : 'opacity-70'}>
                 {t(weekdayKey)}
               </Text>
               <Box
@@ -65,28 +66,45 @@ export const DashboardWeekCalendarSection = ({
                 className={cn(
                   'mt-1 h-9 w-9 rounded-full',
                   day.isToday ? 'bg-primary-500' : undefined,
-                )}
-              >
+                )}>
                 <Text
                   size="sm"
                   weight={day.isToday ? 'semibold' : 'medium'}
                   family="sans"
                   tabularNums
                   responsive={false}
-                  className={day.isToday ? 'text-white' : undefined}
-                >
+                  className={day.isToday ? 'text-white' : undefined}>
                   {day.date.getDate()}
                 </Text>
               </Box>
               <Box className="mt-1.5 h-3.5 items-center justify-center">
-                {marker ? (
-                  <CycleDayMarkerBadge marker={marker} size="sm" />
-                ) : null}
+                {marker ? <CycleDayMarkerBadge marker={marker} size="sm" /> : null}
                 {!marker && !day.isToday ? (
                   <Box className="h-2 w-2 rounded-full border border-foreground-muted bg-card" />
                 ) : null}
               </Box>
-            </Box>
+            </>
+          );
+
+          if (!onPressDate) {
+            return (
+              <Box key={dateKey} align="center" className="min-w-[36px]">
+                {dayContent}
+              </Box>
+            );
+          }
+
+          return (
+            <TouchableOpacity
+              key={dateKey}
+              accessibilityRole="button"
+              accessibilityLabel={t('dashboard_week_day_accessibility_label', {
+                day: day.date.getDate(),
+              })}
+              onPress={() => onPressDate(dateKey)}
+              className="min-w-[36px] items-center">
+              {dayContent}
+            </TouchableOpacity>
           );
         })}
       </Box>

@@ -1,6 +1,7 @@
 import { ProfileSettingsSectionCard } from '@/components/profile/ProfileSettingsSectionCard';
 import { useBioData } from '@/hooks/useBioData';
 import { useTranslate } from '@/hooks/useTranslate';
+import { formatBirthDate } from '@/lib/profile/formatBirthDate';
 import { formatProfileSettingsValue } from '@/lib/profile/formatProfileSettingsValue';
 import { getAgeYearsFromIsoDate } from '@/lib/profile/getAgeYearsFromIsoDate';
 import {
@@ -17,7 +18,7 @@ export const ProfilePersonalSectionCard = ({
   origin,
   onEditPress,
 }: ProfilePersonalSectionCardProps) => {
-  const { t } = useTranslate();
+  const { t, language } = useTranslate();
   const { bioData } = useBioData();
   const emptyValue = t('profile_personal_empty_value');
 
@@ -26,10 +27,12 @@ export const ProfilePersonalSectionCard = ({
     .filter((part) => part.length > 0)
     .join(' ');
 
+  const birthDateValue = formatBirthDate(bioData.dateOfBirth, language) || emptyValue;
   const ageYears = getAgeYearsFromIsoDate(bioData.dateOfBirth);
-  const ageValue = ageYears === null
-    ? emptyValue
-    : t('profile_personal_age_value', { age: ageYears });
+  const ageValue =
+    ageYears === null
+      ? emptyValue
+      : t('profile_personal_age_value', { age: ageYears });
 
   const originValue = origin
     ? t(PROFILE_OPTION_LABEL_KEYS.origin[origin])
@@ -44,6 +47,10 @@ export const ProfilePersonalSectionCard = ({
         {
           labelKey: 'profile_personal_name_label',
           value: formatProfileSettingsValue(fullName, emptyValue),
+        },
+        {
+          labelKey: 'profile_personal_birth_date_label',
+          value: birthDateValue,
         },
         {
           labelKey: 'profile_personal_age_label',

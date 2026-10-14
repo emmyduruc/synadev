@@ -1,5 +1,5 @@
 import { DatePicker } from '@quidone/react-native-wheel-picker';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
@@ -36,6 +36,10 @@ export const WizardDateWheel = ({
   onValidityChange,
 }: WizardDateWheelProps) => {
   const { t, language } = useTranslate();
+  const onChangeRef = useRef(onChange);
+  const onValidityChangeRef = useRef(onValidityChange);
+  onChangeRef.current = onChange;
+  onValidityChangeRef.current = onValidityChange;
 
   const minDate = useMemo(() => getMinBirthDateIso(), []);
   const maxDate = useMemo(() => getMaxBirthDateIso(), []);
@@ -46,29 +50,28 @@ export const WizardDateWheel = ({
     [maxDate, minDate, value],
   );
 
-  const notifyValidity = useCallback(
-    (isoDate: string) => {
-      const parsed = parseIsoDate(isoDate);
-      onValidityChange?.(parsed ? isAtLeastMinAge(parsed) : false);
-    },
-    [onValidityChange],
-  );
+  const notifyValidity = useCallback((isoDate: string) => {
+    const parsed = parseIsoDate(isoDate);
+    onValidityChangeRef.current?.(parsed ? isAtLeastMinAge(parsed) : false);
+  }, []);
 
   const handleDateChanged = useCallback(
     ({ date }: { date: string }) => {
-      onChange(date);
+      onChangeRef.current(date);
       notifyValidity(date);
     },
-    [notifyValidity, onChange],
+    [notifyValidity],
   );
 
+  // Seed an empty value once. Keep refs so parent inline handlers do not
+  // retrigger this and freeze Cancel/Save with an update loop.
   useEffect(() => {
     if (!value) {
-      onChange(pickerDate);
+      onChangeRef.current(pickerDate);
     }
 
     notifyValidity(pickerDate);
-  }, [notifyValidity, onChange, pickerDate, value]);
+  }, [notifyValidity, pickerDate, value]);
 
   return (
     <Box fullWidth gap="md">

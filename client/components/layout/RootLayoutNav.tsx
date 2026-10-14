@@ -108,6 +108,13 @@ export const RootLayoutNav = () => {
           }}
         />
         <Stack.Screen
+          name="assessment/mrs-ii-results"
+          options={{
+            presentation: 'fullScreenModal',
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
           name="assessment/patient-activation-measure"
           options={{
             presentation: 'fullScreenModal',

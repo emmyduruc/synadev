@@ -4,7 +4,6 @@ import { FlatList, type ListRenderItem } from 'react-native';
 import { Box } from '@/components/ui/Box';
 import { Text } from '@/components/ui/Text';
 import { TouchableOpacity } from '@/components/ui/TouchableOpacity';
-import { useTranslate } from '@/hooks/useTranslate';
 import { buildRecentDays, type SelectableDay } from '@/lib/date/dateKeys';
 import { SYMPTOM_ENTRY_DATE_STRIP_DAYS } from '@/lib/symptoms/symptomEntryConstants';
 import { cn } from '@/lib/ui';
@@ -32,7 +31,6 @@ export const SymptomEntryDateStrip = ({
  selectedDateKey,
  onChangeDate,
 }: SymptomEntryDateStripProps) => {
- const { t } = useTranslate();
  const listRef = useRef<FlatList<SelectableDay>>(null);
  const hasCenteredOnce = useRef(false);
  const days = useMemo(() => buildRecentDays(SYMPTOM_ENTRY_DATE_STRIP_DAYS), []);
@@ -120,7 +118,7 @@ export const SymptomEntryDateStrip = ({
  />
  {selectedDay ? (
  <Text size="xs" color="foreground-muted" className="leading-relaxed">
- {`${formatSelectedDate(selectedDay.date)}. ${t('symptom_entry_date_caption')}`}
+ {formatSelectedDate(selectedDay.date)}
  </Text>
  ) : null}
  </Box>

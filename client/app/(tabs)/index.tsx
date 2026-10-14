@@ -1,9 +1,10 @@
 import type { ReportDoctorQuestionId } from '@syna/shared-types';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 
 // import { DashboardCheckInCard } from '@/components/dashboard/DashboardCheckInCard';
+import { CalendarDaySummarySheet } from '@/components/calendar/CalendarDaySummarySheet';
 import { DashboardAppointmentCard } from '@/components/dashboard/DashboardAppointmentCard';
 import { DashboardAppointmentEditSheet } from '@/components/dashboard/DashboardAppointmentEditSheet';
 import { DashboardCyclePhaseCard } from '@/components/dashboard/DashboardCyclePhaseCard';
@@ -23,16 +24,19 @@ import { ReportConcernsSheet } from '@/components/report/ReportConcernsSheet';
 import { ReportDoctorQuestionsSheet } from '@/components/report/ReportDoctorQuestionsSheet';
 import { Box } from '@/components/ui';
 import { useBioData } from '@/hooks/useBioData';
+import { useCalendarDaySummarySheet } from '@/hooks/useCalendarDaySummarySheet';
 import { useCorrectOptimisticHomeDestination } from '@/hooks/useCorrectOptimisticHomeDestination';
 import { useCycleCalendarMarkers } from '@/hooks/useCycleCalendarMarkers';
 import { useDashboardSetupProgress } from '@/hooks/useDashboardSetupProgress';
 import { useHomeWelcomeModal } from '@/hooks/useHomeWelcomeModal';
+import { useMrsIiAssessmentStatus } from '@/hooks/useMrsIiAssessmentStatus';
 import { useOpenBioDataWizard } from '@/hooks/useOpenBioDataWizard';
 import { useProfileCompletionBanner } from '@/hooks/useProfileCompletionBanner';
 import { useReportPreferences } from '@/hooks/useReportPreferences';
 import { useUserAppointment } from '@/hooks/useUserAppointment';
 import { DASHBOARD_SURFACE } from '@/lib/dashboard/surfaces';
 import { CONFETTI_ACTION } from '@/lib/gamification/confettiActions';
+import { HOME_OPEN, isHomeOpenParam } from '@/lib/navigation/homeOpenParams';
 // import { CALENDAR_MODE } from '@/lib/period/constants';
 import type { ReportConcernId } from '@/lib/report/reportConcerns';
 import { ROUTES } from '@/lib/routes';
@@ -40,9 +44,11 @@ import { cn } from '@/lib/ui';
 
 const StartTabScreen = () => {
   const router = useRouter();
+  const { open: openParam } = useLocalSearchParams<{ open?: string }>();
   const [isAppointmentEditVisible, setIsAppointmentEditVisible] = useState(false);
   const [isDoctorQuestionsSheetOpen, setIsDoctorQuestionsSheetOpen] = useState(false);
   const [isConcernsSheetOpen, setIsConcernsSheetOpen] = useState(false);
+  const { isCompleted: isMrsIiCompleted } = useMrsIiAssessmentStatus();
   const { preferences, savePreferences } = useReportPreferences();
   const {
     appointment,
@@ -127,6 +133,27 @@ const StartTabScreen = () => {
     router.push(ROUTES.symptoms);
   };
 
+  const {
+    summary: daySummary,
+    visible: isDaySummaryVisible,
+    open: openDaySummary,
+    close: closeDaySummary,
+  } = useCalendarDaySummarySheet();
+
+  useEffect(() => {
+    if (!isHomeOpenParam(openParam)) {
+      return;
+    }
+
+    if (openParam === HOME_OPEN.doctorQuestions) {
+      setIsDoctorQuestionsSheetOpen(true);
+    } else if (openParam === HOME_OPEN.appointment) {
+      setIsAppointmentEditVisible(true);
+    }
+
+    router.setParams({ open: undefined });
+  }, [openParam, router]);
+
   return (
     <SynaGradientBackground>
       <SafeAreaScreen edges={SAFE_AREA_EDGES.top} style={{ backgroundColor: 'transparent' }}>
@@ -145,6 +172,7 @@ const StartTabScreen = () => {
                   embedded
                   getPrimaryMarker={getPrimaryMarker}
                   onOpenCalendar={() => router.push(ROUTES.calendar)}
+                  onPressDate={openDaySummary}
                 />
               </Box>
 
@@ -206,6 +234,7 @@ const StartTabScreen = () => {
                 onPressGoToReport={() => router.push(ROUTES.tabs.report)}
               />
               <DashboardNextStepsCard
+                showMrsIi={!isMrsIiCompleted}
                 onPressFirstEntry={() => router.push(ROUTES.symptoms)}
                 onPressMrsIi={() => router.push(ROUTES.assessment.mrsIi)}
                 onPressCompleteProfile={() => router.push(ROUTES.clinicalProfile)}
@@ -262,6 +291,19 @@ const StartTabScreen = () => {
             onClose={handleDismissHomeWelcome}
             onSelectComplaints={handleSelectComplaints}
             onSelectLater={handleDismissHomeWelcome}
+          />
+
+          <CalendarDaySummarySheet
+            summary={daySummary}
+            visible={isDaySummaryVisible}
+            onClose={closeDaySummary}
+            onEdit={(dateKey) => {
+              closeDaySummary();
+              router.push({
+                pathname: ROUTES.symptoms,
+                params: { dateKey },
+              });
+            }}
           />
 
           {showProfileBanner ? (

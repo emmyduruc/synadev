@@ -70,10 +70,18 @@ export const ProfileSettingsMenopauseCard = ({
         <TouchableOpacity
           accessibilityRole="button"
           onPress={() => {
-            router.push(ROUTES.assessment.mrsIi);
+            router.push(
+              isCompleted
+                ? ROUTES.assessment.mrsIiResults
+                : ROUTES.assessment.mrsIi,
+            );
           }}>
           <Text size="xs" weight="medium" color="primary">
-            {t('profile_settings_mrs_open_button')}
+            {t(
+              isCompleted
+                ? 'profile_settings_mrs_view_results_button'
+                : 'profile_settings_mrs_open_button',
+            )}
           </Text>
         </TouchableOpacity>
       )}
