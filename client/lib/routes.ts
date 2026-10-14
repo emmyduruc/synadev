@@ -37,4 +37,7 @@ export const ROUTES = {
     dataSources: '/profile-data-sources',
   },
   clinicalProfile: '/clinical-profile',
+  legal: {
+    privacyPolicy: '/legal/privacy-policy',
+  },
 } as const;

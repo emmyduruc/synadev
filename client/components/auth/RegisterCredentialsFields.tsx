@@ -16,6 +16,8 @@ export type RegisterCredentialsFieldsProps = {
   isPasswordVisible: boolean;
   emailFocusKey: number;
   isBusy: boolean;
+  /** When false, social / email start actions stay disabled (privacy not accepted). */
+  canContinue?: boolean;
   onFocusEmail: () => void;
   onTogglePasswordVisibility: () => void;
 };
@@ -25,12 +27,14 @@ export const RegisterCredentialsFields = ({
   isPasswordVisible,
   emailFocusKey,
   isBusy,
+  canContinue = true,
   onFocusEmail,
   onTogglePasswordVisibility,
 }: RegisterCredentialsFieldsProps) => {
   const { t } = useTranslate();
   const { handleGoogleAuth, isSocialLoading } = useSocialAuth();
   const softButtonStyle = { backgroundColor: semanticColors.report.dataBackground };
+  const socialDisabled = isSocialLoading || isBusy || !canContinue;
 
   return (
     <Box gap="md">
@@ -38,7 +42,7 @@ export const RegisterCredentialsFields = ({
         variant="outline"
         fullWidth
         size="lg"
-        disabled={isSocialLoading || isBusy}
+        disabled={socialDisabled}
         leftIcon={<SocialProviderIcon provider={AUTH_PROVIDER.google} />}
         onPress={handleGoogleAuth}
         style={softButtonStyle}

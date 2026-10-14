@@ -5861,6 +5861,7 @@ __metadata:
     react-native-screens: "npm:~4.26.0"
     react-native-svg: "npm:15.15.4"
     react-native-web: "npm:~0.21.0"
+    react-native-webview: "npm:14.0.1"
     react-native-worklets: "npm:0.10.1"
     sonner: "npm:^2.0.7"
     sonner-native: "npm:^0.26.4"
@@ -12028,7 +12029,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"invariant@npm:^2.2.2, invariant@npm:^2.2.4":
+"invariant@npm:2.2.4, invariant@npm:^2.2.2, invariant@npm:^2.2.4":
   version: 2.2.4
   resolution: "invariant@npm:2.2.4"
   dependencies:
@@ -16057,6 +16058,19 @@ __metadata:
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
   checksum: 10c0/8c184fef0045c25deff765c8e80963454a5dffd8e389a9e11cf2fec9e769ff0f82c3d56d082b1897a7ded8374d9ae8a49dac7f09377a104f1995a5ddea645095
+  languageName: node
+  linkType: hard
+
+"react-native-webview@npm:14.0.1":
+  version: 14.0.1
+  resolution: "react-native-webview@npm:14.0.1"
+  dependencies:
+    escape-string-regexp: "npm:^4.0.0"
+    invariant: "npm:2.2.4"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/79f906a751a7fb24e41e14ad9ab193f60682ee2ad8d7d448e5db07a02ed7391c057b886515f66e6e560dcb56cdcaa886e936eafdb8f2d43eddfddd52d76b4c02
   languageName: node
   linkType: hard
 

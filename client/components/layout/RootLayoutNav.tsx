@@ -27,6 +27,12 @@ export const RootLayoutNav = () => {
         <Stack.Screen name="register" />
         <Stack.Screen name="login" />
         <Stack.Screen name="forgot-password" />
+        <Stack.Screen
+          name="legal/privacy-policy"
+          options={{
+            presentation: 'fullScreenModal',
+          }}
+        />
         <Stack.Screen name="(tabs)" />
         {/* Card (not fullScreenModal): modal presentation made home open as a
             swipeable sheet over connect-health after onboarding finished. */}

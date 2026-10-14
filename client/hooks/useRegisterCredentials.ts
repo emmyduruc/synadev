@@ -22,12 +22,19 @@ export const useRegisterCredentials = ({
   const { signUp } = useSignUp();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [emailFocusKey, setEmailFocusKey] = useState(0);
+  const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
+  const [wantsNewsletter, setWantsNewsletter] = useState(false);
   const { control, handleSubmit, formState } = useForm<RegisterCredentialsValues>({
     resolver: zodResolver(registerCredentialsSchema),
     defaultValues: { email: '', password: '' },
   });
 
   const submit = useCallback(() => {
+    if (!acceptedPrivacy) {
+      toast.error(t('register_privacy_required_error'));
+      return;
+    }
+
     void handleSubmit(async ({ email, password }) => {
       await runAuthAction(async () => {
         const { error } = await signUp.password({ emailAddress: email, password });
@@ -51,7 +58,7 @@ export const useRegisterCredentials = ({
         toast(t('register_verification_prompt'));
       });
     })();
-  }, [handleSubmit, onVerificationRequired, router, signUp, t]);
+  }, [acceptedPrivacy, handleSubmit, onVerificationRequired, router, signUp, t]);
 
   const focusEmailField = useCallback(() => {
     setEmailFocusKey((current) => current + 1);
@@ -61,13 +68,26 @@ export const useRegisterCredentials = ({
     setIsPasswordVisible((visible) => !visible);
   }, []);
 
+  const togglePrivacy = useCallback(() => {
+    setAcceptedPrivacy((current) => !current);
+  }, []);
+
+  const toggleNewsletter = useCallback(() => {
+    setWantsNewsletter((current) => !current);
+  }, []);
+
   return {
     control,
     isSubmitting: formState.isSubmitting,
     isPasswordVisible,
     emailFocusKey,
+    acceptedPrivacy,
+    wantsNewsletter,
+    canSubmit: acceptedPrivacy,
     submit,
     focusEmailField,
     togglePasswordVisibility,
+    togglePrivacy,
+    toggleNewsletter,
   };
 };

@@ -3,6 +3,7 @@ import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MrsIiQuestionStep } from '@/components/mrs/MrsIiQuestionStep';
+import { BackButton } from '@/components/ui/BackButton';
 import { Box } from '@/components/ui/Box';
 import { useMenopauseScaleWizard } from '@/hooks/useMenopauseScaleWizard';
 import { buildMrsIiSubmissionPayload } from '@/lib/mrs/mrsIiScoring';
@@ -14,6 +15,7 @@ import type {
 import { semanticColors } from '@/lib/ui';
 
 export type MenopauseScaleWizardProps = {
+  onClose: () => void;
   onSave: (payload: MrsIiSubmissionPayload) => void | Promise<void>;
 };
 
@@ -24,7 +26,7 @@ const ADVANCE_DELAY_MS = 220;
  * Uses explicit safe-area insets because SafeAreaView edges are unreliable
  * inside fullScreenModal.
  */
-export const MenopauseScaleWizard = ({ onSave }: MenopauseScaleWizardProps) => {
+export const MenopauseScaleWizard = ({ onClose, onSave }: MenopauseScaleWizardProps) => {
   const { top: safeAreaTop, bottom: safeAreaBottom } = useSafeAreaInsets();
   const {
     questionNumber,
@@ -82,6 +84,9 @@ export const MenopauseScaleWizard = ({ onSave }: MenopauseScaleWizardProps) => {
       fullWidth
       style={{ backgroundColor: semanticColors.page.DEFAULT }}>
       <Box style={{ paddingTop: safeAreaTop }} flex={1}>
+        <Box paddingX="sm">
+          <BackButton onPress={onClose} />
+        </Box>
         <ScrollView
           className="flex-1"
           showsVerticalScrollIndicator={false}

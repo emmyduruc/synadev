@@ -1,6 +1,6 @@
 import { useAuth } from '@clerk/expo';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ConfettiProvider } from '@/components/gamification/ConfettiProvider';
 import { RootLayoutNav } from '@/components/layout/RootLayoutNav';
@@ -13,10 +13,10 @@ type RootStartupGateProps = {
   fontsLoaded: boolean;
 };
 
-
 export const RootStartupGate = ({ fontsLoaded }: RootStartupGateProps) => {
   const { isLoaded, isSignedIn } = useAuth({ treatPendingAsSignedOut: false });
   const [isBrandSplashDone, setIsBrandSplashDone] = useState(false);
+  const hasMountedNavRef = useRef(false);
 
   useEffect(() => {
     if (!fontsLoaded) {
@@ -43,11 +43,16 @@ export const RootStartupGate = ({ fontsLoaded }: RootStartupGateProps) => {
     return () => clearTimeout(timeout);
   }, [fontsLoaded, isLoaded, isSignedIn]);
 
-  const showBrandSplash = !fontsLoaded || !isLoaded || !isBrandSplashDone;
+  // Startup only: Clerk reports `isLoaded: false` again while sign-in finalizes.
+  // Unmounting the root Stack then left Android on a blank white screen.
+  const showBrandSplash = !hasMountedNavRef.current
+    && (!fontsLoaded || !isLoaded || !isBrandSplashDone);
 
   if (showBrandSplash) {
     return <BrandSplash />;
   }
+
+  hasMountedNavRef.current = true;
 
   return (
     <ConfettiProvider>

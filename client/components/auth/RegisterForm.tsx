@@ -1,4 +1,5 @@
 import { AuthGradientLayout } from '@/components/auth/AuthGradientLayout';
+import { RegisterConsentSection } from '@/components/auth/RegisterConsentSection';
 import { RegisterCredentialsFields } from '@/components/auth/RegisterCredentialsFields';
 import { Box, Button, ScreenHero } from '@/components/ui';
 import { useRegisterCredentials } from '@/hooks/useRegisterCredentials';
@@ -16,9 +17,14 @@ export const RegisterForm = ({ onVerificationRequired }: RegisterFormProps) => {
     isSubmitting,
     isPasswordVisible,
     emailFocusKey,
+    acceptedPrivacy,
+    wantsNewsletter,
+    canSubmit,
     submit,
     focusEmailField,
     togglePasswordVisibility,
+    togglePrivacy,
+    toggleNewsletter,
   } = useRegisterCredentials({ onVerificationRequired });
 
   return (
@@ -26,7 +32,13 @@ export const RegisterForm = ({ onVerificationRequired }: RegisterFormProps) => {
       header={{ title: '', fallbackHref: ROUTES.welcome }}
       footer={(
         <Box paddingX="lg">
-          <Button fullWidth size="lg" loading={isSubmitting} onPress={submit}>
+          <Button
+            fullWidth
+            size="lg"
+            loading={isSubmitting}
+            disabled={!canSubmit || isSubmitting}
+            onPress={submit}
+          >
             {t('register_submit_button')}
           </Button>
         </Box>
@@ -42,8 +54,16 @@ export const RegisterForm = ({ onVerificationRequired }: RegisterFormProps) => {
         isPasswordVisible={isPasswordVisible}
         emailFocusKey={emailFocusKey}
         isBusy={isSubmitting}
+        canContinue={canSubmit}
         onFocusEmail={focusEmailField}
         onTogglePasswordVisibility={togglePasswordVisibility}
+      />
+
+      <RegisterConsentSection
+        acceptedPrivacy={acceptedPrivacy}
+        wantsNewsletter={wantsNewsletter}
+        onTogglePrivacy={togglePrivacy}
+        onToggleNewsletter={toggleNewsletter}
       />
     </AuthGradientLayout>
   );
