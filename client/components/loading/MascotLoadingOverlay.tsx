@@ -2,16 +2,13 @@ import { useEffect } from 'react';
 import { Modal } from 'react-native';
 import Animated, {
   Easing,
-  cancelAnimation,
   useAnimatedStyle,
   useSharedValue,
-  withRepeat,
-  withSequence,
   withTiming,
 } from 'react-native-reanimated';
 
+import { RectLoadingIndicator } from '@/components/loading/RectLoadingIndicator';
 import { Box } from '@/components/ui/Box';
-import { MascotBearIcon } from '@/components/ui/icons/MascotBearIcon';
 import { Text } from '@/components/ui/Text';
 import { useTranslate } from '@/hooks/useTranslate';
 import {
@@ -35,25 +32,7 @@ export const MascotLoadingOverlay = ({
   useModal = false,
 }: MascotLoadingOverlayProps) => {
   const { t } = useTranslate();
-  const bounceY = useSharedValue(0);
   const overlayOpacity = useSharedValue(0);
-
-  useEffect(() => {
-    if (isExiting) {
-      cancelAnimation(bounceY);
-      bounceY.value = withTiming(0, { duration: MASCOT_LOADING_FADE_MS });
-      return;
-    }
-
-    bounceY.value = withRepeat(
-      withSequence(
-        withTiming(-14, { duration: 420, easing: Easing.out(Easing.quad) }),
-        withTiming(0, { duration: 420, easing: Easing.in(Easing.quad) }),
-      ),
-      -1,
-      false,
-    );
-  }, [bounceY, isExiting]);
 
   useEffect(() => {
     if (isExiting) {
@@ -70,10 +49,6 @@ export const MascotLoadingOverlay = ({
     });
   }, [isExiting, overlayOpacity]);
 
-  const bearStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: bounceY.value }],
-  }));
-
   const overlayStyle = useAnimatedStyle(() => ({
     opacity: overlayOpacity.value,
   }));
@@ -84,9 +59,7 @@ export const MascotLoadingOverlay = ({
       className="absolute inset-0 z-50 items-center justify-center bg-lavender-light"
       style={overlayStyle}>
       <Box align="center" gap="lg" paddingX="xl" className="max-w-sm">
-        <Animated.View style={bearStyle}>
-          <MascotBearIcon size={128} />
-        </Animated.View>
+        <RectLoadingIndicator />
         <Box align="center" gap="sm">
           <Text size="xl" weight="bold" align="center">
             {t(LOADING_VARIANT_TITLE_KEY[variant])}

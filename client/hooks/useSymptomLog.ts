@@ -1,13 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { getSymptomLogs, replaceSymptomLogs } from '@/lib/api';
 import { queryKeys } from '@/lib/query/queryKeys';
-import {
-  emitSymptomLogsChanged,
-  subscribeSymptomLogsChanged,
-} from '@/lib/symptoms/symptomLogsEvents';
+import { emitSymptomLogsChanged } from '@/lib/symptoms/symptomLogsEvents';
 import type { SymptomLogMap } from '@/lib/symptoms/symptomLogStorage';
 
 export type UseSymptomLogOptions = {
@@ -38,7 +35,9 @@ export const useSymptomLog = (options: UseSymptomLogOptions = {}) => {
       const { logs: saved } = await replaceSymptomLogs({ logs: nextLogs });
       return saved;
     },
-    onSuccess: (saved) => {
+    onSuccess: async (saved) => {
+      // Cancel in-flight GETs so a slow refetch cannot overwrite this save.
+      await queryClient.cancelQueries({ queryKey: queryKeys.symptoms.logs() });
       queryClient.setQueryData(queryKeys.symptoms.logs(), saved);
       emitSymptomLogsChanged();
     },
@@ -58,14 +57,6 @@ export const useSymptomLog = (options: UseSymptomLogOptions = {}) => {
 
       void refetch();
     }, [enabled, refetch, refetchOnFocus]),
-  );
-
-  useEffect(
-    () =>
-      subscribeSymptomLogsChanged(() => {
-        void queryClient.invalidateQueries({ queryKey: queryKeys.symptoms.logs() });
-      }),
-    [queryClient],
   );
 
   return {

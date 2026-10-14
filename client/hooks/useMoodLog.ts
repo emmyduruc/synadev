@@ -1,12 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { getMoodLogs, replaceMoodLogs } from '@/lib/api';
-import {
-  emitMoodLogsChanged,
-  subscribeMoodLogsChanged,
-} from '@/lib/mood/moodLogsEvents';
+import { emitMoodLogsChanged } from '@/lib/mood/moodLogsEvents';
 import type { MoodLogMap } from '@/lib/mood/moodLogStorage';
 import { queryKeys } from '@/lib/query/queryKeys';
 
@@ -37,7 +34,8 @@ export const useMoodLog = (options: UseMoodLogOptions = {}) => {
       const { logs: saved } = await replaceMoodLogs({ logs: nextLogs });
       return saved;
     },
-    onSuccess: (saved) => {
+    onSuccess: async (saved) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.mood.logs() });
       queryClient.setQueryData(queryKeys.mood.logs(), saved);
       emitMoodLogsChanged();
     },
@@ -57,14 +55,6 @@ export const useMoodLog = (options: UseMoodLogOptions = {}) => {
 
       void refetch();
     }, [enabled, refetch, refetchOnFocus]),
-  );
-
-  useEffect(
-    () =>
-      subscribeMoodLogsChanged(() => {
-        void queryClient.invalidateQueries({ queryKey: queryKeys.mood.logs() });
-      }),
-    [queryClient],
   );
 
   return {

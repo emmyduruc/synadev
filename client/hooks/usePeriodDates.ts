@@ -53,7 +53,9 @@ export const usePeriodDates = () => {
       const sorted = [...new Set(input.dateKeys)].sort();
       return toCachePayload(await replacePeriodDays({ dateKeys: sorted }));
     },
-    onSuccess: (saved) => {
+    onSuccess: async (saved) => {
+      // Cancel in-flight GETs so a slow refetch cannot overwrite this save.
+      await queryClient.cancelQueries({ queryKey: queryKeys.period.days() });
       queryClient.setQueryData(queryKeys.period.days(), saved);
       void queryClient.invalidateQueries({ queryKey: queryKeys.cycle.phase() });
       emitPeriodDatesChanged();
@@ -90,7 +92,7 @@ export const usePeriodDates = () => {
   useEffect(
     () =>
       subscribePeriodDatesChanged(() => {
-        void queryClient.invalidateQueries({ queryKey: queryKeys.period.days() });
+        // Period days cache is already set by the mutation. Only refresh derived cycle phase.
         void queryClient.invalidateQueries({ queryKey: queryKeys.cycle.phase() });
       }),
     [queryClient],
