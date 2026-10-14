@@ -1,59 +1,81 @@
+import { useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
 
 import { DashboardInsightCard } from './DashboardInsightCard';
 
-import { InsightArticleModal } from '@/components/insights/InsightArticleModal';
-import { InsightStoryModal } from '@/components/insights/InsightStoryModal';
 import { Box } from '@/components/ui/Box';
-import { FlameIcon } from '@/components/ui/icons/FlameIcon';
-import { InsightPatternIcon } from '@/components/ui/icons/InsightPatternIcon';
-import { SleepIcon } from '@/components/ui/icons/SleepIcon';
 import { Text } from '@/components/ui/Text';
-import { useInsightStoryFlow } from '@/hooks/useInsightStoryFlow';
+import { useDashboardInsights } from '@/hooks/useDashboardInsights';
 import { useTranslate } from '@/hooks/useTranslate';
 import {
   dashboardHorizontalScrollContentStyle,
   dashboardHorizontalScrollStyle,
 } from '@/lib/dashboard/horizontalScrollStyles';
 import { DASHBOARD_INSIGHT_SURFACE } from '@/lib/dashboard/surfaces';
-import { INSIGHT_ICON_KEY } from '@/lib/insights/constants';
-import { INSIGHT_CONTENT_MOCK } from '@/lib/insights/insightContentMock';
+import type { DashboardInsightCardModel } from '@/lib/insights/buildDashboardInsights';
+import { renderInsightIcon } from '@/lib/insights/insightIcons';
 import { semanticColors } from '@/lib/ui';
 
-const CARD_ICONS = {
-  [INSIGHT_ICON_KEY.pattern]: (
-    <InsightPatternIcon size={20} color={semanticColors.dashboardIcon.insight} />
-  ),
-  [INSIGHT_ICON_KEY.sleep]: <SleepIcon size={20} color={semanticColors.dashboardIcon.sleep} />,
-  [INSIGHT_ICON_KEY.flame]: <FlameIcon size={20} color={semanticColors.dashboardIcon.insight} />,
-} as const;
+const formatInsightDate = (dateKey: string, language: string): string => {
+  const date = new Date(`${dateKey}T12:00:00`);
 
-const CARD_SURFACES = {
-  mrs: DASHBOARD_INSIGHT_SURFACE.mrs,
-  sleep: DASHBOARD_INSIGHT_SURFACE.sleep,
-  heat: DASHBOARD_INSIGHT_SURFACE.heat,
-} as const;
+  if (Number.isNaN(date.getTime())) {
+    return dateKey;
+  }
 
-const CARD_ICON_BY_INSIGHT = {
-  mrs: INSIGHT_ICON_KEY.pattern,
-  sleep: INSIGHT_ICON_KEY.sleep,
-  heat: INSIGHT_ICON_KEY.flame,
-} as const;
+  return date.toLocaleDateString(language, {
+    day: 'numeric',
+    month: 'short',
+  });
+};
+
+const resolveTitle = (
+  insight: DashboardInsightCardModel,
+  t: (key: string, options?: Record<string, unknown>) => string,
+): string => {
+  const params: Record<string, string | number> = {
+    ...(insight.titleParams ?? {}),
+  };
+
+  if (insight.severityLabelKey) {
+    params.severity = t(insight.severityLabelKey);
+  }
+
+  if (insight.phaseLabelKey) {
+    params.phase = t(insight.phaseLabelKey);
+  }
+
+  return t(insight.titleKey, params);
+};
+
+const resolveDescription = (
+  insight: DashboardInsightCardModel,
+  t: (key: string, options?: Record<string, unknown>) => string,
+  language: string,
+): string => {
+  const params: Record<string, string | number> = {
+    ...(insight.descriptionParams ?? {}),
+  };
+
+  if (insight.phaseLabelKey) {
+    params.phase = t(insight.phaseLabelKey);
+  }
+
+  if (typeof params.date === 'string') {
+    params.date = formatInsightDate(params.date, language);
+  }
+
+  return t(insight.descriptionKey, params);
+};
 
 export const DashboardInsightsSection = () => {
-  const { t } = useTranslate();
-  const {
-    activeInsight,
-    activeSlideIndex,
-    openInsight,
-    closeInsight,
-    goToNextSlide,
-    goToPreviousSlide,
-    openArticle,
-    closeArticle,
-    isStoryVisible,
-    isArticleVisible,
-  } = useInsightStoryFlow();
+  const { t, language } = useTranslate();
+  const router = useRouter();
+  const { insights, isLoading } = useDashboardInsights();
+
+  if (isLoading || insights.length === 0) {
+    return null;
+  }
 
   return (
     <Box gap="sm">
@@ -72,38 +94,24 @@ export const DashboardInsightsSection = () => {
         style={dashboardHorizontalScrollStyle}
         contentContainerStyle={dashboardHorizontalScrollContentStyle}>
         <Box direction="row" className="pr-2">
-          {INSIGHT_CONTENT_MOCK.map((insight) => (
+          {insights.map((insight) => (
             <DashboardInsightCard
               key={insight.id}
               eyebrow={t(insight.eyebrowKey)}
-              title={t(insight.cardTitleKey)}
-              description={t(insight.cardDescriptionKey)}
-              icon={CARD_ICONS[CARD_ICON_BY_INSIGHT[insight.id]]}
-              backgroundClassName={CARD_SURFACES[insight.surfaceKey]}
-              onPress={() => openInsight(insight.id)}
+              title={resolveTitle(insight, t)}
+              description={resolveDescription(insight, t, language)}
+              icon={renderInsightIcon(insight.iconKey, {
+                size: 20,
+                color: semanticColors.dashboardIcon.insight,
+              })}
+              backgroundClassName={DASHBOARD_INSIGHT_SURFACE[insight.surfaceKey]}
+              onPress={() => {
+                router.push(insight.href);
+              }}
             />
           ))}
         </Box>
       </ScrollView>
-
-      {activeInsight ? (
-        <>
-          <InsightStoryModal
-            insight={activeInsight}
-            activeSlideIndex={activeSlideIndex}
-            visible={isStoryVisible}
-            onClose={closeInsight}
-            onNext={goToNextSlide}
-            onPrevious={goToPreviousSlide}
-            onReadNow={openArticle}
-          />
-          <InsightArticleModal
-            insight={activeInsight}
-            visible={isArticleVisible}
-            onClose={closeArticle}
-          />
-        </>
-      ) : null}
     </Box>
   );
 };

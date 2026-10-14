@@ -65,6 +65,8 @@ export const DASHBOARD_QUICK_ACTION_SURFACE = {
 
 export const DASHBOARD_INSIGHT_SURFACE = {
   mrs: `${tintedTile} border-dusty-rose bg-dusty-rose-light`,
+  pam: `${tintedTile} border-apricot bg-apricot-light`,
   sleep: `${tintedTile} border-lavender bg-lavender-light`,
-  heat: `${tintedTile} border-apricot bg-apricot-light`,
+  hrv: `${tintedTile} border-sage-mist bg-sage-mist-light`,
+  cycle: `${tintedTile} border-primary-200 bg-primary-50`,
 } as const;
