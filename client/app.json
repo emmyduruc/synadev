@@ -18,10 +18,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.syna.app"
+      "bundleIdentifier": "com.syna.health.app"
     },
     "android": {
-      "package": "com.syna.app",
+      "package": "com.syna.health.app",
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "backgroundColor": "#5B4A52",
